@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+:root {
+  --color-cream: #fdf6e9;
+  --color-cream-dark: #f5e6c8;
+  --color-ketchup: #b6392c;
+  --color-ketchup-dark: #8f2c21;
+  --color-mustard: #e3a72e;
+  --color-mustard-dark: #c78a17;
+  --color-charcoal: #2b2118;
+  --color-charcoal-soft: #4a3b2c;
+  --color-forest: #2f5d50;
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-dark: var(--color-cream-dark);
+  --color-ketchup: var(--color-ketchup);
+  --color-ketchup-dark: var(--color-ketchup-dark);
+  --color-mustard: var(--color-mustard);
+  --color-mustard-dark: var(--color-mustard-dark);
+  --color-charcoal: var(--color-charcoal);
+  --color-charcoal-soft: var(--color-charcoal-soft);
+  --color-forest: var(--color-forest);
+  --font-display: var(--font-suez);
+  --font-body: var(--font-heebo);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display), var(--font-body), serif;
+}
+
+/* פס משובצות דיינר קלאסי — שימוש דקורטיבי בלבד */
+.diner-checker {
+  background-image: repeating-conic-gradient(
+    var(--color-charcoal) 0% 25%,
+    var(--color-cream) 0% 50%
+  );
+  background-size: 16px 16px;
+}
