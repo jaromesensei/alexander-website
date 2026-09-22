@@ -24,8 +24,12 @@
   --color-mustard-dark: var(--color-mustard-dark);
   --color-turquoise: var(--color-turquoise);
   --color-turquoise-dark: var(--color-turquoise-dark);
-  --font-display: var(--font-heebo);
+  --font-display: var(--font-rubik);
   --font-body: var(--font-heebo);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -42,6 +46,13 @@ h4,
   font-family: var(--font-display), var(--font-body), sans-serif;
   font-weight: 900;
   letter-spacing: -0.02em;
+}
+
+.font-wordmark {
+  font-family: var(--font-wordmark), var(--font-display), sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .label-caps {

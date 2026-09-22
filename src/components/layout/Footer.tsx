@@ -11,7 +11,7 @@ export function Footer({ settings }: { settings: RestaurantSettings }) {
   return (
     <footer className="border-ink/10 bg-ink text-paper relative overflow-hidden border-t">
       <Container className="pt-16 pb-10">
-        <p className="font-display text-5xl sm:text-8xl">ALEXANDER</p>
+        <p className="font-wordmark text-6xl sm:text-9xl">Alexander</p>
       </Container>
 
       <Container className="grid gap-10 pb-14 sm:grid-cols-2 lg:grid-cols-4">

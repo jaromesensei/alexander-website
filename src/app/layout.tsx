@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Heebo } from 'next/font/google'
+import { Heebo, Rubik, Bebas_Neue } from 'next/font/google'
 import { LanguageProvider } from '@/lib/i18n/LanguageProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -11,7 +11,19 @@ import './globals.css'
 const heebo = Heebo({
   variable: '--font-heebo',
   subsets: ['hebrew', 'latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
+})
+
+const rubik = Rubik({
+  variable: '--font-rubik',
+  subsets: ['hebrew', 'latin'],
+  weight: ['700', '800', '900'],
+})
+
+const bebasNeue = Bebas_Neue({
+  variable: '--font-wordmark',
+  subsets: ['latin'],
+  weight: '400',
 })
 
 export const metadata: Metadata = {
@@ -34,7 +46,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await getSettings()
 
   return (
-    <html lang="he" dir="rtl" className={`${heebo.variable} h-full antialiased`}>
+    <html
+      lang="he"
+      dir="rtl"
+      className={`${heebo.variable} ${rubik.variable} ${bebasNeue.variable} h-full antialiased`}
+    >
       <body className="bg-paper text-ink flex min-h-full flex-col">
         <LanguageProvider>
           <ChromeGate>

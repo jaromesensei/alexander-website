@@ -50,9 +50,10 @@ export function Hero({ settings }: { settings: RestaurantSettings }) {
           </motion.p>
           <motion.h1
             variants={item}
-            className="font-display text-[15vw] leading-[0.82] sm:text-[9rem] lg:text-[10.5rem]"
+            className="font-wordmark text-[19vw] leading-[0.82] sm:text-[9.5rem] lg:text-[11rem]"
           >
-            {settings.name}
+            <span className="sr-only">{settings.name}</span>
+            <span aria-hidden="true">Alexander</span>
           </motion.h1>
           {settings.tagline && (
             <motion.p

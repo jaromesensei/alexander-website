@@ -17,11 +17,16 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
   const reserveHref =
     waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
 
+  // קישורי עוגן (עם #) לא מקבלים מצב "פעיל" — אין דרך זולה לדעת איזו סקשן בתצוגה כרגע.
+  function isActive(href: string) {
+    return !href.includes('#') && pathname === href
+  }
+
   return (
     <header className="border-ink/10 bg-paper/95 sticky top-0 z-40 border-b backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="font-display text-xl leading-none sm:text-2xl">
-          ALEXANDER
+        <Link href="/" className="font-wordmark text-2xl leading-none sm:text-3xl">
+          Alexander
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -31,7 +36,7 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
               href={item.href}
               className={cn(
                 'label-caps hover:text-pink text-xs transition-colors',
-                pathname === item.href ? 'text-pink' : 'text-ink',
+                isActive(item.href) ? 'text-pink' : 'text-ink',
               )}
             >
               {item.label}
@@ -66,7 +71,7 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
                   onClick={() => setOpen(false)}
                   className={cn(
                     'label-caps block rounded-lg px-3 py-3 text-sm',
-                    pathname === item.href ? 'bg-pink/10 text-pink' : 'text-ink',
+                    isActive(item.href) ? 'bg-pink/10 text-pink' : 'text-ink',
                   )}
                 >
                   {item.label}
