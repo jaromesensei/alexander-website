@@ -17,6 +17,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
   const [form, setForm] = useState(settings)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   function set<K extends keyof RestaurantSettings>(key: K, value: RestaurantSettings[K]) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -36,6 +37,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
 
   async function save() {
     setSaving(true)
+    setError(null)
     const supabase = createClient()
     const payload = {
       name: form.name,
@@ -56,12 +58,16 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       promo_title: form.promo_title,
       promo_description: form.promo_description,
     }
-    if (form.id === 'fallback') {
-      await supabase.from('restaurant_settings').insert(payload)
-    } else {
-      await supabase.from('restaurant_settings').update(payload).eq('id', form.id)
-    }
+    const { error: saveError } =
+      form.id === 'fallback'
+        ? await supabase.from('restaurant_settings').insert(payload)
+        : await supabase.from('restaurant_settings').update(payload).eq('id', form.id)
+
     setSaving(false)
+    if (saveError) {
+      setError(saveError.message)
+      return
+    }
     setSaved(true)
     router.refresh()
   }
@@ -264,6 +270,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
           {saving ? 'שומר…' : 'שמירת הגדרות'}
         </Button>
         {saved && <span className="text-turquoise text-sm">נשמר בהצלחה</span>}
+        {error && <span className="text-pink text-sm">שמירה נכשלה: {error}</span>}
       </div>
     </div>
   )
