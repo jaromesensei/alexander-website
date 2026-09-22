@@ -1,62 +1,76 @@
+'use client'
+
 import Image from 'next/image'
+import { motion } from 'motion/react'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
+import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
 import type { RestaurantSettings } from '@/types/db'
 
-export function Hero({ settings }: { settings: RestaurantSettings }) {
-  return (
-    <section className="bg-charcoal text-cream relative overflow-hidden">
-      <div className="diner-checker absolute inset-x-0 bottom-0 h-3 opacity-80" />
-      <Container className="grid gap-10 py-20 sm:py-28 lg:grid-cols-2 lg:items-center">
-        <div>
-          <p className="text-mustard mb-4 text-sm font-bold tracking-[0.3em] uppercase">
-            נהריה · דיינר משפחתי
-          </p>
-          <h1 className="font-display text-5xl leading-tight sm:text-6xl">
-            {settings.name}
-          </h1>
-          {settings.tagline && (
-            <p className="text-cream/80 mt-4 text-xl sm:text-2xl">{settings.tagline}</p>
-          )}
-          <p className="text-cream/70 mt-6 max-w-md">
-            המבורגרים טריים, רוטבים מהבית ואווירה שגורמת לכם להרגיש חלק מהמשפחה — מהביס
-            הראשון ועד האחרון.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <ButtonLink href="/menu" size="lg">
-              לתפריט המלא
-            </ButtonLink>
-            <ButtonLink
-              href="/contact"
-              variant="outline"
-              size="lg"
-              className="border-cream text-cream hover:bg-cream hover:text-charcoal"
-            >
-              יצירת קשר
-            </ButtonLink>
-          </div>
-        </div>
+const container = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.1 } },
+}
 
-        <div className="from-ketchup/40 to-mustard/30 relative aspect-4/3 overflow-hidden rounded-3xl bg-gradient-to-br">
-          {settings.hero_image_url ? (
-            <Image
-              src={settings.hero_image_url}
-              alt={settings.name}
-              fill
-              priority
-              className="object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-            />
-          ) : (
-            <div className="text-cream/60 absolute inset-0 flex items-center justify-center text-center">
-              <p className="font-display px-8 text-2xl">
-                תמונת הירו של המנה הדגל
-                <br />
-                <span className="font-body text-sm">(מועלית מהניהול)</span>
-              </p>
-            </div>
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  },
+}
+
+export function Hero({ settings }: { settings: RestaurantSettings }) {
+  const reserveHref =
+    waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
+
+  return (
+    <section className="bg-ink text-paper relative min-h-[92svh] overflow-hidden">
+      <div className="absolute inset-0">
+        {settings.hero_image_url ? (
+          <Image
+            src={settings.hero_image_url}
+            alt={settings.name}
+            fill
+            priority
+            className="object-cover opacity-70"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="from-turquoise/25 via-ink to-pink/25 absolute inset-0 bg-gradient-to-br" />
+        )}
+        <div className="from-ink via-ink/40 absolute inset-0 bg-gradient-to-t to-transparent" />
+      </div>
+
+      <Container className="relative flex min-h-[92svh] flex-col justify-end pt-32 pb-16 sm:pb-24">
+        <motion.div initial="hidden" animate="visible" variants={container}>
+          <motion.p variants={item} className="label-caps text-turquoise mb-4 text-xs">
+            נהריה · לוקאל דיינר
+          </motion.p>
+          <motion.h1
+            variants={item}
+            className="font-display text-[15vw] leading-[0.82] sm:text-[9rem] lg:text-[10.5rem]"
+          >
+            {settings.name}
+          </motion.h1>
+          {settings.tagline && (
+            <motion.p
+              variants={item}
+              className="mt-6 max-w-lg text-xl font-semibold sm:text-2xl"
+            >
+              {settings.tagline}
+            </motion.p>
           )}
-        </div>
+          <motion.div variants={item} className="mt-10 flex flex-wrap gap-4">
+            <ButtonLink href={reserveHref} target="_blank" size="lg">
+              הזמנת שולחן
+            </ButtonLink>
+            <ButtonLink href="/menu" variant="outlineInverse" size="lg">
+              לתפריט
+            </ButtonLink>
+          </motion.div>
+        </motion.div>
       </Container>
     </section>
   )

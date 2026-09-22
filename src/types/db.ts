@@ -14,6 +14,9 @@ export interface RestaurantSettings {
   hours: Record<string, { open: string; close: string } | null> // key: 0=ראשון..6=שבת
   instagram_url: string | null
   facebook_url: string | null
+  promo_active: boolean
+  promo_title: string | null
+  promo_description: string | null
   updated_at: string
 }
 

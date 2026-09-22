@@ -48,13 +48,13 @@ export default async function AdminHomePage() {
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map(({ href, label, value, icon: Icon }) => (
           <Link key={label} href={href}>
-            <Card className="hover:border-ketchup/40 flex items-center gap-4 p-6">
-              <div className="bg-ketchup/10 text-ketchup flex size-11 items-center justify-center rounded-xl">
+            <Card className="hover:border-pink/40 flex items-center gap-4 p-6">
+              <div className="bg-pink/10 text-pink flex size-11 items-center justify-center rounded-xl">
                 <Icon className="size-5" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{value}</p>
-                <p className="text-charcoal-soft text-sm">{label}</p>
+                <p className="text-ink-soft text-sm">{label}</p>
               </div>
             </Card>
           </Link>

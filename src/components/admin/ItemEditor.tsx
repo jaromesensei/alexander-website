@@ -60,7 +60,7 @@ export function ItemEditor({
   }
 
   return (
-    <div className="border-charcoal/10 flex flex-col gap-4 rounded-xl border p-4 sm:flex-row">
+    <div className="border-ink/10 flex flex-col gap-4 rounded-xl border p-4 sm:flex-row">
       <ImageUploadButton value={imageUrl} onChange={setImageUrl} folder="menu" />
 
       <div className="flex-1 space-y-3">
@@ -78,7 +78,7 @@ export function ItemEditor({
               placeholder="מחיר"
               className="ps-8"
             />
-            <span className="text-charcoal-soft absolute inset-y-0 start-3 flex items-center">
+            <span className="text-ink-soft absolute inset-y-0 start-3 flex items-center">
               ₪
             </span>
           </div>
@@ -120,7 +120,7 @@ export function ItemEditor({
               type="button"
               disabled={!canMoveUp}
               onClick={() => onMove('up')}
-              className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+              className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
               aria-label="הזזה למעלה"
             >
               <ChevronUp className="size-4" />
@@ -129,7 +129,7 @@ export function ItemEditor({
               type="button"
               disabled={!canMoveDown}
               onClick={() => onMove('down')}
-              className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+              className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
               aria-label="הזזה למטה"
             >
               <ChevronDown className="size-4" />
@@ -137,7 +137,7 @@ export function ItemEditor({
             <button
               type="button"
               onClick={remove}
-              className="text-ketchup hover:bg-ketchup/10 rounded-lg p-1.5"
+              className="text-pink hover:bg-pink/10 rounded-lg p-1.5"
               aria-label="מחיקה"
             >
               <Trash2 className="size-4" />

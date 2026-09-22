@@ -22,16 +22,16 @@ export default async function ContactPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="space-y-5 p-6 sm:p-8">
           <div className="flex items-start gap-3">
-            <MapPin className="text-ketchup mt-1 size-5 shrink-0" />
+            <MapPin className="text-pink mt-1 size-5 shrink-0" />
             <div>
               <p className="font-semibold">כתובת</p>
-              <p className="text-charcoal-soft">{settings.address}</p>
+              <p className="text-ink-soft">{settings.address}</p>
               {settings.map_url && (
                 <a
                   href={settings.map_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-ketchup mt-1 inline-block text-sm font-semibold hover:underline"
+                  className="text-pink mt-1 inline-block text-sm font-semibold hover:underline"
                 >
                   פתיחה בגוגל מפות
                 </a>
@@ -40,10 +40,10 @@ export default async function ContactPage() {
           </div>
 
           <div className="flex items-start gap-3">
-            <Phone className="text-ketchup mt-1 size-5 shrink-0" />
+            <Phone className="text-pink mt-1 size-5 shrink-0" />
             <div>
               <p className="font-semibold">טלפון</p>
-              <a href={`tel:${settings.phone}`} className="text-charcoal-soft" dir="ltr">
+              <a href={`tel:${settings.phone}`} className="text-ink-soft" dir="ltr">
                 {settings.phone}
               </a>
             </div>
@@ -51,14 +51,10 @@ export default async function ContactPage() {
 
           {settings.email && (
             <div className="flex items-start gap-3">
-              <Mail className="text-ketchup mt-1 size-5 shrink-0" />
+              <Mail className="text-pink mt-1 size-5 shrink-0" />
               <div>
                 <p className="font-semibold">אימייל</p>
-                <a
-                  href={`mailto:${settings.email}`}
-                  className="text-charcoal-soft"
-                  dir="ltr"
-                >
+                <a href={`mailto:${settings.email}`} className="text-ink-soft" dir="ltr">
                   {settings.email}
                 </a>
               </div>
@@ -66,10 +62,10 @@ export default async function ContactPage() {
           )}
 
           <div className="flex items-start gap-3">
-            <Clock className="text-ketchup mt-1 size-5 shrink-0" />
+            <Clock className="text-pink mt-1 size-5 shrink-0" />
             <div className="w-full">
               <p className="mb-2 font-semibold">שעות פתיחה</p>
-              <ul className="text-charcoal-soft space-y-1 text-sm">
+              <ul className="text-ink-soft space-y-1 text-sm">
                 {HOURS_LABELS.map((label, i) => {
                   const h = settings.hours[String(i)]
                   return (
@@ -102,7 +98,7 @@ export default async function ContactPage() {
           </div>
         </Card>
 
-        <div className="border-charcoal/10 overflow-hidden rounded-2xl border">
+        <div className="border-ink/10 overflow-hidden rounded-2xl border">
           {settings.lat && settings.lng ? (
             <iframe
               title="מפה"
@@ -111,7 +107,7 @@ export default async function ContactPage() {
               src={`https://www.google.com/maps?q=${settings.lat},${settings.lng}&output=embed`}
             />
           ) : (
-            <div className="bg-cream-dark text-charcoal-soft flex h-full min-h-80 items-center justify-center">
+            <div className="bg-paper-dark text-ink-soft flex h-full min-h-80 items-center justify-center">
               מפה תוצג לאחר עדכון קואורדינטות בניהול
             </div>
           )}

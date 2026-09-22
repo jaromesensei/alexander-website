@@ -16,7 +16,7 @@ export default async function GalleryPage() {
     <Section>
       <SectionHeading eyebrow="אצלנו במסעדה" title="גלריה" />
       {images.length === 0 ? (
-        <div className="border-charcoal/20 text-charcoal-soft flex flex-col items-center gap-3 rounded-2xl border border-dashed py-20 text-center">
+        <div className="border-ink/20 text-ink-soft flex flex-col items-center gap-3 rounded-2xl border border-dashed py-20 text-center">
           <Camera className="size-8" />
           <p>הגלריה תתמלא בקרוב — עדכון תמונות מתבצע מהניהול.</p>
         </div>

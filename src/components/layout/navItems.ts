@@ -1,6 +1,7 @@
 export const navItems = [
-  { href: '/', label: 'בית' },
   { href: '/menu', label: 'תפריט' },
+  { href: '/#diner', label: 'אודות' },
+  { href: '/#events', label: 'אירועים' },
   { href: '/gallery', label: 'גלריה' },
-  { href: '/contact', label: 'מיקום ויצירת קשר' },
+  { href: '/contact', label: 'מיקום' },
 ] as const

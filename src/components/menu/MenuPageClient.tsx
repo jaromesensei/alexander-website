@@ -21,13 +21,13 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
   const cats = useTranslations(categoryEntries)
 
   if (categories.length === 0) {
-    return <p className="text-charcoal-soft text-center">התפריט יתעדכן בקרוב.</p>
+    return <p className="text-ink-soft text-center">התפריט יתעדכן בקרוב.</p>
   }
 
   return (
     <div>
-      <div className="bg-cream/95 sm:border-charcoal/10 sticky top-16 z-20 -mx-4 mb-8 overflow-x-auto px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-full sm:border sm:px-2">
-        <div className="flex w-max gap-2 sm:w-full sm:justify-center">
+      <div className="bg-paper/95 border-ink/10 sticky top-18 z-20 -mx-4 mb-12 overflow-x-auto border-b px-4 py-4 backdrop-blur sm:mx-0">
+        <div className="flex w-max gap-6 sm:w-full sm:justify-center">
           {categories.map((c) => (
             <button
               key={c.id}
@@ -39,10 +39,10 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
                   ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }}
               className={cn(
-                'shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors',
+                'label-caps shrink-0 pb-1 text-xs transition-colors',
                 active === c.id
-                  ? 'bg-ketchup text-cream'
-                  : 'text-charcoal hover:bg-cream-dark',
+                  ? 'border-pink text-pink border-b-2'
+                  : 'text-ink-soft hover:text-ink',
               )}
             >
               {cats.name(c.id, c.name_he)}
@@ -51,13 +51,13 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
         </div>
       </div>
 
-      <div className="space-y-16">
+      <div className="mx-auto max-w-2xl space-y-20">
         {categories.map((category) => (
-          <section key={category.id} id={category.id} className="scroll-mt-32">
-            <h2 className="font-display mb-5 text-2xl">
+          <section key={category.id} id={category.id} className="scroll-mt-36">
+            <h2 className="font-display mb-2 text-4xl leading-none">
               {cats.name(category.id, category.name_he)}
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div>
               {category.items.map((item) => (
                 <MenuItemCard
                   key={item.id}

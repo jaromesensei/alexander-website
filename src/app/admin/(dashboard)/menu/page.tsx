@@ -24,7 +24,7 @@ export default async function AdminMenuPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">ניהול תפריט</h1>
-        <p className="text-charcoal-soft">
+        <p className="text-ink-soft">
           עדכונים כאן מופיעים באתר הציבורי מיידית, כולל תרגום אוטומטי לכל שפה.
         </p>
       </div>

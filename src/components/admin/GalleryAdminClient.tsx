@@ -63,7 +63,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
 
   return (
     <div>
-      <label className="border-charcoal/20 text-charcoal-soft hover:border-ketchup hover:text-ketchup mb-6 flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed py-8 text-sm font-semibold">
+      <label className="border-ink/20 text-ink-soft hover:border-pink hover:text-pink mb-6 flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed py-8 text-sm font-semibold">
         {uploading ? (
           <>
             <Spinner className="size-4" /> מעלה תמונות…
@@ -87,7 +87,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
         {images.map((img, i) => (
           <div
             key={img.id}
-            className="border-charcoal/10 overflow-hidden rounded-2xl border bg-white"
+            className="border-ink/10 overflow-hidden rounded-2xl border bg-white"
           >
             <div className="relative aspect-square">
               <Image
@@ -109,7 +109,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
                     type="button"
                     disabled={i === 0}
                     onClick={() => move(i, 'up')}
-                    className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+                    className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
                     aria-label="הזזה"
                   >
                     <ChevronUp className="size-4" />
@@ -118,7 +118,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
                     type="button"
                     disabled={i === images.length - 1}
                     onClick={() => move(i, 'down')}
-                    className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+                    className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
                     aria-label="הזזה"
                   >
                     <ChevronDown className="size-4" />
@@ -127,7 +127,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
                 <button
                   type="button"
                   onClick={() => remove(img.id)}
-                  className="text-ketchup hover:bg-ketchup/10 rounded-lg p-1.5"
+                  className="text-pink hover:bg-pink/10 rounded-lg p-1.5"
                   aria-label="מחיקה"
                 >
                   <Trash2 className="size-4" />

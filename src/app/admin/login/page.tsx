@@ -30,10 +30,10 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="bg-charcoal flex min-h-svh items-center justify-center px-4">
+    <div className="bg-ink flex min-h-svh items-center justify-center px-4">
       <Card className="w-full max-w-sm p-8">
-        <p className="font-display text-ketchup mb-1 text-2xl">אלכסנדר</p>
-        <p className="text-charcoal-soft mb-6 text-sm">כניסה לניהול האתר</p>
+        <p className="font-display text-pink mb-1 text-2xl">אלכסנדר</p>
+        <p className="text-ink-soft mb-6 text-sm">כניסה לניהול האתר</p>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {error && <p className="text-ketchup text-sm">{error}</p>}
+          {error && <p className="text-pink text-sm">{error}</p>}
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? 'מתחבר…' : 'כניסה'}
           </Button>

@@ -52,6 +52,9 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       hours: form.hours,
       instagram_url: form.instagram_url,
       facebook_url: form.facebook_url,
+      promo_active: form.promo_active,
+      promo_title: form.promo_title,
+      promo_description: form.promo_description,
     }
     if (form.id === 'fallback') {
       await supabase.from('restaurant_settings').insert(payload)
@@ -204,6 +207,37 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       </Card>
 
       <Card className="space-y-4 p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg">מבצע נוכחי (מוצג בעמוד הבית)</h2>
+          <label className="flex items-center gap-2 text-sm font-semibold">
+            <input
+              type="checkbox"
+              checked={form.promo_active}
+              onChange={(e) => set('promo_active', e.target.checked)}
+            />
+            פעיל
+          </label>
+        </div>
+        <div>
+          <Label>כותרת</Label>
+          <Input
+            value={form.promo_title ?? ''}
+            onChange={(e) => set('promo_title', e.target.value)}
+            placeholder="למשל: האפי-אַוור של אלכסנדר"
+          />
+        </div>
+        <div>
+          <Label>תיאור</Label>
+          <Textarea
+            rows={2}
+            value={form.promo_description ?? ''}
+            onChange={(e) => set('promo_description', e.target.value)}
+            placeholder="למשל: ראשון–חמישי, 17:00–19:00. שתייה ומנות פתיחה במחיר מיוחד."
+          />
+        </div>
+      </Card>
+
+      <Card className="space-y-4 p-6">
         <h2 className="font-display text-lg">רשתות חברתיות</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -229,7 +263,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
         <Button onClick={save} disabled={saving} size="lg">
           {saving ? 'שומר…' : 'שמירת הגדרות'}
         </Button>
-        {saved && <span className="text-forest text-sm">נשמר בהצלחה</span>}
+        {saved && <span className="text-turquoise text-sm">נשמר בהצלחה</span>}
       </div>
     </div>
   )

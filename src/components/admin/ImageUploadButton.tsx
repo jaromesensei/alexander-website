@@ -35,30 +35,30 @@ export function ImageUploadButton({
   return (
     <div>
       <div
-        className="border-charcoal/30 bg-cream-dark relative flex size-24 items-center justify-center overflow-hidden rounded-xl border border-dashed"
+        className="border-ink/30 bg-paper-dark relative flex size-24 items-center justify-center overflow-hidden rounded-xl border border-dashed"
         onClick={() => inputRef.current?.click()}
         role="button"
         tabIndex={0}
       >
         {loading ? (
-          <Spinner className="text-charcoal-soft size-5" />
+          <Spinner className="text-ink-soft size-5" />
         ) : value ? (
           <Image src={value} alt="" fill className="object-cover" />
         ) : (
-          <ImageUp className="text-charcoal-soft size-6" />
+          <ImageUp className="text-ink-soft size-6" />
         )}
       </div>
       {value && !loading && (
         <button
           type="button"
           onClick={() => onChange(null)}
-          className="text-charcoal-soft hover:text-ketchup mt-1 flex items-center gap-1 text-xs"
+          className="text-ink-soft hover:text-pink mt-1 flex items-center gap-1 text-xs"
         >
           <X className="size-3" />
           הסרה
         </button>
       )}
-      {error && <p className="text-ketchup mt-1 text-xs">{error}</p>}
+      {error && <p className="text-pink mt-1 text-xs">{error}</p>}
       <input
         ref={inputRef}
         type="file"

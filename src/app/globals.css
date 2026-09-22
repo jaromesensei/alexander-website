@@ -1,34 +1,36 @@
 @import 'tailwindcss';
 
 :root {
-  --color-cream: #fdf6e9;
-  --color-cream-dark: #f5e6c8;
-  --color-ketchup: #b6392c;
-  --color-ketchup-dark: #8f2c21;
+  --color-paper: #ffffff;
+  --color-paper-dark: #f1f0ec;
+  --color-ink: #0a0a0b;
+  --color-ink-soft: #55555a;
+  --color-pink: #ff2f7e;
+  --color-pink-dark: #d61c63;
   --color-mustard: #e3a72e;
   --color-mustard-dark: #c78a17;
-  --color-charcoal: #2b2118;
-  --color-charcoal-soft: #4a3b2c;
-  --color-forest: #2f5d50;
+  --color-turquoise: #14b8ae;
+  --color-turquoise-dark: #0e8f87;
 }
 
 @theme inline {
-  --color-cream: var(--color-cream);
-  --color-cream-dark: var(--color-cream-dark);
-  --color-ketchup: var(--color-ketchup);
-  --color-ketchup-dark: var(--color-ketchup-dark);
+  --color-paper: var(--color-paper);
+  --color-paper-dark: var(--color-paper-dark);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-pink: var(--color-pink);
+  --color-pink-dark: var(--color-pink-dark);
   --color-mustard: var(--color-mustard);
   --color-mustard-dark: var(--color-mustard-dark);
-  --color-charcoal: var(--color-charcoal);
-  --color-charcoal-soft: var(--color-charcoal-soft);
-  --color-forest: var(--color-forest);
-  --font-display: var(--font-suez);
+  --color-turquoise: var(--color-turquoise);
+  --color-turquoise-dark: var(--color-turquoise-dark);
+  --font-display: var(--font-heebo);
   --font-body: var(--font-heebo);
 }
 
 body {
-  background: var(--color-cream);
-  color: var(--color-charcoal);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
@@ -37,14 +39,24 @@ h2,
 h3,
 h4,
 .font-display {
-  font-family: var(--font-display), var(--font-body), serif;
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
-/* פס משובצות דיינר קלאסי — שימוש דקורטיבי בלבד */
-.diner-checker {
-  background-image: repeating-conic-gradient(
-    var(--color-charcoal) 0% 25%,
-    var(--color-cream) 0% 50%
-  );
-  background-size: 16px 16px;
+.label-caps {
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* טקסטורת גרעין עדינה — שימוש על רקעים כהים בלבד */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }

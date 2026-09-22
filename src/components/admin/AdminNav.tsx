@@ -32,11 +32,11 @@ export function AdminNav() {
   }
 
   return (
-    <nav className="border-charcoal/10 flex h-14 items-center gap-1 overflow-x-auto border-b bg-white px-3 sm:h-auto sm:w-60 sm:flex-col sm:items-stretch sm:border-e sm:border-b-0 sm:px-3 sm:py-6">
+    <nav className="border-ink/10 flex h-14 items-center gap-1 overflow-x-auto border-b bg-white px-3 sm:h-auto sm:w-60 sm:flex-col sm:items-stretch sm:border-e sm:border-b-0 sm:px-3 sm:py-6">
       <Link
         href="/"
         target="_blank"
-        className="text-charcoal-soft hover:text-ketchup mb-4 hidden items-center gap-2 px-3 text-sm sm:flex"
+        className="text-ink-soft hover:text-pink mb-4 hidden items-center gap-2 px-3 text-sm sm:flex"
       >
         <ExternalLink className="size-4" />
         צפייה באתר
@@ -50,7 +50,7 @@ export function AdminNav() {
             href={href}
             className={cn(
               'flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold whitespace-nowrap',
-              active ? 'bg-ketchup/10 text-ketchup' : 'text-charcoal hover:bg-cream-dark',
+              active ? 'bg-pink/10 text-pink' : 'text-ink hover:bg-paper-dark',
             )}
           >
             <Icon className="size-4" />
@@ -61,7 +61,7 @@ export function AdminNav() {
       <button
         type="button"
         onClick={logout}
-        className="text-charcoal-soft hover:bg-cream-dark mt-auto flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold sm:mt-6"
+        className="text-ink-soft hover:bg-paper-dark mt-auto flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold sm:mt-6"
       >
         <LogOut className="size-4" />
         התנתקות

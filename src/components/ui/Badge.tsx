@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils'
 
 const tones = {
   mustard: 'bg-mustard/20 text-mustard-dark',
-  ketchup: 'bg-ketchup/10 text-ketchup',
-  forest: 'bg-forest/10 text-forest',
+  pink: 'bg-pink/10 text-pink',
+  turquoise: 'bg-turquoise/10 text-turquoise',
 } as const
 
 export function Badge({

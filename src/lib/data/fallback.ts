@@ -8,12 +8,11 @@ import type { GalleryImage, MenuCategory, MenuItem, RestaurantSettings } from '@
 export const FALLBACK_SETTINGS: RestaurantSettings = {
   id: 'fallback',
   name: 'אלכסנדר',
-  tagline: 'דיינר משפחתי בלב נהריה',
+  tagline: 'טעם טוב. אנשים טובים. בלי ערבים משעממים.',
   hero_image_url: null,
   about:
-    'אלכסנדר נפתח מתוך אהבה אמיתית להמבורגרים ולתחושת הבית. כל מנה מוכנה טרייה מדי יום, ' +
-    'בדיוק כמו שהיינו רוצים לאכול בעצמנו — עם הרבה טעם, בלי קיצורי דרך, ובאווירה שמרגישה כמו ' +
-    'מטבח של משפחה שפותחת את הדלת לכולם.',
+    'לא עוד דיינר. אלכסנדר זה המקום שבו המבורגרים, שתייה, מוזיקה וערבים טובים נפגשים. ' +
+    'מטבח אמריקאי רטרו בגרסה מודרנית — בלי קיצורי דרך, עם הרבה אישיות.',
   phone: '04-1234567',
   whatsapp: '972500000000',
   email: 'info@alexander-diner.co.il',
@@ -32,6 +31,9 @@ export const FALLBACK_SETTINGS: RestaurantSettings = {
   },
   instagram_url: null,
   facebook_url: null,
+  promo_active: true,
+  promo_title: 'האפי-אַוור של אלכסנדר',
+  promo_description: 'ראשון–חמישי, 17:00–19:00. שתייה נבחרת ומנות פתיחה במחיר מיוחד.',
   updated_at: new Date().toISOString(),
 }
 

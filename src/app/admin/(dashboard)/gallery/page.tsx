@@ -10,7 +10,7 @@ export default async function AdminGalleryPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">ניהול גלריה</h1>
-        <p className="text-charcoal-soft">תמונות שיוצגו בעמוד הבית ובעמוד הגלריה.</p>
+        <p className="text-ink-soft">תמונות שיוצגו בעמוד הבית ובעמוד הגלריה.</p>
       </div>
       <GalleryAdminClient images={(data as GalleryImage[]) ?? []} />
     </div>

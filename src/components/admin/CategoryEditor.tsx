@@ -87,7 +87,7 @@ export function CategoryEditor({
   return (
     <div
       className={cn(
-        'border-charcoal/10 rounded-2xl border bg-white p-5',
+        'border-ink/10 rounded-2xl border bg-white p-5',
         !category.is_active && 'opacity-60',
       )}
     >
@@ -103,7 +103,7 @@ export function CategoryEditor({
             type="button"
             disabled={!canMoveUp}
             onClick={() => onMove('up')}
-            className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+            className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
             aria-label="הזזה למעלה"
           >
             <ChevronUp className="size-4" />
@@ -112,7 +112,7 @@ export function CategoryEditor({
             type="button"
             disabled={!canMoveDown}
             onClick={() => onMove('down')}
-            className="text-charcoal-soft hover:bg-cream-dark rounded-lg p-1.5 disabled:opacity-30"
+            className="text-ink-soft hover:bg-paper-dark rounded-lg p-1.5 disabled:opacity-30"
             aria-label="הזזה למטה"
           >
             <ChevronDown className="size-4" />
@@ -123,7 +123,7 @@ export function CategoryEditor({
             className={cn(
               'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold',
               category.is_active
-                ? 'text-charcoal-soft hover:bg-cream-dark'
+                ? 'text-ink-soft hover:bg-paper-dark'
                 : 'bg-mustard/20 text-mustard-dark',
             )}
           >
@@ -133,7 +133,7 @@ export function CategoryEditor({
           <button
             type="button"
             onClick={removeCategory}
-            className="text-ketchup hover:bg-ketchup/10 rounded-lg p-1.5"
+            className="text-pink hover:bg-pink/10 rounded-lg p-1.5"
             aria-label="מחיקת קטגוריה"
           >
             <Trash2 className="size-4" />
@@ -173,7 +173,7 @@ export function CategoryEditor({
         <button
           type="button"
           onClick={() => setAddingItem(true)}
-          className="text-ketchup mt-4 flex items-center gap-1.5 text-sm font-semibold hover:underline"
+          className="text-pink mt-4 flex items-center gap-1.5 text-sm font-semibold hover:underline"
         >
           <Plus className="size-4" />
           הוספת מנה

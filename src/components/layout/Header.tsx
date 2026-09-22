@@ -8,16 +8,20 @@ import { navItems } from './navItems'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import type { RestaurantSettings } from '@/types/db'
 
-export function Header() {
+export function Header({ settings }: { settings: RestaurantSettings }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const reserveHref =
+    waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
 
   return (
-    <header className="border-charcoal/10 bg-cream/95 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="font-display text-ketchup text-2xl">
-          אלכסנדר
+    <header className="border-ink/10 bg-paper/95 sticky top-0 z-40 border-b backdrop-blur">
+      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="font-display text-xl leading-none sm:text-2xl">
+          ALEXANDER
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -26,8 +30,8 @@ export function Header() {
               key={item.href}
               href={item.href}
               className={cn(
-                'hover:text-ketchup text-sm font-semibold transition-colors',
-                pathname === item.href ? 'text-ketchup' : 'text-charcoal',
+                'label-caps hover:text-pink text-xs transition-colors',
+                pathname === item.href ? 'text-pink' : 'text-ink',
               )}
             >
               {item.label}
@@ -37,8 +41,8 @@ export function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
-          <ButtonLink href="/menu" size="sm">
-            לתפריט
+          <ButtonLink href={reserveHref} target="_blank" size="sm">
+            הזמנת שולחן
           </ButtonLink>
         </div>
 
@@ -53,7 +57,7 @@ export function Header() {
       </div>
 
       {open && (
-        <nav className="border-charcoal/10 bg-cream border-t px-4 py-4 md:hidden">
+        <nav className="border-ink/10 bg-paper border-t px-4 py-4 md:hidden">
           <ul className="flex flex-col gap-1">
             {navItems.map((item) => (
               <li key={item.href}>
@@ -61,10 +65,8 @@ export function Header() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'block rounded-lg px-3 py-2.5 text-base font-semibold',
-                    pathname === item.href
-                      ? 'bg-ketchup/10 text-ketchup'
-                      : 'text-charcoal',
+                    'label-caps block rounded-lg px-3 py-3 text-sm',
+                    pathname === item.href ? 'bg-pink/10 text-pink' : 'text-ink',
                   )}
                 >
                   {item.label}
@@ -74,8 +76,13 @@ export function Header() {
           </ul>
           <div className="mt-4 flex items-center justify-between gap-3">
             <LanguageSwitcher />
-            <ButtonLink href="/menu" size="sm" onClick={() => setOpen(false)}>
-              לתפריט
+            <ButtonLink
+              href={reserveHref}
+              target="_blank"
+              size="sm"
+              onClick={() => setOpen(false)}
+            >
+              הזמנת שולחן
             </ButtonLink>
           </div>
         </nav>

@@ -59,7 +59,7 @@ export function MenuAdminClient({ categories }: { categories: CategoryWithItems[
       ))}
 
       {adding ? (
-        <div className="border-charcoal/20 flex gap-2 rounded-2xl border border-dashed p-4">
+        <div className="border-ink/20 flex gap-2 rounded-2xl border border-dashed p-4">
           <Input
             autoFocus
             value={newName}
@@ -76,7 +76,7 @@ export function MenuAdminClient({ categories }: { categories: CategoryWithItems[
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="border-charcoal/20 text-charcoal-soft hover:border-ketchup hover:text-ketchup flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-6 text-sm font-semibold"
+          className="border-ink/20 text-ink-soft hover:border-pink hover:text-pink flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-6 text-sm font-semibold"
         >
           <Plus className="size-4" />
           הוספת קטגוריה
