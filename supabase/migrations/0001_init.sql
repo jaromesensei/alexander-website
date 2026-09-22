@@ -22,8 +22,6 @@ create table if not exists restaurant_settings (
   hours jsonb not null default '{}'::jsonb,
   instagram_url text,
   facebook_url text,
-  wolt_url text,
-  tenbis_url text,
   updated_at timestamptz not null default now()
 );
 
@@ -107,33 +105,6 @@ create policy "gallery_public_read" on gallery_images
 
 create policy "gallery_admin_all" on gallery_images
   for all to authenticated using (true) with check (true);
-
--- ========== reservation_leads ==========
-create table if not exists reservation_leads (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  phone text not null,
-  party_size integer not null check (party_size between 1 and 30),
-  wanted_date date not null,
-  wanted_time time not null,
-  notes text,
-  status text not null default 'new' check (status in ('new', 'contacted', 'confirmed', 'declined')),
-  created_at timestamptz not null default now()
-);
-
-alter table reservation_leads enable row level security;
-
-create policy "leads_public_insert" on reservation_leads
-  for insert to anon, authenticated with check (status = 'new');
-
-create policy "leads_admin_read" on reservation_leads
-  for select to authenticated using (true);
-
-create policy "leads_admin_update" on reservation_leads
-  for update to authenticated using (true) with check (true);
-
-create policy "leads_admin_delete" on reservation_leads
-  for delete to authenticated using (true);
 
 -- ========== Storage: public-media ==========
 insert into storage.buckets (id, name, public)

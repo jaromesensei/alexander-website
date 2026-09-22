@@ -32,8 +32,6 @@ export const FALLBACK_SETTINGS: RestaurantSettings = {
   },
   instagram_url: null,
   facebook_url: null,
-  wolt_url: null,
-  tenbis_url: null,
   updated_at: new Date().toISOString(),
 }
 

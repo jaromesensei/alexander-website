@@ -1,5 +1,3 @@
-export type ReservationStatus = 'new' | 'contacted' | 'confirmed' | 'declined'
-
 export interface RestaurantSettings {
   id: string
   name: string
@@ -16,8 +14,6 @@ export interface RestaurantSettings {
   hours: Record<string, { open: string; close: string } | null> // key: 0=ראשון..6=שבת
   instagram_url: string | null
   facebook_url: string | null
-  wolt_url: string | null
-  tenbis_url: string | null
   updated_at: string
 }
 
@@ -58,18 +54,6 @@ export interface GalleryImage {
   image_url: string
   caption_he: string | null
   sort_order: number
-  created_at: string
-}
-
-export interface ReservationLead {
-  id: string
-  name: string
-  phone: string
-  party_size: number
-  wanted_date: string
-  wanted_time: string
-  notes: string | null
-  status: ReservationStatus
   created_at: string
 }
 

@@ -6,8 +6,9 @@ SEO ומהירות טעינה, Supabase נפרד משלו.
 
 ## מטרת האתר
 
-דיינר משפחתי, אווירה חמה, עיצוב ברמה מקצועית. תפיסת לקוח והמרה לפעולה
-(הזמנת שולחן / הזמנה אונליין) בכל עמוד. תפריט ניתן לתרגום חי לכל שפה.
+דיינר משפחתי, אווירה חמה, עיצוב ברמה מקצועית. **התמקדות נוכחית: תפריט אונליין
+עם תרגום אוטומטי לכל שפה + CMS פרטי לניהולו.** בלי הזמנת שולחן/הזמנה אונליין
+בשלב זה — ראו `ROADMAP.md` פאזה 3 להרחבות עתידיות.
 
 ## סטאק טכני
 
@@ -16,7 +17,6 @@ SEO ומהירות טעינה, Supabase נפרד משלו.
 | Frontend | Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 |
 | Backend  | Supabase — Postgres, Auth, Storage                                |
 | תרגום    | Claude API (`@anthropic-ai/sdk`) דרך Route Handler, עם מטמון ב-DB |
-| טפסים    | react-hook-form + zod                                             |
 | Deploy   | Vercel                                                            |
 
 ## מבנה תיקיות
@@ -24,22 +24,21 @@ SEO ומהירות טעינה, Supabase נפרד משלו.
 ```
 src/
   app/
-    page.tsx, menu/, gallery/, contact/, reservations/, order/  עמודים ציבוריים
-    admin/login/                                                 כניסה
-    admin/(dashboard)/                                            CMS מוגן (layout עושה auth guard)
-    api/translate/                                                Route Handler לתרגום עם מטמון
+    page.tsx, menu/, gallery/, contact/   עמודים ציבוריים
+    admin/login/                          כניסה
+    admin/(dashboard)/                    CMS מוגן (layout עושה auth guard)
+    api/translate/                        Route Handler לתרגום עם מטמון
   components/
-    ui/           רכיבי design system בסיסיים (Button, Card, Input, Section)
-    layout/       Header, Footer, LanguageSwitcher, ChromeGate (מסתיר chrome ב-/admin)
-    home/         סקשנים של עמוד הבית
-    menu/         כרטיס מנה, עמוד תפריט
-    reservations/ טופס הזמנת שולחן
-    admin/        רכיבי ניהול (CRUD תפריט/גלריה/הגדרות/הזמנות)
+    ui/       רכיבי design system בסיסיים (Button, Card, Input, Section)
+    layout/   Header, Footer, LanguageSwitcher, ChromeGate (מסתיר chrome ב-/admin)
+    home/     סקשנים של עמוד הבית
+    menu/     כרטיס מנה, עמוד תפריט
+    admin/    רכיבי ניהול (CRUD תפריט/גלריה/הגדרות)
   lib/
-    data/         שכבת גישה ל-DB עם fallback לתוכן placeholder כשאין נתונים
-    i18n/         LanguageProvider + useTranslations (תרגום חי בצד קליינט)
-    supabase/     client.ts (דפדפן), server.ts (Server Components + service role)
-  types/db.ts      טיפוסי DB
+    data/     שכבת גישה ל-DB עם fallback לתוכן placeholder כשאין נתונים
+    i18n/     LanguageProvider + useTranslations (תרגום חי בצד קליינט)
+    supabase/ client.ts (דפדפן), server.ts (Server Components + service role)
+  types/db.ts  טיפוסי DB
 supabase/
   migrations/0001_init.sql   סכמה מלאה + RLS + Storage bucket
 ```

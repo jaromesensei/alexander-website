@@ -5,7 +5,6 @@ import { Hero } from '@/components/home/Hero'
 import { StoryTeaser } from '@/components/home/StoryTeaser'
 import { MenuHighlights } from '@/components/home/MenuHighlights'
 import { GalleryTeaser } from '@/components/home/GalleryTeaser'
-import { CTABand } from '@/components/home/CTABand'
 
 export default async function HomePage() {
   const [settings, categories, gallery] = await Promise.all([
@@ -20,7 +19,6 @@ export default async function HomePage() {
       <StoryTeaser settings={settings} />
       <MenuHighlights categories={categories} />
       <GalleryTeaser images={gallery} />
-      <CTABand settings={settings} />
     </>
   )
 }

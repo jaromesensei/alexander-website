@@ -52,8 +52,6 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       hours: form.hours,
       instagram_url: form.instagram_url,
       facebook_url: form.facebook_url,
-      wolt_url: form.wolt_url,
-      tenbis_url: form.tenbis_url,
     }
     if (form.id === 'fallback') {
       await supabase.from('restaurant_settings').insert(payload)
@@ -206,7 +204,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       </Card>
 
       <Card className="space-y-4 p-6">
-        <h2 className="font-display text-lg">רשתות ומשלוחים</h2>
+        <h2 className="font-display text-lg">רשתות חברתיות</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>אינסטגרם</Label>
@@ -222,22 +220,6 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
               dir="ltr"
               value={form.facebook_url ?? ''}
               onChange={(e) => set('facebook_url', e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>קישור להזמנה ב-Wolt</Label>
-            <Input
-              dir="ltr"
-              value={form.wolt_url ?? ''}
-              onChange={(e) => set('wolt_url', e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>קישור להזמנה ב-10ביס</Label>
-            <Input
-              dir="ltr"
-              value={form.tenbis_url ?? ''}
-              onChange={(e) => set('tenbis_url', e.target.value)}
             />
           </div>
         </div>

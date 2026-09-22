@@ -1,21 +1,18 @@
 import Link from 'next/link'
-import { CalendarCheck, UtensilsCrossed, Images } from 'lucide-react'
+import { LayoutGrid, UtensilsCrossed, Images } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/Card'
 
 async function getCounts() {
   const supabase = await createClient()
-  const [{ count: newLeads }, { count: menuItems }, { count: galleryImages }] =
+  const [{ count: categories }, { count: menuItems }, { count: galleryImages }] =
     await Promise.all([
-      supabase
-        .from('reservation_leads')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'new'),
+      supabase.from('menu_categories').select('*', { count: 'exact', head: true }),
       supabase.from('menu_items').select('*', { count: 'exact', head: true }),
       supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
     ])
   return {
-    newLeads: newLeads ?? 0,
+    categories: categories ?? 0,
     menuItems: menuItems ?? 0,
     galleryImages: galleryImages ?? 0,
   }
@@ -26,10 +23,10 @@ export default async function AdminHomePage() {
 
   const stats = [
     {
-      href: '/admin/reservations',
-      label: 'בקשות הזמנה חדשות',
-      value: counts.newLeads,
-      icon: CalendarCheck,
+      href: '/admin/menu',
+      label: 'קטגוריות בתפריט',
+      value: counts.categories,
+      icon: LayoutGrid,
     },
     {
       href: '/admin/menu',
@@ -50,7 +47,7 @@ export default async function AdminHomePage() {
       <h1 className="mb-6 text-2xl font-bold">סקירה כללית</h1>
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map(({ href, label, value, icon: Icon }) => (
-          <Link key={href} href={href}>
+          <Link key={label} href={href}>
             <Card className="hover:border-ketchup/40 flex items-center gap-4 p-6">
               <div className="bg-ketchup/10 text-ketchup flex size-11 items-center justify-center rounded-xl">
                 <Icon className="size-5" />

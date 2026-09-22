@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   UtensilsCrossed,
   Images,
-  CalendarCheck,
   Settings,
   LogOut,
   ExternalLink,
@@ -18,7 +17,6 @@ const items = [
   { href: '/admin', label: 'סקירה', icon: LayoutDashboard },
   { href: '/admin/menu', label: 'תפריט', icon: UtensilsCrossed },
   { href: '/admin/gallery', label: 'גלריה', icon: Images },
-  { href: '/admin/reservations', label: 'הזמנות שולחן', icon: CalendarCheck },
   { href: '/admin/settings', label: 'הגדרות', icon: Settings },
 ] as const
 

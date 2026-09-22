@@ -96,8 +96,8 @@ export default async function ContactPage() {
                 וואטסאפ
               </ButtonLink>
             )}
-            <ButtonLink href="/reservations" variant="outline" size="sm">
-              הזמנת שולחן
+            <ButtonLink href="/menu" variant="outline" size="sm">
+              לתפריט
             </ButtonLink>
           </div>
         </Card>

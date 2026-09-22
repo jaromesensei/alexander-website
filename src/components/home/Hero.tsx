@@ -23,16 +23,16 @@ export function Hero({ settings }: { settings: RestaurantSettings }) {
             הראשון ועד האחרון.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <ButtonLink href="/reservations" size="lg">
-              הזמנת שולחן
+            <ButtonLink href="/menu" size="lg">
+              לתפריט המלא
             </ButtonLink>
             <ButtonLink
-              href="/menu"
+              href="/contact"
               variant="outline"
               size="lg"
               className="border-cream text-cream hover:bg-cream hover:text-charcoal"
             >
-              לתפריט
+              יצירת קשר
             </ButtonLink>
           </div>
         </div>

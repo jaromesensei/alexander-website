@@ -37,8 +37,8 @@ export function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
-          <ButtonLink href="/reservations" size="sm">
-            הזמנת שולחן
+          <ButtonLink href="/menu" size="sm">
+            לתפריט
           </ButtonLink>
         </div>
 
@@ -74,8 +74,8 @@ export function Header() {
           </ul>
           <div className="mt-4 flex items-center justify-between gap-3">
             <LanguageSwitcher />
-            <ButtonLink href="/reservations" size="sm" onClick={() => setOpen(false)}>
-              הזמנת שולחן
+            <ButtonLink href="/menu" size="sm" onClick={() => setOpen(false)}>
+              לתפריט
             </ButtonLink>
           </div>
         </nav>

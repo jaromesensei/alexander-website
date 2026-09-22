@@ -16,7 +16,7 @@
 זה יוצר:
 
 - `restaurant_settings`, `menu_categories`, `menu_items`, `gallery_images`,
-  `reservation_leads`, `translation_cache` — עם RLS מלא.
+  `translation_cache` — עם RLS מלא.
 - Storage bucket ציבורי `public-media` להעלאת תמונות תפריט/גלריה/הירו.
 - שורת ברירת מחדל ב-`restaurant_settings` (ניתן לעריכה מיידית ב-`/admin/settings`).
 
