@@ -18,17 +18,16 @@ const suez = Suez_One({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
     default: 'אלכסנדר | דיינר משפחתי בנהריה',
     template: '%s | אלכסנדר',
   },
   description:
-    'אלכסנדר — דיינר משפחתי בנהריה. המבורגרים, אווירה חמה וטעם של בית. תפריט, שעות פתיחה, הזמנת שולחן והזמנה אונליין.',
+    'אלכסנדר — דיינר משפחתי בנהריה. המבורגרים, אווירה חמה וטעם של בית. תפריט מלא בכל שפה, שעות פתיחה ומיקום.',
   openGraph: {
     title: 'אלכסנדר | דיינר משפחתי בנהריה',
-    description:
-      'המבורגרים, אווירה חמה וטעם של בית. הזמינו שולחן או תפריט להזמנה אונליין.',
+    description: 'המבורגרים, אווירה חמה וטעם של בית. תפריט מלא בכל שפה.',
     locale: 'he_IL',
     type: 'website',
   },
