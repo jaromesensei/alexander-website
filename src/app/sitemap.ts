@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const now = new Date()
 
-  const fixed = ['', '/menu', '/gallery', '/contact'].map((route) => ({
+  const fixed = ['', '/menu', '/gallery', '/contact', '/accessibility'].map((route) => ({
     url: `${base}${route}`,
     lastModified: now,
     changeFrequency: route === '/menu' ? ('daily' as const) : ('weekly' as const),

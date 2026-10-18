@@ -2,6 +2,8 @@
 
 /*
  * שחור/לבן = מבנה. פינק = פעולה (כפתורים, קישורים) בלבד.
+ * נגישות (ת"י 5568 / WCAG AA): pink (#ff2f7e) עומד בניגודיות רק מול טקסט שחור,
+ * לכן כפתורים וקישורים משתמשים ב-pink-dark (5:1 מול לבן) — pink נשאר לרקעים.
  * חרדל = בלוק המבצע, טורקיז = בלוק התפריט, פינק כרקע = סקשן הקוקטיילים (לפי הבריף).
  */
 :root {
@@ -11,6 +13,7 @@
   --color-ink-soft: #5c5c5c;
   --color-pink: #ff2f7e;
   --color-pink-dark: #d61c63;
+  --color-pink-deep: #ad1350;
   --color-mustard: #e3a72e;
   --color-turquoise: #14b8ae;
 }
@@ -22,6 +25,7 @@
   --color-ink-soft: var(--color-ink-soft);
   --color-pink: var(--color-pink);
   --color-pink-dark: var(--color-pink-dark);
+  --color-pink-deep: var(--color-pink-deep);
   --color-mustard: var(--color-mustard);
   --color-turquoise: var(--color-turquoise);
   --font-display: var(--font-rubik);
@@ -58,9 +62,67 @@ h4,
   text-transform: uppercase;
 }
 
-:where(a, button, [role='button'], input, select, textarea):focus-visible {
-  outline: 2px solid var(--color-pink);
-  outline-offset: 3px;
+/*
+ * טבעת פוקוס שנראית על כל רקע: קו שחור עם הילה לבנה בפנים —
+ * על לבן/צבע רואים את השחור, על שחור רואים את הלבן.
+ */
+:where(
+  a,
+  button,
+  [role='button'],
+  [tabindex],
+  input,
+  select,
+  textarea,
+  summary
+):focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-paper);
+}
+
+/* ===== תפריט נגישות (AccessibilityMenu) — מחלקות על <html> ===== */
+html.a11y-text-1 {
+  font-size: 112.5%;
+}
+html.a11y-text-2 {
+  font-size: 125%;
+}
+html.a11y-text-3 {
+  font-size: 137.5%;
+}
+html.a11y-contrast {
+  --color-ink-soft: #000000;
+  --color-paper-dark: #ffffff;
+  --color-pink: #ad1350;
+  --color-pink-dark: #8a0f40;
+  --color-pink-deep: #6d0c33;
+  --color-mustard: #ffd23f;
+  --color-turquoise: #3ee6dc;
+}
+html.a11y-contrast [class*='text-paper/'] {
+  color: var(--color-paper) !important;
+}
+html.a11y-contrast [class*='text-ink/'] {
+  color: var(--color-ink) !important;
+}
+html.a11y-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+}
+html.a11y-font body,
+html.a11y-font body * {
+  font-family: Arial, 'Helvetica Neue', sans-serif !important;
+  letter-spacing: 0.02em !important;
+  word-spacing: 0.08em !important;
+}
+html.a11y-no-motion *,
+html.a11y-no-motion *::before,
+html.a11y-no-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }
 
 /* טקסטורת גרעין עדינה — רק על סקשן הדיינר השחור */

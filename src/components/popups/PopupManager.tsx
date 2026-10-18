@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { SiteMotion } from '@/components/a11y/SiteMotion'
 import { isPopupLive, placementMatches, zonedNow } from '@/lib/popups/schedule'
 import { alreadySeen, markSeen } from '@/lib/popups/seen'
 import { PopupCard } from './PopupCard'
@@ -45,16 +46,42 @@ export function PopupManager({
     return () => window.clearTimeout(timer)
   }, [pathname, popups])
 
+  // נגישות: פוקוס עובר לחלון, Tab נשאר בתוכו, Esc סוגר, ובסגירה הפוקוס חוזר למקומו
   useEffect(() => {
     if (!current) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setCurrent(null)
+    const previous = document.activeElement as HTMLElement | null
+    const dialog = closeRef.current
+    dialog?.querySelector('button')?.focus()
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setCurrent(null)
+        return
+      }
+      if (e.key !== 'Tab' || !dialog) return
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
     window.addEventListener('keydown', onKey)
-    closeRef.current?.querySelector('button')?.focus()
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      previous?.focus?.()
+    }
   }, [current])
 
   return (
-    <MotionConfig reducedMotion="user">
+    <SiteMotion>
       <AnimatePresence>
         {current && (
           <motion.div
@@ -87,6 +114,6 @@ export function PopupManager({
           </motion.div>
         )}
       </AnimatePresence>
-    </MotionConfig>
+    </SiteMotion>
   )
 }

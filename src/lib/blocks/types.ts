@@ -71,6 +71,8 @@ export interface ImageTextBlock extends BlockBase {
   title: string
   text: string
   image: string | null
+  /** תיאור התמונה לקוראי מסך; ריק = הכותרת */
+  imageAlt?: string
   imageSide: 'start' | 'end'
   bg: BlockBg
   button: LinkValue | null
@@ -80,6 +82,8 @@ export interface ImageBlock extends BlockBase {
   type: 'image'
   image: string | null
   caption: string
+  /** תיאור התמונה לקוראי מסך */
+  alt?: string
 }
 
 export interface FeaturesBlock extends BlockBase {

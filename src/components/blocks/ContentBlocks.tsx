@@ -213,7 +213,7 @@ export function ImageTextBlockView({
           {block.image ? (
             <Image
               src={block.image}
-              alt={block.title}
+              alt={block.imageAlt || block.title}
               fill
               sizes="(min-width: 640px) 50vw, 100vw"
               className="object-cover"
@@ -260,7 +260,7 @@ export function ImageBlockView({ block, ctx }: { block: ImageBlock; ctx: BlockCo
           <div className="bg-paper-dark relative aspect-video overflow-hidden">
             <Image
               src={block.image}
-              alt={block.caption}
+              alt={block.alt || block.caption || 'צילום מאלכסנדר דיינר'}
               fill
               sizes="(min-width: 1152px) 1152px, 100vw"
               className="object-cover"
@@ -392,7 +392,7 @@ function DishRow({ item, reversed }: { item: MenuItem; reversed: boolean }) {
         </p>
         <Link
           href="/menu"
-          className="text-pink hover:text-pink-dark mt-4 inline-block font-semibold underline underline-offset-4"
+          className="text-pink-dark hover:text-pink-deep mt-4 inline-block font-semibold underline underline-offset-4"
         >
           לתפריט המלא
         </Link>
@@ -410,10 +410,10 @@ export function GalleryBlockView({
 }) {
   const images =
     block.images.length > 0
-      ? block.images.map((url) => ({ url, alt: '' }))
+      ? block.images.map((url) => ({ url, alt: 'צילום מאלכסנדר דיינר' }))
       : ctx.gallery
           .slice(0, 6)
-          .map((g) => ({ url: g.image_url, alt: g.caption_he ?? '' }))
+          .map((g) => ({ url: g.image_url, alt: g.caption_he || 'צילום מאלכסנדר דיינר' }))
   if (images.length === 0) {
     return ctx.preview ? <Placeholder label="גלריה — עוד אין תמונות" /> : null
   }

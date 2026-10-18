@@ -41,6 +41,7 @@ export function PopupsAdminClient({ popups }: { popups: Row[] }) {
           heading: from.heading,
           body: from.body,
           image_url: from.image_url,
+          image_alt: from.image_alt,
           button: from.button,
           bg: from.bg,
           days: from.days,

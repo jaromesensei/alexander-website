@@ -10,6 +10,7 @@ export const RESERVED_SLUGS = new Set([
   'menu',
   'gallery',
   'contact',
+  'accessibility',
   'admin',
   'api',
   'icons',

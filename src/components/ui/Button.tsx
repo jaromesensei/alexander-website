@@ -1,9 +1,10 @@
 import { forwardRef } from 'react'
 import Link, { type LinkProps } from 'next/link'
 import { cn } from '@/lib/utils'
+import { NewTabHint } from '@/components/a11y/NewTabHint'
 
 const variants = {
-  primary: 'bg-pink text-paper hover:bg-pink-dark',
+  primary: 'bg-pink-dark text-paper hover:bg-pink-deep',
   secondary: 'bg-ink text-paper hover:bg-ink-soft',
   outline: 'border-2 border-ink text-ink hover:bg-ink hover:text-paper',
   outlineInverse: 'border-2 border-paper text-paper hover:bg-paper hover:text-ink',
@@ -55,9 +56,18 @@ type ButtonLinkProps = LinkProps &
   }
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
-  ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
+    const newTab = props.target === '_blank'
     return (
-      <Link ref={ref} className={buttonClasses(variant, size, className)} {...props} />
+      <Link
+        ref={ref}
+        className={buttonClasses(variant, size, className)}
+        rel={newTab ? 'noreferrer' : undefined}
+        {...props}
+      >
+        {children}
+        {newTab && <NewTabHint />}
+      </Link>
     )
   },
 )

@@ -48,6 +48,7 @@ export interface BlockDef {
 
 const BG: Field = { key: 'bg', label: 'צבע רקע', kind: 'bg' }
 const BUTTON: Field = { key: 'button', label: 'כפתור', kind: 'link' }
+const ALT_HELP = 'מה רואים בתמונה, במשפט קצר. מוקרא לאנשים עיוורים (חובת נגישות).'
 const BG_IMAGE: Field = {
   key: 'bgImage',
   label: 'תמונת רקע (לא חובה)',
@@ -145,6 +146,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
     icon: Columns2,
     fields: [
       { key: 'image', label: 'תמונה', kind: 'image' },
+      { key: 'imageAlt', label: 'תיאור התמונה (לנגישות)', kind: 'text', help: ALT_HELP },
       {
         key: 'imageSide',
         label: 'מיקום התמונה',
@@ -175,6 +177,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
     icon: ImageIcon,
     fields: [
       { key: 'image', label: 'תמונה', kind: 'image' },
+      { key: 'alt', label: 'תיאור התמונה (לנגישות)', kind: 'text', help: ALT_HELP },
       { key: 'caption', label: 'כיתוב (לא חובה)', kind: 'text' },
     ],
     create: () => ({ type: 'image', image: null, caption: '' }),

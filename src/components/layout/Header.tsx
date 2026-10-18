@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { NewTabHint } from '@/components/a11y/NewTabHint'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
@@ -20,6 +21,19 @@ export function Header({
 }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+
+  // Esc סוגר את תפריט המובייל ומחזיר את הפוקוס לכפתור שפתח אותו
+  useEffect(() => {
+    if (!open) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      toggleRef.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
   const reserveHref =
     waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
   const links = nav.flatMap((item) => {
@@ -36,10 +50,11 @@ export function Header({
     <header className="border-ink/10 bg-paper/95 sticky top-0 z-40 border-b backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="font-wordmark text-2xl leading-none sm:text-3xl">
-          Alexander
+          <span lang="en">Alexander</span>
+          <span className="sr-only"> — עמוד הבית</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav aria-label="ניווט ראשי" className="hidden items-center gap-8 md:flex">
           {links.map((item) => (
             <Link
               key={item.href + item.label}
@@ -47,11 +62,12 @@ export function Header({
               target={item.external ? '_blank' : undefined}
               aria-current={isActive(item.href) ? 'page' : undefined}
               className={cn(
-                'text-ink hover:text-pink text-[15px] font-semibold underline-offset-8 transition-colors',
+                'text-ink hover:text-pink-dark text-[15px] font-semibold underline-offset-8 transition-colors',
                 isActive(item.href) && 'decoration-ink underline decoration-2',
               )}
             >
               {item.label}
+              {item.external && <NewTabHint />}
             </Link>
           ))}
         </nav>
@@ -64,18 +80,28 @@ export function Header({
         </div>
 
         <button
+          ref={toggleRef}
           type="button"
-          className="flex size-10 items-center justify-center md:hidden"
+          className="flex size-11 items-center justify-center md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'סגירת תפריט' : 'פתיחת תפריט'}
           aria-expanded={open}
+          aria-controls="mobile-menu"
         >
-          {open ? <X className="size-6" /> : <Menu className="size-6" />}
+          {open ? (
+            <X className="size-6" aria-hidden="true" />
+          ) : (
+            <Menu className="size-6" aria-hidden="true" />
+          )}
         </button>
       </div>
 
       {open && (
-        <nav className="border-ink/10 bg-paper border-t px-4 py-4 md:hidden">
+        <nav
+          id="mobile-menu"
+          aria-label="תפריט ניווט"
+          className="border-ink/10 bg-paper border-t px-4 py-4 md:hidden"
+        >
           <ul className="flex flex-col gap-1">
             {links.map((item) => (
               <li key={item.href + item.label}>
@@ -90,6 +116,7 @@ export function Header({
                   )}
                 >
                   {item.label}
+                  {item.external && <NewTabHint />}
                 </Link>
               </li>
             ))}

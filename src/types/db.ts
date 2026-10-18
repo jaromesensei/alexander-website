@@ -21,6 +21,12 @@ export interface RestaurantSettings {
   promo_description: string | null
   /** null = ברירת המחדל שבקוד (DEFAULT_NAV) */
   nav_items: NavItem[] | null
+  /** הצהרת נגישות: איש קשר לנגישות + הסדרים פיזיים + תאריך עדכון ('YYYY-MM-DD') */
+  a11y_contact_name: string | null
+  a11y_contact_phone: string | null
+  a11y_contact_email: string | null
+  a11y_physical: string | null
+  a11y_updated_on: string | null
   updated_at: string
 }
 
@@ -100,6 +106,8 @@ export interface Popup {
   heading: string
   body: string | null
   image_url: string | null
+  /** תיאור התמונה לקוראי מסך */
+  image_alt: string | null
   button: LinkValue | null
   bg: BlockBg
   is_active: boolean

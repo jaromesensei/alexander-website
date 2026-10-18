@@ -6,6 +6,7 @@ import { Section, SectionHeading } from '@/components/ui/Section'
 import { ButtonLink } from '@/components/ui/Button'
 import { formatTime } from '@/lib/format'
 import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import { NewTabHint } from '@/components/a11y/NewTabHint'
 
 export const metadata: Metadata = {
   title: 'מיקום ויצירת קשר',
@@ -32,9 +33,10 @@ export default async function ContactPage() {
                 href={settings.map_url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-pink hover:text-pink-dark mt-1 inline-block font-semibold underline underline-offset-4"
+                className="text-pink-dark hover:text-pink-deep mt-1 inline-block font-semibold underline underline-offset-4"
               >
                 פתיחה בגוגל מפות
+                <NewTabHint />
               </a>
             )}
           </div>

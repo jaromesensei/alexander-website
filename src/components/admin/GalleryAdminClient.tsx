@@ -101,7 +101,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
             <div className="space-y-2 p-3">
               <Input
                 defaultValue={img.caption_he ?? ''}
-                placeholder="כיתוב (אופציונלי)"
+                placeholder="תיאור התמונה (לנגישות ולכיתוב)"
                 onBlur={(e) => updateCaption(img.id, e.target.value)}
               />
               <div className="flex items-center justify-between">

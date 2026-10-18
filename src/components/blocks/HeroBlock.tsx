@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { motion, MotionConfig } from 'motion/react'
+import { motion } from 'motion/react'
+import { SiteMotion } from '@/components/a11y/SiteMotion'
 import { Container } from '@/components/ui/Container'
 import { BlockButton } from './BlockButton'
 import type { HeroBlock as HeroBlockData } from '@/lib/blocks/types'
@@ -17,7 +18,7 @@ export function HeroBlock({
   settings: RestaurantSettings
 }) {
   return (
-    <MotionConfig reducedMotion="user">
+    <SiteMotion>
       <section className="bg-ink text-paper relative overflow-hidden">
         {block.image && (
           <>
@@ -77,6 +78,6 @@ export function HeroBlock({
           </motion.div>
         </Container>
       </section>
-    </MotionConfig>
+    </SiteMotion>
   )
 }

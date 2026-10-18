@@ -1,11 +1,12 @@
 'use client'
 
-import { motion, MotionConfig } from 'motion/react'
+import { motion } from 'motion/react'
+import { SiteMotion } from '@/components/a11y/SiteMotion'
 
 /** template.tsx נטען מחדש בכל ניווט (בניגוד ל-layout.tsx), ולכן ה-fade רץ בכל מעבר עמוד. */
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
-    <MotionConfig reducedMotion="user">
+    <SiteMotion>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -13,6 +14,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
       >
         {children}
       </motion.div>
-    </MotionConfig>
+    </SiteMotion>
   )
 }

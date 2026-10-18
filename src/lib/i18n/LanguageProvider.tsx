@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { DEFAULT_LANG, LANG_COOKIE, dirForLang } from './languages'
+import { DEFAULT_LANG, LANG_COOKIE } from './languages'
 
 interface LanguageContextValue {
   lang: string
@@ -26,11 +26,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved) setLangState(saved)
   }, [])
-
-  useEffect(() => {
-    document.documentElement.lang = lang
-    document.documentElement.dir = dirForLang(lang)
-  }, [lang])
 
   function setLang(next: string) {
     setLangState(next)

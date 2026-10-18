@@ -10,6 +10,8 @@ import { getSettings } from '@/lib/data/settings'
 import { getNav } from '@/lib/links'
 import { getActivePopups } from '@/lib/data/popups'
 import { PopupManager } from '@/components/popups/PopupManager'
+import { AccessibilityMenu } from '@/components/a11y/AccessibilityMenu'
+import { A11Y_BOOT_SCRIPT } from '@/lib/a11yPrefs'
 import './globals.css'
 
 const heebo = Heebo({
@@ -58,20 +60,33 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang="he"
       dir="rtl"
+      suppressHydrationWarning
       className={`${heebo.variable} ${rubik.variable} ${bebasNeue.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: A11Y_BOOT_SCRIPT }} />
+      </head>
       <body className="bg-paper text-ink flex min-h-full flex-col">
+        <a
+          href="#main"
+          className="bg-ink text-paper sr-only z-[100] px-4 py-3 font-bold focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
+        >
+          דילוג לתוכן הראשי
+        </a>
         <StructuredData settings={settings} />
         <LanguageProvider>
           <ChromeGate>
             <Header settings={settings} nav={nav} />
           </ChromeGate>
-          <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          <main id="main" tabIndex={-1} className="flex-1 pb-16 outline-none md:pb-0">
+            {children}
+          </main>
           <ChromeGate>
             <Footer settings={settings} nav={nav} />
             <MobileActionBar settings={settings} />
           </ChromeGate>
           <PopupManager popups={popups} settings={settings} />
+          <AccessibilityMenu />
         </LanguageProvider>
       </body>
     </html>

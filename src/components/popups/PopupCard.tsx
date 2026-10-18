@@ -5,7 +5,10 @@ import { BG_CLASSES, MUTED_TEXT, primaryVariant } from '@/components/blocks/styl
 import { cn } from '@/lib/utils'
 import type { Popup, RestaurantSettings } from '@/types/db'
 
-export type PopupContent = Pick<Popup, 'heading' | 'body' | 'image_url' | 'button' | 'bg'>
+export type PopupContent = Pick<
+  Popup,
+  'heading' | 'body' | 'image_url' | 'image_alt' | 'button' | 'bg'
+>
 
 /** תוכן החלון הקופץ — משותף לאתר ולתצוגה המקדימה בניהול. */
 export function PopupCard({
@@ -38,7 +41,7 @@ export function PopupCard({
         <div className="bg-paper-dark relative aspect-[4/3]">
           <Image
             src={popup.image_url}
-            alt=""
+            alt={popup.image_alt ?? ''}
             fill
             sizes="(min-width: 480px) 448px, 100vw"
             className="object-cover"

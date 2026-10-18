@@ -5,6 +5,7 @@ import { HOURS_LABELS } from '@/lib/data/fallback'
 import { Container } from '@/components/ui/Container'
 import { formatTime } from '@/lib/format'
 import { resolveHref } from '@/lib/links'
+import { NewTabHint } from '@/components/a11y/NewTabHint'
 import type { NavItem, RestaurantSettings } from '@/types/db'
 
 export function Footer({
@@ -22,7 +23,9 @@ export function Footer({
   return (
     <footer className="border-ink/10 bg-ink text-paper relative overflow-hidden border-t">
       <Container className="pt-16 pb-10">
-        <p className="font-wordmark text-6xl sm:text-9xl">Alexander</p>
+        <p className="font-wordmark text-6xl sm:text-9xl" lang="en" aria-hidden="true">
+          Alexander
+        </p>
       </Container>
 
       <Container className="grid gap-10 pb-14 sm:grid-cols-2 lg:grid-cols-4">
@@ -36,8 +39,8 @@ export function Footer({
                 href={settings.instagram_url}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-paper/10 hover:bg-pink flex size-9 items-center justify-center rounded-full transition-colors"
-                aria-label="אינסטגרם"
+                className="bg-paper/10 hover:bg-pink-dark flex size-9 items-center justify-center rounded-full transition-colors"
+                aria-label="אינסטגרם (נפתח בכרטיסייה חדשה)"
               >
                 <InstagramIcon className="size-4" />
               </a>
@@ -47,8 +50,8 @@ export function Footer({
                 href={settings.facebook_url}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-paper/10 hover:bg-pink flex size-9 items-center justify-center rounded-full transition-colors"
-                aria-label="פייסבוק"
+                className="bg-paper/10 hover:bg-pink-dark flex size-9 items-center justify-center rounded-full transition-colors"
+                aria-label="פייסבוק (נפתח בכרטיסייה חדשה)"
               >
                 <FacebookIcon className="size-4" />
               </a>
@@ -56,8 +59,10 @@ export function Footer({
           </div>
         </div>
 
-        <div>
-          <h2 className="text-paper/50 mb-3 text-sm font-semibold">ניווט</h2>
+        <nav aria-labelledby="footer-nav-title">
+          <h2 id="footer-nav-title" className="text-paper/50 mb-3 text-sm font-semibold">
+            ניווט
+          </h2>
           <ul className="text-paper/80 space-y-2 text-sm">
             {links.map((item) => (
               <li key={item.href + item.label}>
@@ -67,11 +72,12 @@ export function Footer({
                   className="hover:text-paper"
                 >
                   {item.label}
+                  {item.external && <NewTabHint />}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
         <div>
           <h2 className="text-paper/50 mb-3 text-sm font-semibold">יצירת קשר</h2>
@@ -107,8 +113,16 @@ export function Footer({
         </div>
       </Container>
 
-      <div className="border-paper/10 text-paper/50 border-t py-6 text-center text-xs">
-        © {new Date().getFullYear()} {settings.name}. כל הזכויות שמורות.
+      <div className="border-paper/10 text-paper/60 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t px-4 py-6 text-center text-sm">
+        <span>
+          © {new Date().getFullYear()} {settings.name}. כל הזכויות שמורות.
+        </span>
+        <Link
+          href="/accessibility"
+          className="hover:text-paper underline underline-offset-4"
+        >
+          הצהרת נגישות
+        </Link>
       </div>
     </footer>
   )

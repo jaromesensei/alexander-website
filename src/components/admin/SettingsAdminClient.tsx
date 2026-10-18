@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { publishContent } from '@/app/admin/actions'
 import { Card } from '@/components/ui/Card'
-import { Input, Label } from '@/components/ui/Input'
+import { Input, Label, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { HOURS_LABELS } from '@/lib/data/fallback'
 import type { RestaurantSettings } from '@/types/db'
@@ -53,6 +53,11 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       hours: form.hours,
       instagram_url: form.instagram_url,
       facebook_url: form.facebook_url,
+      a11y_contact_name: form.a11y_contact_name || null,
+      a11y_contact_phone: form.a11y_contact_phone || null,
+      a11y_contact_email: form.a11y_contact_email || null,
+      a11y_physical: form.a11y_physical || null,
+      a11y_updated_on: form.a11y_updated_on || null,
       promo_active: form.promo_active,
       promo_title: form.promo_title,
       promo_description: form.promo_description,
@@ -220,6 +225,89 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
               onChange={(e) => set('facebook_url', e.target.value)}
             />
           </div>
+        </div>
+      </Card>
+
+      <Card className="space-y-4 p-6">
+        <div>
+          <h2 className="font-display text-lg">הצהרת נגישות</h2>
+          <p className="text-ink-soft text-sm">
+            מוצג בעמוד{' '}
+            <a
+              href="/accessibility"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              הצהרת הנגישות
+            </a>
+            . חובה לפי תקנות הנגישות — חשוב שהפרטים יהיו נכונים ומעודכנים.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <Label htmlFor="a11y-name">איש קשר לנגישות</Label>
+            <Input
+              id="a11y-name"
+              value={form.a11y_contact_name ?? ''}
+              onChange={(e) => set('a11y_contact_name', e.target.value)}
+              placeholder="שם מלא"
+            />
+          </div>
+          <div>
+            <Label htmlFor="a11y-phone">טלפון</Label>
+            <Input
+              id="a11y-phone"
+              dir="ltr"
+              value={form.a11y_contact_phone ?? ''}
+              onChange={(e) => set('a11y_contact_phone', e.target.value)}
+              placeholder={form.phone}
+            />
+          </div>
+          <div>
+            <Label htmlFor="a11y-email">אימייל</Label>
+            <Input
+              id="a11y-email"
+              dir="ltr"
+              value={form.a11y_contact_email ?? ''}
+              onChange={(e) => set('a11y_contact_email', e.target.value)}
+              placeholder={form.email ?? ''}
+            />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="a11y-physical">הסדרי הנגישות במסעדה עצמה</Label>
+          <Textarea
+            id="a11y-physical"
+            rows={4}
+            value={form.a11y_physical ?? ''}
+            onChange={(e) => set('a11y_physical', e.target.value)}
+            placeholder={
+              'כתבו רק מה שנכון בפועל, שורה לכל פריט. למשל:\n' +
+              'כניסה ללא מדרגות\nשירותי נכים\nחניית נכים במרחק 50 מ׳\nתפריט בגופן מוגדל לפי בקשה'
+            }
+          />
+        </div>
+        <div className="flex flex-wrap items-end gap-3">
+          <div>
+            <Label htmlFor="a11y-date">תאריך עדכון ההצהרה</Label>
+            <Input
+              id="a11y-date"
+              type="date"
+              dir="ltr"
+              value={form.a11y_updated_on ?? ''}
+              onChange={(e) => set('a11y_updated_on', e.target.value || null)}
+              className="w-44"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => set('a11y_updated_on', new Date().toISOString().slice(0, 10))}
+          >
+            עדכון להיום
+          </Button>
         </div>
       </Card>
 

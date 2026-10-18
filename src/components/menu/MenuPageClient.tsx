@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/useTranslations'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
+import { dirForLang } from '@/lib/i18n/languages'
 import { MENU_TAGS, TAG_KEYS, normalizeTag, type MenuTagKey } from '@/lib/menu/tags'
 import { TAG_ICONS } from './tagIcons'
 import { MenuItemCard } from './MenuItemCard'
@@ -12,6 +14,7 @@ import type { CategoryWithItems } from '@/lib/data/menu'
 export function MenuPageClient({ categories }: { categories: CategoryWithItems[] }) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? '')
   const [filters, setFilters] = useState<MenuTagKey[]>([])
+  const { lang } = useLanguage()
 
   const allItemEntries = categories.flatMap((c) =>
     c.items.map((i) => ({ id: i.id, scope: 'menu_item' as const })),
@@ -58,13 +61,19 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
     setFilters((f) => (f.includes(key) ? f.filter((k) => k !== key) : [...f, key]))
   }
 
+  const translating = items.isLoading || cats.isLoading || tags.isLoading
+
+  // התוכן המתורגם מסומן בשפה ובכיוון שלו (WCAG 3.1.2), שאר האתר נשאר בעברית
   return (
-    <div>
+    <div lang={lang} dir={dirForLang(lang)}>
+      <p className="sr-only" role="status" lang="he">
+        {translating ? 'התפריט מתורגם…' : ''}
+      </p>
       {dietFilters.length > 0 && (
         <div
           className="mb-8 flex flex-wrap items-center gap-2"
           role="group"
-          aria-label="סינון"
+          aria-label="סינון לפי העדפה תזונתית"
         >
           {dietFilters.map((key) => {
             const Icon = TAG_ICONS[key]
@@ -91,6 +100,7 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
             <button
               type="button"
               onClick={() => setFilters([])}
+              lang="he"
               className="text-ink-soft hover:text-ink inline-flex h-9 items-center gap-1 px-2 text-sm font-semibold"
             >
               <X className="size-4" aria-hidden="true" />
@@ -131,7 +141,9 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
       </div>
 
       {visible.length === 0 ? (
-        <p className="text-ink-soft">אין מנות שמתאימות לכל המסננים שבחרתם.</p>
+        <p className="text-ink-soft" lang="he" dir="rtl" role="status">
+          אין מנות שמתאימות לכל המסננים שבחרתם.
+        </p>
       ) : (
         <div className="max-w-2xl space-y-16">
           {visible.map((category) => (

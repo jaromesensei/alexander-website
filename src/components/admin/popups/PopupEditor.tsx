@@ -109,6 +109,7 @@ export function PopupEditor({
         heading: form.heading,
         body: form.body || null,
         image_url: form.image_url,
+        image_alt: form.image_alt || null,
         button: form.button,
         bg: form.bg,
         is_active: form.is_active,
@@ -183,6 +184,17 @@ export function PopupEditor({
                 aspect="aspect-[4/3]"
               />
             </FieldShell>
+            {form.image_url && (
+              <FieldShell
+                label="תיאור התמונה (לנגישות)"
+                help="אם בתמונה יש טקסט (פלייר) — כתבו אותו כאן. מוקרא לאנשים עיוורים."
+              >
+                <Input
+                  value={form.image_alt ?? ''}
+                  onChange={(e) => set('image_alt', e.target.value)}
+                />
+              </FieldShell>
+            )}
             <FieldShell label="כותרת">
               <Textarea
                 rows={2}

@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import { NewTabHint } from '@/components/a11y/NewTabHint'
 import type { RestaurantSettings } from '@/types/db'
 
 interface Action {
@@ -37,21 +38,26 @@ export function MobileActionBar({ settings }: { settings: RestaurantSettings }) 
       icon: MessageCircle,
       external: true,
     },
-    { href: `tel:${settings.phone}`, label: 'התקשרות', icon: Phone, external: true },
+    { href: `tel:${settings.phone}`, label: 'התקשרות', icon: Phone },
     { href: wazeHref, label: 'וייז', icon: Navigation, external: true },
   ].filter((a): a is Action & { href: string } => Boolean(a.href))
 
   return (
-    <nav className="border-ink/10 bg-paper/95 fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t backdrop-blur md:hidden">
+    <nav
+      aria-label="פעולות מהירות"
+      className="border-ink/10 bg-paper/95 fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t backdrop-blur md:hidden"
+    >
       {actions.map(({ href, label, icon: Icon, external }) => (
         <Link
           key={label}
           href={href}
           target={external ? '_blank' : undefined}
-          className="text-ink active:text-pink flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold"
+          rel={external ? 'noreferrer' : undefined}
+          className="text-ink active:text-pink-dark flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold"
         >
-          <Icon className="size-5" />
+          <Icon className="size-5" aria-hidden="true" />
           {label}
+          {external && <NewTabHint />}
         </Link>
       ))}
     </nav>

@@ -25,7 +25,7 @@ export default async function GalleryPage() {
               <div key={img.id} className="relative break-inside-avoid overflow-hidden">
                 <Image
                   src={img.image_url}
-                  alt={img.caption_he ?? ''}
+                  alt={img.caption_he || 'צילום מאלכסנדר דיינר'}
                   width={600}
                   height={600}
                   sizes="(min-width: 640px) 33vw, 50vw"
