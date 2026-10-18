@@ -40,6 +40,7 @@ export const FALLBACK_SETTINGS: RestaurantSettings = {
   a11y_contact_email: null,
   a11y_physical: null,
   a11y_updated_on: null,
+  site_texts: null,
   updated_at: new Date().toISOString(),
 }
 

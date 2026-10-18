@@ -38,6 +38,8 @@ export interface HeadingBlock extends BlockBase {
   type: 'heading'
   title: string
   text: string
+  /** יישור הכותרת והטקסט; ברירת מחדל = לימין */
+  align?: 'start' | 'center'
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null
@@ -48,6 +50,8 @@ export interface TextBlock extends BlockBase {
   title: string
   text: string
   size: 'md' | 'lg'
+  /** יישור הכותרת והטקסט; ברירת מחדל = לימין */
+  align?: 'start' | 'center'
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null
@@ -60,6 +64,8 @@ export interface CtaBlock extends BlockBase {
   text: string
   /** md = שורה קומפקטית, lg = כותרת גדולה וכפתור מתחת */
   size: 'md' | 'lg'
+  /** יישור הכותרת והטקסט; ברירת מחדל = לימין */
+  align?: 'start' | 'center'
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null

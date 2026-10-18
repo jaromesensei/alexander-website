@@ -67,12 +67,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: A11Y_BOOT_SCRIPT }} />
       </head>
       <body className="bg-paper text-ink flex min-h-full flex-col">
-        <a
-          href="#main"
-          className="bg-ink text-paper sr-only z-[100] px-4 py-3 font-bold focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
-        >
-          דילוג לתוכן הראשי
-        </a>
         <StructuredData settings={settings} />
         <LanguageProvider>
           <ChromeGate>

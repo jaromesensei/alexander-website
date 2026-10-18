@@ -8,8 +8,8 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import { NewTabHint } from '@/components/a11y/NewTabHint'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
-import { resolveHref } from '@/lib/links'
+import { resolveHref, waHref } from '@/lib/links'
+import { siteText } from '@/lib/siteTexts'
 import type { NavItem, RestaurantSettings } from '@/types/db'
 
 export function Header({
@@ -34,8 +34,8 @@ export function Header({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
-  const reserveHref =
-    waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
+  const reserveHref = waHref(settings, 'reservation')
+  const reserveLabel = siteText(settings, 'header.reserve')
   const links = nav.flatMap((item) => {
     const r = resolveHref(item.href, settings)
     return r ? [{ ...r, label: item.label }] : []
@@ -48,6 +48,12 @@ export function Header({
 
   return (
     <header className="border-ink/10 bg-paper/95 sticky top-0 z-40 border-b backdrop-blur">
+      <a
+        href="#main"
+        className="bg-ink text-paper sr-only z-[100] px-4 py-3 font-bold focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
+      >
+        דילוג לתוכן הראשי
+      </a>
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="font-wordmark text-2xl leading-none sm:text-3xl">
           <span lang="en">Alexander</span>
@@ -75,7 +81,7 @@ export function Header({
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
           <ButtonLink href={reserveHref} target="_blank" size="sm">
-            הזמנת שולחן
+            {reserveLabel}
           </ButtonLink>
         </div>
 
@@ -129,7 +135,7 @@ export function Header({
               size="sm"
               onClick={() => setOpen(false)}
             >
-              הזמנת שולחן
+              {reserveLabel}
             </ButtonLink>
           </div>
         </nav>

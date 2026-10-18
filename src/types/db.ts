@@ -27,6 +27,8 @@ export interface RestaurantSettings {
   a11y_contact_email: string | null
   a11y_physical: string | null
   a11y_updated_on: string | null
+  /** טקסטים קבועים שהבעלים שינה (ראו lib/siteTexts.ts) */
+  site_texts: Record<string, string> | null
   updated_at: string
 }
 

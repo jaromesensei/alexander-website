@@ -11,7 +11,13 @@ import { TAG_ICONS } from './tagIcons'
 import { MenuItemCard } from './MenuItemCard'
 import type { CategoryWithItems } from '@/lib/data/menu'
 
-export function MenuPageClient({ categories }: { categories: CategoryWithItems[] }) {
+export function MenuPageClient({
+  categories,
+  emptyText,
+}: {
+  categories: CategoryWithItems[]
+  emptyText: string
+}) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? '')
   const [filters, setFilters] = useState<MenuTagKey[]>([])
   const { lang } = useLanguage()
@@ -54,7 +60,7 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
   }, [categories, filters])
 
   if (categories.length === 0) {
-    return <p className="text-ink-soft text-center">התפריט יתעדכן בקרוב.</p>
+    return <p className="text-ink-soft text-center">{emptyText}</p>
   }
 
   function toggleFilter(key: MenuTagKey) {

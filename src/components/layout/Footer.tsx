@@ -6,6 +6,7 @@ import { Container } from '@/components/ui/Container'
 import { formatTime } from '@/lib/format'
 import { resolveHref } from '@/lib/links'
 import { NewTabHint } from '@/components/a11y/NewTabHint'
+import { siteText } from '@/lib/siteTexts'
 import type { NavItem, RestaurantSettings } from '@/types/db'
 
 export function Footer({
@@ -61,7 +62,7 @@ export function Footer({
 
         <nav aria-labelledby="footer-nav-title">
           <h2 id="footer-nav-title" className="text-paper/50 mb-3 text-sm font-semibold">
-            ניווט
+            {siteText(settings, 'footer.nav')}
           </h2>
           <ul className="text-paper/80 space-y-2 text-sm">
             {links.map((item) => (
@@ -80,7 +81,9 @@ export function Footer({
         </nav>
 
         <div>
-          <h2 className="text-paper/50 mb-3 text-sm font-semibold">יצירת קשר</h2>
+          <h2 className="text-paper/50 mb-3 text-sm font-semibold">
+            {siteText(settings, 'footer.contact')}
+          </h2>
           <ul className="text-paper/80 space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <Phone className="size-4 shrink-0" />
@@ -96,7 +99,9 @@ export function Footer({
         </div>
 
         <div>
-          <h2 className="text-paper/50 mb-3 text-sm font-semibold">שעות פתיחה</h2>
+          <h2 className="text-paper/50 mb-3 text-sm font-semibold">
+            {siteText(settings, 'footer.hours')}
+          </h2>
           <ul className="text-paper/80 space-y-1 text-sm">
             {HOURS_LABELS.map((label, i) => {
               const h = settings.hours[String(i)]

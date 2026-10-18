@@ -48,6 +48,15 @@ export interface BlockDef {
 
 const BG: Field = { key: 'bg', label: 'צבע רקע', kind: 'bg' }
 const BUTTON: Field = { key: 'button', label: 'כפתור', kind: 'link' }
+const ALIGN: Field = {
+  key: 'align',
+  label: 'יישור',
+  kind: 'select',
+  options: [
+    { value: 'start', label: 'לימין' },
+    { value: 'center', label: 'למרכז' },
+  ],
+}
 const ALT_HELP = 'מה רואים בתמונה, במשפט קצר. מוקרא לאנשים עיוורים (חובת נגישות).'
 const BG_IMAGE: Field = {
   key: 'bgImage',
@@ -93,6 +102,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
     fields: [
       { key: 'title', label: 'כותרת', kind: 'textarea', rows: 2 },
       { key: 'text', label: 'טקסט פתיחה', kind: 'textarea', rows: 3 },
+      ALIGN,
       BG,
       BG_IMAGE,
     ],
@@ -106,6 +116,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'title', label: 'כותרת (לא חובה)', kind: 'text' },
       { key: 'text', label: 'טקסט', kind: 'textarea', rows: 6 },
       SIZE('רגיל', 'גדול ומודגש'),
+      ALIGN,
       BG,
       BG_IMAGE,
       BUTTON,
@@ -127,6 +138,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'title', label: 'כותרת', kind: 'textarea', rows: 2 },
       { key: 'text', label: 'טקסט', kind: 'textarea', rows: 2 },
       SIZE('שורה קומפקטית', 'גדול'),
+      ALIGN,
       BG,
       BG_IMAGE,
       BUTTON,

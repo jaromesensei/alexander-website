@@ -5,16 +5,21 @@ import { HOURS_LABELS } from '@/lib/data/fallback'
 import { Section, SectionHeading } from '@/components/ui/Section'
 import { ButtonLink } from '@/components/ui/Button'
 import { formatTime } from '@/lib/format'
-import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import { waHref } from '@/lib/links'
+import { siteText } from '@/lib/siteTexts'
 import { NewTabHint } from '@/components/a11y/NewTabHint'
 
-export const metadata: Metadata = {
-  title: 'מיקום ויצירת קשר',
-  description: 'כתובת, שעות פתיחה וטלפון של אלכסנדר בנהריה.',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings()
+  return {
+    title: siteText(settings, 'contact.title'),
+    description: 'כתובת, שעות פתיחה וטלפון של אלכסנדר בנהריה.',
+  }
 }
 
 export default async function ContactPage() {
   const settings = await getSettings()
+  const t = (key: Parameters<typeof siteText>[1]) => siteText(settings, key)
   const hasCoords = Boolean(settings.lat && settings.lng)
   const wazeHref = hasCoords
     ? `https://waze.com/ul?ll=${settings.lat},${settings.lng}&navigate=yes`
@@ -22,7 +27,10 @@ export default async function ContactPage() {
 
   return (
     <Section>
-      <SectionHeading title="מיקום ויצירת קשר" />
+      <SectionHeading
+        title={t('contact.title')}
+        description={t('contact.intro') || undefined}
+      />
 
       <div className={hasCoords ? 'grid gap-12 lg:grid-cols-2' : 'max-w-xl'}>
         <div className="space-y-8">
@@ -35,7 +43,7 @@ export default async function ContactPage() {
                 rel="noreferrer"
                 className="text-pink-dark hover:text-pink-deep mt-1 inline-block font-semibold underline underline-offset-4"
               >
-                פתיחה בגוגל מפות
+                {t('contact.mapLink')}
                 <NewTabHint />
               </a>
             )}
@@ -63,7 +71,7 @@ export default async function ContactPage() {
           </dl>
 
           <div>
-            <h2 className="mb-3 text-xl">שעות פתיחה</h2>
+            <h2 className="mb-3 text-xl">{t('contact.hoursTitle')}</h2>
             <ul className="divide-ink/10 divide-y text-lg">
               {HOURS_LABELS.map((label, i) => {
                 const h = settings.hours[String(i)]
@@ -80,19 +88,13 @@ export default async function ContactPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <ButtonLink
-              href={
-                waLink(settings.whatsapp, WA_MESSAGES.reservation) ??
-                `tel:${settings.phone}`
-              }
-              target="_blank"
-            >
-              הזמנת שולחן
+            <ButtonLink href={waHref(settings, 'reservation')} target="_blank">
+              {t('contact.reserve')}
             </ButtonLink>
             {wazeHref && (
               <ButtonLink href={wazeHref} target="_blank" variant="outline">
                 <Navigation className="size-4" aria-hidden="true" />
-                ניווט בוויז
+                {t('contact.waze')}
               </ButtonLink>
             )}
           </div>

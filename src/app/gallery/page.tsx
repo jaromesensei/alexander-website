@@ -1,23 +1,31 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getGallery } from '@/lib/data/gallery'
+import { getSettings } from '@/lib/data/settings'
+import { siteText } from '@/lib/siteTexts'
 import { Section, SectionHeading } from '@/components/ui/Section'
 import { PageCTA } from '@/components/ui/PageCTA'
 
-export const metadata: Metadata = {
-  title: 'גלריה',
-  description: 'תמונות מהמסעדה, מהמטבח ומהמנות של אלכסנדר.',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings()
+  return {
+    title: siteText(settings, 'gallery.title'),
+    description: 'תמונות מהמסעדה, מהמטבח ומהמנות של אלכסנדר.',
+  }
 }
 
 export default async function GalleryPage() {
-  const images = await getGallery()
+  const [images, settings] = await Promise.all([getGallery(), getSettings()])
+  const t = (key: Parameters<typeof siteText>[1]) => siteText(settings, key)
 
   return (
     <>
       <Section>
         <SectionHeading
-          title="גלריה"
-          description={images.length === 0 ? 'תמונות מהמסעדה יעלו כאן בקרוב.' : undefined}
+          title={t('gallery.title')}
+          description={
+            images.length === 0 ? t('gallery.empty') : t('gallery.intro') || undefined
+          }
         />
         {images.length > 0 && (
           <div className="columns-2 gap-2 sm:columns-3 [&>*]:mb-2">
@@ -37,9 +45,9 @@ export default async function GalleryPage() {
         )}
       </Section>
       <PageCTA
-        title="ראיתם מספיק? בואו לטעום"
-        primary={{ href: '/menu', label: 'לתפריט' }}
-        secondary={{ href: '/contact', label: 'מיקום ושעות פתיחה' }}
+        title={t('gallery.ctaTitle')}
+        primary={{ href: '/menu', label: t('gallery.ctaPrimary') }}
+        secondary={{ href: '/contact', label: t('gallery.ctaSecondary') }}
       />
     </>
   )

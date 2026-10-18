@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   PanelsTopLeft,
   Megaphone,
+  Type,
   UtensilsCrossed,
   Images,
   Settings,
@@ -18,6 +19,7 @@ import { cn } from '@/lib/utils'
 const items = [
   { href: '/admin', label: 'סקירה', icon: LayoutDashboard },
   { href: '/admin/pages', label: 'עמודים ועיצוב', icon: PanelsTopLeft },
+  { href: '/admin/texts', label: 'טקסטים באתר', icon: Type },
   { href: '/admin/menu', label: 'תפריט', icon: UtensilsCrossed },
   { href: '/admin/popups', label: 'חלונות קופצים', icon: Megaphone },
   { href: '/admin/gallery', label: 'גלריה', icon: Images },

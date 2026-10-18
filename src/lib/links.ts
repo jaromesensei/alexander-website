@@ -1,4 +1,5 @@
-import { waLink, WA_MESSAGES } from './whatsapp'
+import { waLink, WA_KINDS, type WaKind } from './whatsapp'
+import { siteText } from './siteTexts'
 import type { NavItem, RestaurantSettings } from '@/types/db'
 
 /**
@@ -12,6 +13,13 @@ export const LINK_ACTIONS = {
   tel: 'חיוג למסעדה',
   waze: 'ניווט בוויז',
 } as const
+
+/** קישור וואטסאפ עם ההודעה הערוכה; בלי מספר וואטסאפ — חיוג. */
+export function waHref(settings: RestaurantSettings, kind: WaKind): string {
+  return (
+    waLink(settings.whatsapp, siteText(settings, `wa.${kind}`)) ?? `tel:${settings.phone}`
+  )
+}
 
 export function wazeHref(settings: RestaurantSettings): string | null {
   return settings.lat && settings.lng
@@ -31,10 +39,9 @@ export function resolveHref(
   if (!h) return null
 
   if (h.startsWith('wa:')) {
-    const key = h.slice(3) as keyof typeof WA_MESSAGES
-    if (!Object.hasOwn(WA_MESSAGES, key)) return null
-    const wa = waLink(settings.whatsapp, WA_MESSAGES[key])
-    return { href: wa ?? `tel:${settings.phone}`, external: true }
+    const kind = h.slice(3) as WaKind
+    if (!WA_KINDS.includes(kind)) return null
+    return { href: waHref(settings, kind), external: true }
   }
   if (h === 'tel') return { href: `tel:${settings.phone}`, external: true }
   if (h === 'waze') {

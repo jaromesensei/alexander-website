@@ -6,6 +6,7 @@ import { HOURS_LABELS } from '@/lib/data/fallback'
 import { formatCurrency, formatTime } from '@/lib/format'
 import { featureIcon } from '@/lib/blocks/icons'
 import { wazeHref } from '@/lib/links'
+import { siteText } from '@/lib/siteTexts'
 import { cn } from '@/lib/utils'
 import { BlockButton } from './BlockButton'
 import { BG_CLASSES, MUTED_TEXT, outlineVariant, primaryVariant } from './styles'
@@ -76,14 +77,20 @@ export function HeadingBlockView({
 }) {
   const H = level === 1 ? 'h1' : 'h2'
   const bg = effectiveBg(block)
+  const center = block.align === 'center'
   return (
     <BlockSection
       bg={bg}
       image={block.bgImage}
       className={cn('py-16 sm:py-24', block.bgImage && 'flex min-h-[60svh] items-end')}
     >
-      <Container>
-        <H className="max-w-4xl text-5xl leading-[0.95] whitespace-pre-line sm:text-7xl">
+      <Container className={cn(center && 'text-center')}>
+        <H
+          className={cn(
+            'max-w-4xl text-5xl leading-[0.95] whitespace-pre-line sm:text-7xl',
+            center && 'mx-auto',
+          )}
+        >
           {block.title}
         </H>
         {block.text && (
@@ -91,6 +98,7 @@ export function HeadingBlockView({
             className={cn(
               'mt-6 max-w-2xl text-lg whitespace-pre-line sm:text-xl',
               MUTED_TEXT[bg],
+              center && 'mx-auto',
             )}
           >
             {block.text}
@@ -106,12 +114,18 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
     return ctx.preview ? <Placeholder label="טקסט ריק" /> : null
   const large = block.size === 'lg'
   const bg = effectiveBg(block)
+  const center = block.align === 'center'
 
   return (
     <BlockSection bg={bg} image={block.bgImage} className="py-20 sm:py-28">
-      <Container>
+      <Container className={cn(center && 'text-center')}>
         {block.title ? (
-          <h2 className="mb-6 max-w-3xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+          <h2
+            className={cn(
+              'mb-6 max-w-3xl text-4xl leading-tight whitespace-pre-line sm:text-5xl',
+              center && 'mx-auto',
+            )}
+          >
             {block.title}
           </h2>
         ) : (
@@ -121,6 +135,7 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
           <p
             className={cn(
               'whitespace-pre-line',
+              center && 'mx-auto',
               large
                 ? 'max-w-3xl text-3xl leading-snug font-bold sm:text-4xl'
                 : cn('max-w-2xl text-lg leading-relaxed', MUTED_TEXT[bg]),
@@ -144,16 +159,32 @@ export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContex
   if (!block.title)
     return ctx.preview ? <Placeholder label="קריאה לפעולה בלי כותרת" /> : null
   const bg = effectiveBg(block)
+  const center = block.align === 'center'
 
-  if (block.size === 'lg') {
+  // גדול או ממורכז — כותרת וכפתור אחד מתחת לשני
+  if (block.size === 'lg' || center) {
     return (
-      <BlockSection bg={bg} image={block.bgImage} className="py-24 sm:py-32">
-        <Container>
-          <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+      <BlockSection
+        bg={bg}
+        image={block.bgImage}
+        className={block.size === 'lg' ? 'py-24 sm:py-32' : 'py-14 sm:py-20'}
+      >
+        <Container className={cn(center && 'text-center')}>
+          <h2
+            className={cn(
+              'max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl',
+              center && 'mx-auto',
+            )}
+          >
             {block.title}
           </h2>
           {block.text && (
-            <p className="mt-6 max-w-md text-lg font-medium whitespace-pre-line">
+            <p
+              className={cn(
+                'mt-6 max-w-md text-lg font-medium whitespace-pre-line',
+                center && 'mx-auto',
+              )}
+            >
               {block.text}
             </p>
           )}
@@ -350,7 +381,12 @@ export function FeaturedDishesBlockView({
         </h2>
         <div className="space-y-20 sm:space-y-28">
           {featured.map((item, i) => (
-            <DishRow key={item.id} item={item} reversed={i % 2 === 1} />
+            <DishRow
+              key={item.id}
+              item={item}
+              reversed={i % 2 === 1}
+              linkLabel={siteText(ctx.settings, 'dishes.menuLink')}
+            />
           ))}
         </div>
       </Container>
@@ -358,7 +394,15 @@ export function FeaturedDishesBlockView({
   )
 }
 
-function DishRow({ item, reversed }: { item: MenuItem; reversed: boolean }) {
+function DishRow({
+  item,
+  reversed,
+  linkLabel,
+}: {
+  item: MenuItem
+  reversed: boolean
+  linkLabel: string
+}) {
   return (
     <article className="grid items-center gap-8 sm:grid-cols-2 sm:gap-16">
       <div
@@ -394,7 +438,7 @@ function DishRow({ item, reversed }: { item: MenuItem; reversed: boolean }) {
           href="/menu"
           className="text-pink-dark hover:text-pink-deep mt-4 inline-block font-semibold underline underline-offset-4"
         >
-          לתפריט המלא
+          {linkLabel}
         </Link>
       </div>
     </article>
@@ -472,12 +516,15 @@ export function LocationBlockView({
           </a>
           <div className="mt-8 flex flex-wrap gap-3">
             <BlockButton
-              link={{ label: 'הזמנת שולחן', href: 'wa:reservation' }}
+              link={{
+                label: siteText(settings, 'location.reserve'),
+                href: 'wa:reservation',
+              }}
               settings={settings}
             />
             {waze && (
               <BlockButton
-                link={{ label: 'ניווט בוויז', href: 'waze' }}
+                link={{ label: siteText(settings, 'location.waze'), href: 'waze' }}
                 settings={settings}
                 variant="outline"
               >
@@ -488,7 +535,7 @@ export function LocationBlockView({
         </div>
 
         <div>
-          <h3 className="mb-3 text-xl">שעות פתיחה</h3>
+          <h3 className="mb-3 text-xl">{siteText(settings, 'location.hoursTitle')}</h3>
           <ul className="divide-ink/10 divide-y text-lg">
             {HOURS_LABELS.map((label, i) => {
               const h = settings.hours[String(i)]

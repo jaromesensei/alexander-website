@@ -23,7 +23,9 @@ export function SectionHeading({
   return (
     <div className="mb-10 max-w-2xl">
       <h1 className="text-4xl leading-tight sm:text-5xl">{title}</h1>
-      {description && <p className="text-ink-soft mt-4 text-lg">{description}</p>}
+      {description && (
+        <p className="text-ink-soft mt-4 text-lg whitespace-pre-line">{description}</p>
+      )}
     </div>
   )
 }

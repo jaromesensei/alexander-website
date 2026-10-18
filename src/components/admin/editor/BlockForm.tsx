@@ -78,7 +78,7 @@ export function BlockForm({
       case 'select':
         return (
           <SegmentedField
-            value={value as string}
+            value={(value as string | undefined) ?? field.options[0].value}
             options={field.options}
             onChange={(v) => set(field.key, v)}
           />

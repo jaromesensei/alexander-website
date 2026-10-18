@@ -10,7 +10,8 @@ import {
   Navigation,
   type LucideIcon,
 } from 'lucide-react'
-import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import { waHref } from '@/lib/links'
+import { siteText } from '@/lib/siteTexts'
 import { NewTabHint } from '@/components/a11y/NewTabHint'
 import type { RestaurantSettings } from '@/types/db'
 
@@ -31,15 +32,24 @@ export function MobileActionBar({ settings }: { settings: RestaurantSettings }) 
       : settings.map_url
 
   const actions = [
-    { href: '/menu', label: 'תפריט', icon: UtensilsCrossed },
+    { href: '/menu', label: siteText(settings, 'mobile.menu'), icon: UtensilsCrossed },
     {
-      href: waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`,
-      label: 'הזמנה',
+      href: waHref(settings, 'reservation'),
+      label: siteText(settings, 'mobile.reserve'),
       icon: MessageCircle,
       external: true,
     },
-    { href: `tel:${settings.phone}`, label: 'התקשרות', icon: Phone },
-    { href: wazeHref, label: 'וייז', icon: Navigation, external: true },
+    {
+      href: `tel:${settings.phone}`,
+      label: siteText(settings, 'mobile.call'),
+      icon: Phone,
+    },
+    {
+      href: wazeHref,
+      label: siteText(settings, 'mobile.waze'),
+      icon: Navigation,
+      external: true,
+    },
   ].filter((a): a is Action & { href: string } => Boolean(a.href))
 
   return (
