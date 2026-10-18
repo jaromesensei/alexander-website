@@ -9,6 +9,7 @@ export function BlockButton({
   variant,
   size,
   className,
+  onClick,
   children,
 }: {
   link: LinkValue | null
@@ -16,6 +17,7 @@ export function BlockButton({
   variant?: ButtonVariant
   size?: ButtonSize
   className?: string
+  onClick?: () => void
   children?: React.ReactNode
 }) {
   if (!link?.label) return null
@@ -30,6 +32,7 @@ export function BlockButton({
       variant={variant}
       size={size}
       className={className}
+      onClick={onClick}
     >
       {children}
       {link.label}

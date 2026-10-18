@@ -48,6 +48,12 @@ export interface BlockDef {
 
 const BG: Field = { key: 'bg', label: 'צבע רקע', kind: 'bg' }
 const BUTTON: Field = { key: 'button', label: 'כפתור', kind: 'link' }
+const BG_IMAGE: Field = {
+  key: 'bgImage',
+  label: 'תמונת רקע (לא חובה)',
+  kind: 'image',
+  help: 'מעל התמונה תונח שכבה כהה והטקסט יהיה לבן',
+}
 const SIZE = (md: string, lg: string): Field => ({
   key: 'size',
   label: 'גודל',
@@ -87,6 +93,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'title', label: 'כותרת', kind: 'textarea', rows: 2 },
       { key: 'text', label: 'טקסט פתיחה', kind: 'textarea', rows: 3 },
       BG,
+      BG_IMAGE,
     ],
     create: () => ({ type: 'heading', title: 'כותרת העמוד', text: '', bg: 'paper' }),
   },
@@ -99,6 +106,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'text', label: 'טקסט', kind: 'textarea', rows: 6 },
       SIZE('רגיל', 'גדול ומודגש'),
       BG,
+      BG_IMAGE,
       BUTTON,
     ],
     create: () => ({
@@ -119,6 +127,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'text', label: 'טקסט', kind: 'textarea', rows: 2 },
       SIZE('שורה קומפקטית', 'גדול'),
       BG,
+      BG_IMAGE,
       BUTTON,
     ],
     create: () => ({

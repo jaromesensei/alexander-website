@@ -39,6 +39,8 @@ export interface HeadingBlock extends BlockBase {
   title: string
   text: string
   bg: BlockBg
+  /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
+  bgImage?: string | null
 }
 
 export interface TextBlock extends BlockBase {
@@ -47,6 +49,8 @@ export interface TextBlock extends BlockBase {
   text: string
   size: 'md' | 'lg'
   bg: BlockBg
+  /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
+  bgImage?: string | null
   button: LinkValue | null
 }
 
@@ -57,6 +61,8 @@ export interface CtaBlock extends BlockBase {
   /** md = שורה קומפקטית, lg = כותרת גדולה וכפתור מתחת */
   size: 'md' | 'lg'
   bg: BlockBg
+  /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
+  bgImage?: string | null
   button: LinkValue | null
 }
 

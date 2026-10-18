@@ -5,13 +5,12 @@ import {
   BgField,
   FeaturesField,
   FieldShell,
-  ImagesField,
-  ImageUploadButton,
   Input,
   LinkField,
   SegmentedField,
   Textarea,
 } from './fields'
+import { ImageField, ImagesField } from '@/components/admin/media/ImageField'
 import type { LinkOption } from '@/lib/blocks/linkOptions'
 import type { Block, BlockBg, FeatureItem, LinkValue } from '@/lib/blocks/types'
 
@@ -52,7 +51,7 @@ export function BlockForm({
         )
       case 'image':
         return (
-          <ImageUploadButton
+          <ImageField
             value={(value as string | null) ?? null}
             onChange={(url) => set(field.key, url)}
             folder="pages"
@@ -63,6 +62,7 @@ export function BlockForm({
           <ImagesField
             value={(value as string[]) ?? []}
             onChange={(v) => set(field.key, v)}
+            folder="pages"
           />
         )
       case 'bg':

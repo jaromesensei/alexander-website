@@ -6,23 +6,29 @@ import {
   FileText,
   Settings,
   ExternalLink,
+  Megaphone,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 
 async function getCounts() {
   const supabase = await createClient()
-  const [menuItems, galleryImages, pages] = await Promise.all([
+  const [menuItems, galleryImages, pages, popups] = await Promise.all([
     supabase.from('menu_items').select('*', { count: 'exact', head: true }),
     supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
     supabase
       .from('pages')
       .select('*', { count: 'exact', head: true })
       .neq('slug', 'home'),
+    supabase
+      .from('popups')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true),
   ])
   return {
     menuItems: menuItems.count ?? 0,
     galleryImages: galleryImages.count ?? 0,
     pages: pages.count ?? 0,
+    popups: popups.count ?? 0,
   }
 }
 
@@ -47,6 +53,12 @@ export default async function AdminHomePage() {
       title: 'עמודים וניווט',
       text: `${counts.pages} עמודים נוספים · תפריט הניווט העליון`,
       icon: FileText,
+    },
+    {
+      href: '/admin/popups',
+      title: 'חלונות קופצים',
+      text: `${counts.popups} פעילים · מבצעים מתוזמנים לפי ימים ושעות`,
+      icon: Megaphone,
     },
     {
       href: '/admin/gallery',

@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/blocks/types'
+import type { Block, BlockBg, LinkValue } from '@/lib/blocks/types'
 
 export interface RestaurantSettings {
   id: string
@@ -90,3 +90,31 @@ export interface Profile {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Database = any
+
+export type PopupFrequency = 'session' | 'day' | 'once'
+export type PopupPlacement = 'all' | 'home' | 'menu'
+
+export interface Popup {
+  id: string
+  name: string
+  heading: string
+  body: string | null
+  image_url: string | null
+  button: LinkValue | null
+  bg: BlockBg
+  is_active: boolean
+  /** 0 = ראשון … 6 = שבת */
+  days: number[]
+  /** 'HH:MM' או 'HH:MM:SS' בשעון ישראל; null = כל היום */
+  start_time: string | null
+  end_time: string | null
+  /** 'YYYY-MM-DD'; null = ללא הגבלה */
+  start_date: string | null
+  end_date: string | null
+  frequency: PopupFrequency
+  delay_seconds: number
+  placement: PopupPlacement
+  sort_order: number
+  created_at: string
+  updated_at: string
+}

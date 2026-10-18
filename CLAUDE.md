@@ -30,6 +30,7 @@ src/
     admin/(dashboard)/                    CMS מוגן (layout עושה auth guard)
     admin/(dashboard)/pages/              עורך עמודים ויזואלי + עריכת ניווט
     admin/preview/                        העמוד שנטען ב-iframe של העורך (postMessage)
+    admin/(dashboard)/popups/             חלונות קופצים מתוזמנים
     admin/actions.ts                      publishContent — ניקוי מטמון אחרי שמירה
     api/translate/                        Route Handler לתרגום עם מטמון
   components/
@@ -37,11 +38,13 @@ src/
     layout/   Header, Footer, LanguageSwitcher, ChromeGate (מסתיר chrome ב-/admin)
     blocks/   רכיבי הבלוקים (פתיח, טקסט, קריאה לפעולה…) + BlockRenderer
     menu/     כרטיס מנה, עמוד תפריט, תגיות מנה
-    admin/    רכיבי ניהול (CRUD תפריט/גלריה/הגדרות), admin/editor/ = העורך הוויזואלי
+    admin/    רכיבי ניהול; admin/editor/ = העורך הוויזואלי, admin/media/ = ספריית תמונות
+    popups/   PopupCard + PopupManager (בוחר ומציג חלון לפי תזמון, בדפדפן)
   lib/
     blocks/   טיפוסי בלוקים, הגדרות שדות (defs.ts), ברירת המחדל של עמוד הבית
     data/     שכבת גישה ל-DB עם מטמון ו-fallback לתוכן placeholder
     menu/     הגדרות תגיות המנה (tags.ts)
+    popups/   תזמון לפי שעון ישראל (schedule.ts) + זיכרון "כבר ראה" (seen.ts)
     links.ts  פתרון קישורים וטוקני פעולה (wa:reservation, tel, waze), ניווט ברירת מחדל
     i18n/     LanguageProvider + useTranslations (תרגום חי בצד קליינט)
     supabase/ client.ts (דפדפן), server.ts (Server Components + service role)
@@ -60,6 +63,14 @@ supabase/
 
 התצוגה המקדימה בעורך היא iframe של `/admin/preview` שמרנדר את אותם רכיבים —
 כך ה-breakpoints אמיתיים והתצוגה זהה לאתר.
+
+## חלונות קופצים
+
+טבלת `popups` (מיגרציה 0004). הדפים סטטיים, לכן **התזמון נבדק בדפדפן** ברגע
+הכניסה (`PopupManager` + `lib/popups/schedule.ts`, תמיד לפי `Asia/Jerusalem`).
+שעות שחוצות חצות שייכות ליום שבו הן מתחילות. "כבר ראה" נשמר ב-session/localStorage
+עם `updated_at` במפתח — עריכת חלון מציגה אותו מחדש. אם כמה חלונות פעילים — העליון
+ב-`sort_order` מוצג.
 
 ## מטמון ומהירות
 

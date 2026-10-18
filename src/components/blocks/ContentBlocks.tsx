@@ -11,6 +11,7 @@ import { BlockButton } from './BlockButton'
 import { BG_CLASSES, MUTED_TEXT, outlineVariant, primaryVariant } from './styles'
 import type { BlockContext } from './context'
 import type {
+  BlockBg,
   CtaBlock,
   FeaturedDishesBlock,
   FeaturesBlock,
@@ -37,6 +38,35 @@ function Placeholder({ label }: { label: string }) {
   )
 }
 
+/** על תמונת רקע הטקסט תמיד בהיר (שכבה כהה מעל התמונה), אז מתנהגים כמו רקע שחור. */
+function effectiveBg(block: { bg: BlockBg; bgImage?: string | null }): BlockBg {
+  return block.bgImage ? 'ink' : block.bg
+}
+
+function BlockSection({
+  bg,
+  image,
+  className,
+  children,
+}: {
+  bg: BlockBg
+  image?: string | null
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className={cn(BG_CLASSES[bg], 'relative overflow-hidden', className)}>
+      {image && (
+        <>
+          <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
+          <div className="bg-ink/60 absolute inset-0" />
+        </>
+      )}
+      <div className="relative w-full">{children}</div>
+    </section>
+  )
+}
+
 export function HeadingBlockView({
   block,
   level,
@@ -45,8 +75,13 @@ export function HeadingBlockView({
   level: 1 | 2
 }) {
   const H = level === 1 ? 'h1' : 'h2'
+  const bg = effectiveBg(block)
   return (
-    <section className={cn(BG_CLASSES[block.bg], 'py-16 sm:py-24')}>
+    <BlockSection
+      bg={bg}
+      image={block.bgImage}
+      className={cn('py-16 sm:py-24', block.bgImage && 'flex min-h-[60svh] items-end')}
+    >
       <Container>
         <H className="max-w-4xl text-5xl leading-[0.95] whitespace-pre-line sm:text-7xl">
           {block.title}
@@ -55,14 +90,14 @@ export function HeadingBlockView({
           <p
             className={cn(
               'mt-6 max-w-2xl text-lg whitespace-pre-line sm:text-xl',
-              MUTED_TEXT[block.bg],
+              MUTED_TEXT[bg],
             )}
           >
             {block.text}
           </p>
         )}
       </Container>
-    </section>
+    </BlockSection>
   )
 }
 
@@ -70,9 +105,10 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
   if (!block.text && !block.title)
     return ctx.preview ? <Placeholder label="טקסט ריק" /> : null
   const large = block.size === 'lg'
+  const bg = effectiveBg(block)
 
   return (
-    <section className={cn(BG_CLASSES[block.bg], 'py-20 sm:py-28')}>
+    <BlockSection bg={bg} image={block.bgImage} className="py-20 sm:py-28">
       <Container>
         {block.title ? (
           <h2 className="mb-6 max-w-3xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
@@ -87,7 +123,7 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
               'whitespace-pre-line',
               large
                 ? 'max-w-3xl text-3xl leading-snug font-bold sm:text-4xl'
-                : cn('max-w-2xl text-lg leading-relaxed', MUTED_TEXT[block.bg]),
+                : cn('max-w-2xl text-lg leading-relaxed', MUTED_TEXT[bg]),
             )}
           >
             {block.text}
@@ -96,21 +132,22 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
         <BlockButton
           link={block.button}
           settings={ctx.settings}
-          variant={outlineVariant(block.bg)}
+          variant={outlineVariant(bg)}
           className="mt-10"
         />
       </Container>
-    </section>
+    </BlockSection>
   )
 }
 
 export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContext }) {
   if (!block.title)
     return ctx.preview ? <Placeholder label="קריאה לפעולה בלי כותרת" /> : null
+  const bg = effectiveBg(block)
 
   if (block.size === 'lg') {
     return (
-      <section className={cn(BG_CLASSES[block.bg], 'py-24 sm:py-32')}>
+      <BlockSection bg={bg} image={block.bgImage} className="py-24 sm:py-32">
         <Container>
           <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
             {block.title}
@@ -123,17 +160,17 @@ export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContex
           <BlockButton
             link={block.button}
             settings={ctx.settings}
-            variant={primaryVariant(block.bg)}
+            variant={primaryVariant(bg)}
             size="lg"
             className="mt-8"
           />
         </Container>
-      </section>
+      </BlockSection>
     )
   }
 
   return (
-    <section className={cn(BG_CLASSES[block.bg], 'py-14 sm:py-20')}>
+    <BlockSection bg={bg} image={block.bgImage} className="py-14 sm:py-20">
       <Container className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
@@ -148,12 +185,12 @@ export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContex
         <BlockButton
           link={block.button}
           settings={ctx.settings}
-          variant={primaryVariant(block.bg)}
+          variant={primaryVariant(bg)}
           size="lg"
           className="shrink-0"
         />
       </Container>
-    </section>
+    </BlockSection>
   )
 }
 

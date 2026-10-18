@@ -1,11 +1,15 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import { ImageUp, X } from 'lucide-react'
-import { uploadPublicImage, type UploadFolder } from '@/lib/supabase/storage'
+import { ImagePlus, X } from 'lucide-react'
 import { Spinner } from '@/components/ui/Spinner'
+import { cn } from '@/lib/utils'
+import { MediaLibrary } from './media/MediaLibrary'
+import { useUpload } from './media/useUpload'
+import type { UploadFolder } from '@/lib/supabase/storage'
 
+/** ריבוע תמונה קומפקטי (תמונת מנה): לחיצה פותחת את ספריית התמונות, אפשר גם לגרור קובץ. */
 export function ImageUploadButton({
   value,
   onChange,
@@ -15,44 +19,41 @@ export function ImageUploadButton({
   onChange: (url: string | null) => void
   folder: UploadFolder
 }) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  async function handleFile(file: File) {
-    setError(null)
-    setLoading(true)
-    try {
-      const url = await uploadPublicImage(file, folder)
-      onChange(url)
-    } catch {
-      setError('העלאה נכשלה, נסו שוב')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [over, setOver] = useState(false)
+  const { upload, uploading, failed } = useUpload(folder)
 
   return (
     <div>
-      <div
-        className="border-ink/30 bg-paper-dark relative flex size-24 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed"
-        onClick={() => inputRef.current?.click()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
+      <button
+        type="button"
+        onClick={() => setLibraryOpen(true)}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setOver(true)
         }}
-        role="button"
-        tabIndex={0}
-        aria-label={value ? 'החלפת תמונה' : 'העלאת תמונה'}
+        onDragLeave={() => setOver(false)}
+        onDrop={async (e) => {
+          e.preventDefault()
+          setOver(false)
+          const [url] = await upload(Array.from(e.dataTransfer.files).slice(0, 1))
+          if (url) onChange(url)
+        }}
+        aria-label={value ? 'החלפת תמונה' : 'הוספת תמונה'}
+        className={cn(
+          'border-ink/30 bg-paper-dark relative flex size-24 items-center justify-center overflow-hidden rounded-xl border border-dashed',
+          over && 'border-pink outline-pink outline-2',
+        )}
       >
-        {loading ? (
+        {uploading ? (
           <Spinner className="text-ink-soft size-5" />
         ) : value ? (
           <Image src={value} alt="" fill sizes="96px" className="object-cover" />
         ) : (
-          <ImageUp className="text-ink-soft size-6" />
+          <ImagePlus className="text-ink-soft size-6" />
         )}
-      </div>
-      {value && !loading && (
+      </button>
+      {value && !uploading && (
         <button
           type="button"
           onClick={() => onChange(null)}
@@ -62,18 +63,14 @@ export function ImageUploadButton({
           הסרה
         </button>
       )}
-      {error && <p className="text-pink mt-1 text-xs">{error}</p>}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) handleFile(file)
-          e.target.value = ''
-        }}
-      />
+      {failed > 0 && <p className="text-pink mt-1 text-xs">העלאה נכשלה</p>}
+      {libraryOpen && (
+        <MediaLibrary
+          folder={folder}
+          onSelect={([url]) => onChange(url)}
+          onClose={() => setLibraryOpen(false)}
+        />
+      )}
     </div>
   )
 }

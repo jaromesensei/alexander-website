@@ -8,6 +8,8 @@ import { ChromeGate } from '@/components/layout/ChromeGate'
 import { StructuredData } from '@/components/StructuredData'
 import { getSettings } from '@/lib/data/settings'
 import { getNav } from '@/lib/links'
+import { getActivePopups } from '@/lib/data/popups'
+import { PopupManager } from '@/components/popups/PopupManager'
 import './globals.css'
 
 const heebo = Heebo({
@@ -49,7 +51,7 @@ export const viewport: Viewport = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSettings()
+  const [settings, popups] = await Promise.all([getSettings(), getActivePopups()])
   const nav = getNav(settings)
 
   return (
@@ -69,6 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer settings={settings} nav={nav} />
             <MobileActionBar settings={settings} />
           </ChromeGate>
+          <PopupManager popups={popups} settings={settings} />
         </LanguageProvider>
       </body>
     </html>

@@ -5,26 +5,37 @@ import Link from 'next/link'
 import {
   ArrowRight,
   Check,
-  ChevronDown,
-  ChevronUp,
-  Copy,
   ExternalLink,
-  Eye,
-  EyeOff,
   Monitor,
   Plus,
+  Redo2,
+  RotateCcw,
   Smartphone,
-  Trash2,
   Undo2,
   X,
 } from 'lucide-react'
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { createClient } from '@/lib/supabase/client'
 import { publishContent } from '@/app/admin/actions'
-import { BLOCK_DEFS, BLOCK_TYPES, blockSummary, newBlockId } from '@/lib/blocks/defs'
+import { BLOCK_DEFS, BLOCK_TYPES, newBlockId } from '@/lib/blocks/defs'
 import { HOME_SLUG, RESERVED_SLUGS } from '@/lib/data/pages'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-import { BlockForm } from './BlockForm'
+import { BlockCard } from './BlockCard'
 import { FieldShell, IconButton, Input, Textarea } from './fields'
 import { PreviewPane, type Device } from './PreviewPane'
 import type { LinkOption } from '@/lib/blocks/linkOptions'
@@ -40,6 +51,18 @@ export interface EditorPage {
 }
 
 type Meta = Omit<EditorPage, 'id' | 'blocks'>
+type Snapshot = { meta: Meta; blocks: Block[] }
+
+/** הקלדות רצופות בתוך הזמן הזה מתאחדות לצעד ביטול אחד */
+const MERGE_MS = 700
+
+/** האם השינוי הנוכחי מתאחד עם הקודם (הקלדה רצופה). מעדכן את זמן העריכה האחרונה. */
+function mergesWithLast(lastEdit: { current: number }, force: boolean): boolean {
+  const now = Date.now()
+  const merge = !force && now - lastEdit.current < MERGE_MS
+  lastEdit.current = force ? 0 : now
+  return merge
+}
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
@@ -76,6 +99,53 @@ export function PageEditor({
   const [device, setDevice] = useState<Device>('mobile')
   const [pickerOpen, setPickerOpen] = useState(false)
   const cardRefs = useRef(new Map<string, HTMLDivElement>())
+  const [history, setHistory] = useState<{ past: Snapshot[]; future: Snapshot[] }>({
+    past: [],
+    future: [],
+  })
+  const lastEdit = useRef(0)
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  /** שומר את המצב הנוכחי בהיסטוריה לפני שינוי. force = פעולה נפרדת (לא הקלדה). */
+  function record(force = false) {
+    const merge = mergesWithLast(lastEdit, force)
+    setHistory((h) => ({
+      past: merge ? h.past : [...h.past.slice(-49), { meta, blocks }],
+      future: [],
+    }))
+  }
+
+  function restore(snapshot: Snapshot) {
+    setMeta(snapshot.meta)
+    setBlocks(snapshot.blocks)
+    setScrollPreview(false)
+    setStatus('idle')
+    setError(null)
+    lastEdit.current = 0
+  }
+
+  function undo() {
+    const prev = history.past.at(-1)
+    if (!prev) return
+    setHistory({
+      past: history.past.slice(0, -1),
+      future: [{ meta, blocks }, ...history.future],
+    })
+    restore(prev)
+  }
+
+  function redo() {
+    const next = history.future[0]
+    if (!next) return
+    setHistory({
+      past: [...history.past, { meta, blocks }],
+      future: history.future.slice(1),
+    })
+    restore(next)
+  }
 
   useEffect(() => {
     // במסך רחב ברירת המחדל היא תצוגת מחשב; בטלפון — תצוגת טלפון
@@ -101,24 +171,32 @@ export function PageEditor({
     }
   }
 
-  function changeBlocks(next: (bs: Block[]) => Block[]) {
+  function changeBlocks(next: (bs: Block[]) => Block[], discrete = true) {
+    record(discrete)
     setBlocks(next)
     setScrollPreview(false)
     setStatus('idle')
   }
 
   function updateBlock(id: string, patch: Partial<Block>) {
-    changeBlocks((bs) => bs.map((b) => (b.id === id ? ({ ...b, ...patch } as Block) : b)))
+    // הסתרה/הצגה = פעולה נפרדת; שינוי טקסט = הקלדה שמתאחדת
+    const discrete = Object.keys(patch).every((k) => k === 'hidden')
+    changeBlocks(
+      (bs) => bs.map((b) => (b.id === id ? ({ ...b, ...patch } as Block) : b)),
+      discrete,
+    )
   }
 
-  function move(index: number, dir: -1 | 1) {
-    changeBlocks((bs) => {
-      const j = index + dir
-      if (j < 0 || j >= bs.length) return bs
-      const next = [...bs]
-      ;[next[index], next[j]] = [next[j], next[index]]
-      return next
-    })
+  function onDragEnd({ active, over }: DragEndEvent) {
+    if (!over || active.id === over.id) return
+    changeBlocks((bs) =>
+      arrayMove(
+        bs,
+        bs.findIndex((b) => b.id === active.id),
+        bs.findIndex((b) => b.id === over.id),
+      ),
+    )
+    setSelectedId(String(active.id))
     setScrollPreview(true)
   }
 
@@ -152,13 +230,14 @@ export function PageEditor({
     })
   }
 
+  // בלי אישור — אפשר לבטל עם "ביטול פעולה"
   function remove(block: Block) {
-    if (!confirm(`למחוק את הבלוק "${BLOCK_DEFS[block.type].label}"?`)) return
     changeBlocks((bs) => bs.filter((b) => b.id !== block.id))
     if (selectedId === block.id) setSelectedId(null)
   }
 
   function setMetaField<K extends keyof Meta>(key: K, value: Meta[K]) {
+    record(key === 'is_published')
     setMeta((m) => ({ ...m, [key]: value }))
     setStatus('idle')
   }
@@ -226,28 +305,38 @@ export function PageEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks, meta, pageId, isHome])
 
-  const saveRef = useRef(save)
+  const actions = useRef({ save, undo, redo })
   useEffect(() => {
-    saveRef.current = save
+    actions.current = { save, undo, redo }
   })
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+      if (!(e.metaKey || e.ctrlKey)) return
+      const key = e.key.toLowerCase()
+      if (key === 's') {
         e.preventDefault()
-        saveRef.current()
+        actions.current.save()
+        return
+      }
+      // בתוך שדה טקסט — ביטול/חזרה של הדפדפן עצמו
+      const target = e.target as HTMLElement
+      if (target.closest('input, textarea, select, [contenteditable]')) return
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        actions.current.undo()
+      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
+        e.preventDefault()
+        actions.current.redo()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  /** חזרה לגרסה השמורה — גם היא ניתנת לביטול */
   function revert() {
-    if (!confirm('לבטל את כל השינויים מאז השמירה האחרונה?')) return
-    const snapshot = JSON.parse(saved) as { meta: Meta; blocks: Block[] }
-    setMeta(snapshot.meta)
-    setBlocks(snapshot.blocks)
-    setStatus('idle')
-    setError(null)
+    record(true)
+    restore(JSON.parse(saved) as Snapshot)
   }
 
   const publicHref = isHome ? '/' : `/${meta.slug}`
@@ -263,7 +352,7 @@ export function PageEditor({
             : null
 
   return (
-    <div className="-m-4 flex h-[calc(100svh-3.5rem)] flex-col sm:-m-8 sm:h-svh">
+    <div className="bg-paper fixed inset-0 z-40 flex flex-col">
       {/* סרגל עליון */}
       <div className="border-ink/10 flex h-14 shrink-0 items-center gap-2 border-b bg-white px-3 sm:px-4">
         <Link
@@ -289,10 +378,26 @@ export function PageEditor({
             </p>
           )}
         </div>
+        <IconButton
+          label="ביטול פעולה (Ctrl+Z)"
+          onClick={undo}
+          disabled={history.past.length === 0}
+        >
+          <Undo2 className="size-5" />
+        </IconButton>
+        <IconButton
+          label="חזרה על פעולה (Ctrl+Y)"
+          onClick={redo}
+          disabled={history.future.length === 0}
+        >
+          <Redo2 className="size-5" />
+        </IconButton>
         {dirty && (
-          <IconButton label="ביטול השינויים" onClick={revert}>
-            <Undo2 className="size-5" />
-          </IconButton>
+          <span className="hidden sm:inline-flex">
+            <IconButton label="חזרה לגרסה השמורה" onClick={revert}>
+              <RotateCcw className="size-5" />
+            </IconButton>
+          </span>
         )}
         {pageId && (isHome || meta.is_published) && !dirty && (
           <a
@@ -354,117 +459,44 @@ export function PageEditor({
         >
           {!isHome && <PageSettings meta={meta} onChange={setMetaField} />}
 
-          <div className="space-y-2">
-            {blocks.map((block, i) => {
-              const def = BLOCK_DEFS[block.type]
-              const Icon = def.icon
-              const selected = block.id === selectedId
-              return (
-                <div
-                  key={block.id}
-                  ref={(el) => {
-                    if (el) cardRefs.current.set(block.id, el)
-                    else cardRefs.current.delete(block.id)
-                  }}
-                  className={cn(
-                    'scroll-mt-3 rounded-2xl border bg-white transition-colors',
-                    selected ? 'border-pink' : 'border-ink/10',
-                  )}
-                >
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    aria-expanded={selected}
-                    onClick={() => (selected ? setSelectedId(null) : select(block.id))}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') select(block.id)
+          <DndContext
+            id="blocks-dnd"
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+            accessibility={{
+              screenReaderInstructions: {
+                draggable: 'להזזה: רווח כדי להרים, חצים כדי להזיז, רווח כדי לשחרר.',
+              },
+            }}
+          >
+            <SortableContext
+              items={blocks.map((b) => b.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {blocks.map((block) => (
+                  <BlockCard
+                    key={block.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current.set(block.id, el)
+                      else cardRefs.current.delete(block.id)
                     }}
-                    className={cn(
-                      'flex cursor-pointer items-center gap-2 p-3',
-                      block.hidden && 'opacity-50',
-                    )}
-                  >
-                    <span className="bg-paper-dark flex size-9 shrink-0 items-center justify-center rounded-lg">
-                      <Icon className="size-4" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold">
-                        {def.label}
-                        {block.hidden && ' · מוסתר'}
-                      </span>
-                      <span className="text-ink-soft block truncate text-xs">
-                        {blockSummary(block) || '—'}
-                      </span>
-                    </span>
-                    <span className="flex shrink-0 items-center">
-                      <IconButton
-                        label={block.hidden ? 'הצגה באתר' : 'הסתרה מהאתר'}
-                        active={block.hidden}
-                        onClick={() => updateBlock(block.id, { hidden: !block.hidden })}
-                      >
-                        {block.hidden ? (
-                          <EyeOff className="size-4" />
-                        ) : (
-                          <Eye className="size-4" />
-                        )}
-                      </IconButton>
-                      <IconButton
-                        label="הזזה למעלה"
-                        disabled={i === 0}
-                        onClick={() => move(i, -1)}
-                      >
-                        <ChevronUp className="size-4" />
-                      </IconButton>
-                      <IconButton
-                        label="הזזה למטה"
-                        disabled={i === blocks.length - 1}
-                        onClick={() => move(i, 1)}
-                      >
-                        <ChevronDown className="size-4" />
-                      </IconButton>
-                    </span>
-                  </div>
-
-                  {selected && (
-                    <div className="border-ink/10 space-y-4 border-t p-4">
-                      <BlockForm
-                        block={block}
-                        linkOptions={linkOptions}
-                        onChange={(patch) => updateBlock(block.id, patch)}
-                      />
-                      <div className="border-ink/10 flex flex-wrap items-center gap-2 border-t pt-3">
-                        <button
-                          type="button"
-                          onClick={() => setPickerOpen(true)}
-                          className="text-pink flex items-center gap-1 text-sm font-semibold hover:underline"
-                        >
-                          <Plus className="size-4" />
-                          בלוק חדש מתחת
-                        </button>
-                        <span className="flex-1" />
-                        <button
-                          type="button"
-                          onClick={() => duplicate(block)}
-                          className="text-ink-soft hover:text-ink flex items-center gap-1 text-sm"
-                        >
-                          <Copy className="size-4" />
-                          שכפול
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => remove(block)}
-                          className="text-pink flex items-center gap-1 text-sm"
-                        >
-                          <Trash2 className="size-4" />
-                          מחיקה
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                    block={block}
+                    selected={block.id === selectedId}
+                    linkOptions={linkOptions}
+                    onToggle={() =>
+                      block.id === selectedId ? setSelectedId(null) : select(block.id)
+                    }
+                    onChange={(patch) => updateBlock(block.id, patch)}
+                    onDuplicate={() => duplicate(block)}
+                    onRemove={() => remove(block)}
+                    onAddBelow={() => setPickerOpen(true)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
 
           <button
             type="button"
@@ -478,7 +510,8 @@ export function PageEditor({
             הוספת בלוק
           </button>
           <p className="text-ink-soft mt-4 pb-6 text-center text-xs">
-            טיפ: לחיצה על אזור בתצוגה המקדימה פותחת אותו לעריכה.
+            טיפ: לחיצה על אזור בתצוגה המקדימה פותחת אותו לעריכה. גוררים בידית ⋮⋮ כדי לשנות
+            סדר.
           </p>
         </div>
 

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   PanelsTopLeft,
+  Megaphone,
   UtensilsCrossed,
   Images,
   Settings,
@@ -18,6 +19,7 @@ const items = [
   { href: '/admin', label: 'סקירה', icon: LayoutDashboard },
   { href: '/admin/pages', label: 'עמודים ועיצוב', icon: PanelsTopLeft },
   { href: '/admin/menu', label: 'תפריט', icon: UtensilsCrossed },
+  { href: '/admin/popups', label: 'חלונות קופצים', icon: Megaphone },
   { href: '/admin/gallery', label: 'גלריה', icon: Images },
   { href: '/admin/settings', label: 'הגדרות', icon: Settings },
 ] as const

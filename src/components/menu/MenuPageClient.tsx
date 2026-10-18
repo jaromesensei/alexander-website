@@ -112,12 +112,10 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
                 const reduce = window.matchMedia(
                   '(prefers-reduced-motion: reduce)',
                 ).matches
-                document
-                  .getElementById(c.id)
-                  ?.scrollIntoView({
-                    behavior: reduce ? 'auto' : 'smooth',
-                    block: 'start',
-                  })
+                document.getElementById(c.id)?.scrollIntoView({
+                  behavior: reduce ? 'auto' : 'smooth',
+                  block: 'start',
+                })
               }}
               className={cn(
                 'shrink-0 border-b-2 pb-1 text-base font-semibold transition-colors',

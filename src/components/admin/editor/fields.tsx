@@ -1,12 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
-import { Check, ChevronDown, ChevronUp, Plus, Trash2, X } from 'lucide-react'
+import { Check, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import { Input, Label, Textarea } from '@/components/ui/Input'
-import { Spinner } from '@/components/ui/Spinner'
-import { ImageUploadButton } from '@/components/admin/ImageUploadButton'
-import { uploadPublicImage } from '@/lib/supabase/storage'
 import { FEATURE_ICONS } from '@/lib/blocks/icons'
 import { cn } from '@/lib/utils'
 import type { LinkOption } from '@/lib/blocks/linkOptions'
@@ -203,66 +199,6 @@ export function LinkField({
   )
 }
 
-export function ImagesField({
-  value,
-  onChange,
-}: {
-  value: string[]
-  onChange: (v: string[]) => void
-}) {
-  const [uploading, setUploading] = useState(false)
-
-  async function add(files: FileList) {
-    setUploading(true)
-    const urls: string[] = []
-    for (const file of Array.from(files)) {
-      try {
-        urls.push(await uploadPublicImage(file, 'pages'))
-      } catch {
-        // ממשיכים עם שאר הקבצים
-      }
-    }
-    setUploading(false)
-    onChange([...value, ...urls])
-  }
-
-  return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-      {value.map((url, i) => (
-        <div
-          key={url}
-          className="bg-paper-dark relative aspect-square overflow-hidden rounded-lg"
-        >
-          <Image src={url} alt="" fill sizes="120px" className="object-cover" />
-          <button
-            type="button"
-            onClick={() => onChange(value.filter((_, j) => j !== i))}
-            className="bg-ink/70 text-paper absolute end-1 top-1 rounded-full p-1"
-            aria-label="הסרת תמונה"
-          >
-            <X className="size-3.5" />
-          </button>
-        </div>
-      ))}
-      <label className="border-ink/30 text-ink-soft hover:border-pink hover:text-pink flex aspect-square cursor-pointer items-center justify-center rounded-lg border border-dashed">
-        {uploading ? <Spinner className="size-5" /> : <Plus className="size-5" />}
-        <span className="sr-only">הוספת תמונות</span>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          disabled={uploading}
-          onChange={(e) => {
-            if (e.target.files) add(e.target.files)
-            e.target.value = ''
-          }}
-        />
-      </label>
-    </div>
-  )
-}
-
 export function FeaturesField({
   value,
   onChange,
@@ -382,4 +318,4 @@ export function IconButton({
   )
 }
 
-export { Input, Textarea, ImageUploadButton }
+export { Input, Textarea }
