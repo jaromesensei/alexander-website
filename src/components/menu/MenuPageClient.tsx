@@ -151,7 +151,7 @@ export function MenuPageClient({
           אין מנות שמתאימות לכל המסננים שבחרתם.
         </p>
       ) : (
-        <div className="max-w-2xl space-y-16">
+        <div className="max-w-3xl space-y-16">
           {visible.map((category) => (
             <section key={category.id} id={category.id} className="scroll-mt-36">
               <h2 className="mb-2 text-3xl leading-tight sm:text-4xl">

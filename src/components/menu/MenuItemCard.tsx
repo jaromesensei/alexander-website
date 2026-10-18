@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import { formatCurrency } from '@/lib/format'
 import { HighlightTags, DietTags } from './MenuTags'
+import { DishImage } from './DishImage'
 import type { MenuItem } from '@/types/db'
 
 export function MenuItemCard({
@@ -15,24 +15,15 @@ export function MenuItemCard({
   tagLabel?: (key: string, fallback: string) => string
 }) {
   const text = description ?? item.description_he
+  const title = name ?? item.name_he
 
   return (
-    <div className="border-ink/10 flex gap-4 border-b py-5">
-      {item.image_url && (
-        <div className="bg-paper-dark relative size-20 shrink-0 overflow-hidden">
-          <Image
-            src={item.image_url}
-            alt={item.name_he}
-            fill
-            sizes="80px"
-            className="object-cover"
-          />
-        </div>
-      )}
+    <div className="border-ink/10 flex gap-4 border-b py-5 sm:gap-6">
+      {item.image_url && <DishImage src={item.image_url} name={title} />}
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="text-lg font-bold">{name ?? item.name_he}</h3>
+          <h3 className="text-lg font-bold">{title}</h3>
           <span className="shrink-0 text-lg font-bold tabular-nums">
             {formatCurrency(item.price_agorot)}
           </span>
