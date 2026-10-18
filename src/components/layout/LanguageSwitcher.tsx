@@ -45,7 +45,7 @@ export function LanguageSwitcher() {
 
       {open && (
         <div
-          className="border-ink/10 absolute end-0 top-12 z-30 w-56 rounded-xl border bg-white p-2 shadow-lg"
+          className="border-ink/10 absolute end-0 top-12 z-30 max-h-[70svh] w-56 overflow-y-auto rounded-xl border bg-white p-2 shadow-lg"
           role="listbox"
         >
           {QUICK_LANGUAGES.map((l) => (
@@ -69,12 +69,12 @@ export function LanguageSwitcher() {
           ))}
           <form onSubmit={submitCustom} className="border-ink/10 mt-1 border-t pt-2">
             <label className="text-ink-soft block px-3 pb-1 text-xs">
-              שפה אחרת (קוד, למשל de, it, zh)
+              שפה אחרת? הקלידו את קוד השפה (למשל pt)
             </label>
             <input
               value={customCode}
               onChange={(e) => setCustomCode(e.target.value)}
-              placeholder="de"
+              placeholder="pt"
               className="border-ink/15 mx-3 mb-2 h-9 w-[calc(100%-1.5rem)] rounded-lg border px-3 text-sm"
               dir="ltr"
             />

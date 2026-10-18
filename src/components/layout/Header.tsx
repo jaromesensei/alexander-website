@@ -34,9 +34,10 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
               className={cn(
-                'label-caps hover:text-pink text-xs transition-colors',
-                isActive(item.href) ? 'text-pink' : 'text-ink',
+                'text-ink hover:text-pink text-[15px] font-semibold underline-offset-8 transition-colors',
+                isActive(item.href) && 'decoration-ink underline decoration-2',
               )}
             >
               {item.label}
@@ -56,6 +57,7 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
           className="flex size-10 items-center justify-center md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'סגירת תפריט' : 'פתיחת תפריט'}
+          aria-expanded={open}
         >
           {open ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
@@ -69,9 +71,10 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
                   className={cn(
-                    'label-caps block rounded-lg px-3 py-3 text-sm',
-                    isActive(item.href) ? 'bg-pink/10 text-pink' : 'text-ink',
+                    'block px-3 py-3 text-lg font-semibold',
+                    isActive(item.href) ? 'bg-paper-dark' : 'text-ink',
                   )}
                 >
                   {item.label}

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'דיינר אמריקאי רטרו בגרסה מודרנית, נהריה.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0a0a0b',
-    theme_color: '#0a0a0b',
+    background_color: '#000000',
+    theme_color: '#000000',
     icons: [
       { src: '/icons/192', sizes: '192x192', type: 'image/png' },
       { src: '/icons/512', sizes: '512x512', type: 'image/png' },

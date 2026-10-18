@@ -1,6 +1,5 @@
 import { Navigation } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
-import { Reveal } from '@/components/ui/Reveal'
 import { ButtonLink } from '@/components/ui/Button'
 import { HOURS_LABELS } from '@/lib/data/fallback'
 import { formatTime } from '@/lib/format'
@@ -14,13 +13,17 @@ export function LocationSection({ settings }: { settings: RestaurantSettings }) 
       : settings.map_url
 
   return (
-    <section className="border-ink/10 border-t py-20 sm:py-32">
+    <section className="border-ink border-t-2 py-20 sm:py-28">
       <Container className="grid gap-12 sm:grid-cols-2">
-        <Reveal>
-          <p className="label-caps text-pink mb-3 text-xs">נהריה</p>
-          <h2 className="font-display text-4xl leading-[0.95] sm:text-6xl">
-            {settings.address}
-          </h2>
+        <div>
+          <h2 className="text-4xl leading-tight sm:text-5xl">{settings.address}</h2>
+          <a
+            href={`tel:${settings.phone}`}
+            className="text-ink-soft hover:text-ink mt-3 inline-block text-lg tabular-nums"
+            dir="ltr"
+          >
+            {settings.phone}
+          </a>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink
               href={
@@ -33,29 +36,29 @@ export function LocationSection({ settings }: { settings: RestaurantSettings }) 
             </ButtonLink>
             {wazeHref && (
               <ButtonLink href={wazeHref} target="_blank" variant="outline">
-                <Navigation className="size-4" />
-                וייז
+                <Navigation className="size-4" aria-hidden="true" />
+                ניווט בוויז
               </ButtonLink>
             )}
           </div>
-        </Reveal>
+        </div>
 
-        <Reveal delay={0.1}>
-          <p className="label-caps mb-4 text-xs">שעות פתיחה</p>
+        <div>
+          <h3 className="mb-3 text-xl">שעות פתיחה</h3>
           <ul className="divide-ink/10 divide-y text-lg">
             {HOURS_LABELS.map((label, i) => {
               const h = settings.hours[String(i)]
               return (
                 <li key={i} className="flex justify-between py-2.5">
-                  <span className="font-semibold">{label}</span>
-                  <span className="text-ink-soft" dir="ltr">
+                  <span>{label}</span>
+                  <span className="text-ink-soft tabular-nums" dir="ltr">
                     {h ? `${formatTime(h.open)}–${formatTime(h.close)}` : 'סגור'}
                   </span>
                 </li>
               )
             })}
           </ul>
-        </Reveal>
+        </div>
       </Container>
     </section>
   )

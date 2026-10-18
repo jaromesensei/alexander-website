@@ -1,6 +1,5 @@
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
-import { Reveal } from '@/components/ui/Reveal'
 
 export function PageCTA({
   title,
@@ -12,19 +11,17 @@ export function PageCTA({
   secondary: { href: string; label: string }
 }) {
   return (
-    <section className="border-ink/10 border-t py-20 sm:py-28">
-      <Container className="text-center">
-        <Reveal>
-          <h2 className="font-display text-3xl leading-[0.95] sm:text-5xl">{title}</h2>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <ButtonLink href={primary.href} target={primary.target} size="lg">
-              {primary.label}
-            </ButtonLink>
-            <ButtonLink href={secondary.href} variant="outline" size="lg">
-              {secondary.label}
-            </ButtonLink>
-          </div>
-        </Reveal>
+    <section className="border-ink border-t-2 py-16 sm:py-20">
+      <Container className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between">
+        <h2 className="text-3xl leading-tight sm:text-4xl">{title}</h2>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href={primary.href} target={primary.target} size="lg">
+            {primary.label}
+          </ButtonLink>
+          <ButtonLink href={secondary.href} variant="outline" size="lg">
+            {secondary.label}
+          </ButtonLink>
+        </div>
       </Container>
     </section>
   )

@@ -1,22 +1,19 @@
 import type { LucideIcon } from 'lucide-react'
-import { Reveal } from '@/components/ui/Reveal'
 
 export function EventCard({
   icon: Icon,
   title,
   description,
-  delay = 0,
 }: {
   icon: LucideIcon
   title: string
   description: string
-  delay?: number
 }) {
   return (
-    <Reveal delay={delay} className="border-ink/10 border-t pt-6">
-      <Icon className="text-pink mb-4 size-7" strokeWidth={1.5} />
-      <h3 className="font-display text-xl">{title}</h3>
-      <p className="text-ink-soft mt-2 text-sm leading-relaxed">{description}</p>
-    </Reveal>
+    <div className="border-ink border-t-2 pt-5">
+      <Icon className="mb-4 size-6" strokeWidth={1.75} aria-hidden="true" />
+      <h3 className="text-xl">{title}</h3>
+      <p className="text-ink-soft mt-1">{description}</p>
+    </div>
   )
 }

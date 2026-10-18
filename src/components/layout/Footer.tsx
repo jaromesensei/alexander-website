@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Phone, MapPin, Clock } from 'lucide-react'
+import { Phone, MapPin } from 'lucide-react'
 import { InstagramIcon, FacebookIcon } from '@/components/icons/SocialIcons'
 import { HOURS_LABELS } from '@/lib/data/fallback'
 import { Container } from '@/components/ui/Container'
@@ -46,7 +46,7 @@ export function Footer({ settings }: { settings: RestaurantSettings }) {
         </div>
 
         <div>
-          <p className="label-caps text-pink mb-3 text-xs">ניווט</p>
+          <h2 className="text-paper/50 mb-3 text-sm font-semibold">ניווט</h2>
           <ul className="text-paper/80 space-y-2 text-sm">
             {navItems.map((item) => (
               <li key={item.href}>
@@ -59,7 +59,7 @@ export function Footer({ settings }: { settings: RestaurantSettings }) {
         </div>
 
         <div>
-          <p className="label-caps text-pink mb-3 text-xs">יצירת קשר</p>
+          <h2 className="text-paper/50 mb-3 text-sm font-semibold">יצירת קשר</h2>
           <ul className="text-paper/80 space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <Phone className="size-4 shrink-0" />
@@ -75,10 +75,7 @@ export function Footer({ settings }: { settings: RestaurantSettings }) {
         </div>
 
         <div>
-          <p className="label-caps text-pink mb-3 flex items-center gap-2 text-xs">
-            <Clock className="size-4" />
-            שעות פתיחה
-          </p>
+          <h2 className="text-paper/50 mb-3 text-sm font-semibold">שעות פתיחה</h2>
           <ul className="text-paper/80 space-y-1 text-sm">
             {HOURS_LABELS.map((label, i) => {
               const h = settings.hours[String(i)]

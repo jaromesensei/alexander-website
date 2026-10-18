@@ -11,6 +11,11 @@ export const QUICK_LANGUAGES: Language[] = [
   { code: 'ar', label: 'العربية', dir: 'rtl' },
   { code: 'ru', label: 'Русский', dir: 'ltr' },
   { code: 'fr', label: 'Français', dir: 'ltr' },
+  { code: 'de', label: 'Deutsch', dir: 'ltr' },
+  { code: 'es', label: 'Español', dir: 'ltr' },
+  { code: 'it', label: 'Italiano', dir: 'ltr' },
+  { code: 'uk', label: 'Українська', dir: 'ltr' },
+  { code: 'zh', label: '中文', dir: 'ltr' },
 ]
 
 const RTL_CODES = new Set(['he', 'ar', 'fa', 'ur'])

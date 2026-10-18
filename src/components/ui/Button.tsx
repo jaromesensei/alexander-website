@@ -11,9 +11,9 @@ const variants = {
 } as const
 
 const sizes = {
-  sm: 'h-10 px-4 text-xs',
-  md: 'h-13 px-7 text-sm',
-  lg: 'h-16 px-9 text-base',
+  sm: 'h-10 px-4 text-sm',
+  md: 'h-12 px-6 text-base',
+  lg: 'h-14 px-8 text-lg',
 } as const
 
 export function buttonClasses(
@@ -22,10 +22,9 @@ export function buttonClasses(
   className?: string,
 ) {
   return cn(
-    'label-caps inline-flex items-center justify-center gap-2 transition-all duration-200',
-    'hover:-translate-y-0.5 active:translate-y-0',
+    'inline-flex items-center justify-center gap-2 font-bold transition-colors duration-150',
+    'active:scale-[0.98] motion-reduce:active:scale-100',
     'disabled:pointer-events-none disabled:opacity-50',
-    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink',
     variants[variant],
     sizes[size],
     className,

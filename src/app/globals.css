@@ -1,16 +1,18 @@
 @import 'tailwindcss';
 
+/*
+ * שחור/לבן = מבנה. פינק = פעולה (כפתורים, קישורים) בלבד.
+ * חרדל = בלוק המבצע, טורקיז = בלוק התפריט, פינק כרקע = סקשן הקוקטיילים (לפי הבריף).
+ */
 :root {
   --color-paper: #ffffff;
-  --color-paper-dark: #f1f0ec;
-  --color-ink: #0a0a0b;
-  --color-ink-soft: #55555a;
+  --color-paper-dark: #f2f2f2;
+  --color-ink: #000000;
+  --color-ink-soft: #5c5c5c;
   --color-pink: #ff2f7e;
   --color-pink-dark: #d61c63;
   --color-mustard: #e3a72e;
-  --color-mustard-dark: #c78a17;
   --color-turquoise: #14b8ae;
-  --color-turquoise-dark: #0e8f87;
 }
 
 @theme inline {
@@ -21,15 +23,15 @@
   --color-pink: var(--color-pink);
   --color-pink-dark: var(--color-pink-dark);
   --color-mustard: var(--color-mustard);
-  --color-mustard-dark: var(--color-mustard-dark);
   --color-turquoise: var(--color-turquoise);
-  --color-turquoise-dark: var(--color-turquoise-dark);
   --font-display: var(--font-rubik);
   --font-body: var(--font-heebo);
 }
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -44,24 +46,24 @@ h3,
 h4,
 .font-display {
   font-family: var(--font-display), var(--font-body), sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
+/* Bebas Neue — ל-wordmark "Alexander" בלבד */
 .font-wordmark {
   font-family: var(--font-wordmark), var(--font-display), sans-serif;
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
-.label-caps {
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+:where(a, button, [role='button'], input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-pink);
+  outline-offset: 3px;
 }
 
-/* טקסטורת גרעין עדינה — שימוש על רקעים כהים בלבד */
+/* טקסטורת גרעין עדינה — רק על סקשן הדיינר השחור */
 .grain::after {
   content: '';
   position: absolute;

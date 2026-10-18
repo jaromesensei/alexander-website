@@ -32,47 +32,49 @@ export default async function OpengraphImage() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-end',
-        justifyContent: 'center',
-        backgroundColor: '#0a0a0b',
-        backgroundImage:
-          'radial-gradient(circle at 15% 15%, rgba(20,184,174,0.35), transparent 55%), radial-gradient(circle at 85% 85%, rgba(255,47,126,0.35), transparent 55%)',
-        padding: '80px',
+        justifyContent: 'flex-end',
+        backgroundColor: '#000000',
+        padding: '72px 80px',
       }}
     >
       <div
         style={{
-          fontFamily: 'Heebo',
-          fontSize: 28,
-          letterSpacing: 6,
-          color: '#14b8ae',
-          marginBottom: 20,
-        }}
-      >
-        {rtlLine('נהריה · לוקאל דיינר')}
-      </div>
-      <div
-        style={{
           fontFamily: 'Bebas',
-          fontSize: 200,
-          lineHeight: 0.9,
+          fontSize: 260,
+          lineHeight: 0.85,
           color: '#ffffff',
           textTransform: 'uppercase',
         }}
       >
         Alexander
       </div>
-      {settings.tagline && (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          width: '100%',
+          borderTop: '2px solid rgba(255,255,255,0.2)',
+          marginTop: 32,
+          paddingTop: 28,
+        }}
+      >
+        {settings.tagline && (
+          <div style={{ fontFamily: 'Heebo', fontSize: 40, color: '#ffffff' }}>
+            {rtlLine(settings.tagline)}
+          </div>
+        )}
         <div
           style={{
             fontFamily: 'Heebo',
-            fontSize: 36,
-            color: 'rgba(255,255,255,0.85)',
-            marginTop: 28,
+            fontSize: 28,
+            color: 'rgba(255,255,255,0.6)',
+            marginTop: 8,
           }}
         >
-          {rtlLine(settings.tagline)}
+          {rtlLine('לוקאל דיינר, נהריה')}
         </div>
-      )}
+      </div>
     </div>,
     {
       ...size,

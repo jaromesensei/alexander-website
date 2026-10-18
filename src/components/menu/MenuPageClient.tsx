@@ -27,22 +27,29 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
   return (
     <div>
       <div className="bg-paper/95 border-ink/10 sticky top-18 z-20 -mx-4 mb-12 overflow-x-auto border-b px-4 py-4 backdrop-blur sm:mx-0">
-        <div className="flex w-max gap-6 sm:w-full sm:justify-center">
+        <div className="flex w-max gap-6">
           {categories.map((c) => (
             <button
               key={c.id}
               type="button"
+              aria-current={active === c.id ? 'true' : undefined}
               onClick={() => {
                 setActive(c.id)
+                const reduce = window.matchMedia(
+                  '(prefers-reduced-motion: reduce)',
+                ).matches
                 document
                   .getElementById(c.id)
-                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  ?.scrollIntoView({
+                    behavior: reduce ? 'auto' : 'smooth',
+                    block: 'start',
+                  })
               }}
               className={cn(
-                'label-caps shrink-0 pb-1 text-xs transition-colors',
+                'shrink-0 border-b-2 pb-1 text-base font-semibold transition-colors',
                 active === c.id
-                  ? 'border-pink text-pink border-b-2'
-                  : 'text-ink-soft hover:text-ink',
+                  ? 'border-ink text-ink'
+                  : 'text-ink-soft hover:text-ink border-transparent',
               )}
             >
               {cats.name(c.id, c.name_he)}
@@ -51,10 +58,10 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
         </div>
       </div>
 
-      <div className="mx-auto max-w-2xl space-y-20">
+      <div className="max-w-2xl space-y-16">
         {categories.map((category) => (
           <section key={category.id} id={category.id} className="scroll-mt-36">
-            <h2 className="font-display mb-2 text-4xl leading-none">
+            <h2 className="mb-2 text-3xl leading-tight sm:text-4xl">
               {cats.name(category.id, category.name_he)}
             </h2>
             <div>

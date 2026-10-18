@@ -124,7 +124,7 @@ export function CategoryEditor({
               'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold',
               category.is_active
                 ? 'text-ink-soft hover:bg-paper-dark'
-                : 'bg-mustard/20 text-mustard-dark',
+                : 'bg-mustard text-ink',
             )}
           >
             <EyeOff className="size-3.5" />
