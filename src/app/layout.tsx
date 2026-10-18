@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { MobileActionBar } from '@/components/layout/MobileActionBar'
 import { ChromeGate } from '@/components/layout/ChromeGate'
+import { StructuredData } from '@/components/StructuredData'
 import { getSettings } from '@/lib/data/settings'
 import './globals.css'
 
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={`${heebo.variable} ${rubik.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="bg-paper text-ink flex min-h-full flex-col">
+        <StructuredData settings={settings} />
         <LanguageProvider>
           <ChromeGate>
             <Header settings={settings} />
