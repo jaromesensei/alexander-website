@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Heebo, Rubik, Bebas_Neue } from 'next/font/google'
 import { LanguageProvider } from '@/lib/i18n/LanguageProvider'
 import { Header } from '@/components/layout/Header'
@@ -41,6 +41,10 @@ export const metadata: Metadata = {
     locale: 'he_IL',
     type: 'website',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0a0a0b',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
