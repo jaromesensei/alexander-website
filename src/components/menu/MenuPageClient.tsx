@@ -157,6 +157,11 @@ export function MenuPageClient({
               <h2 className="mb-2 text-3xl leading-tight sm:text-4xl">
                 {cats.name(category.id, category.name_he)}
               </h2>
+              {category.description_he && (
+                <p className="text-ink-soft mb-2 max-w-2xl whitespace-pre-line">
+                  {cats.description(category.id, category.description_he)}
+                </p>
+              )}
               <div>
                 {category.items.map((item) => (
                   <MenuItemCard

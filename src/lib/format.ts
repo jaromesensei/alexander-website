@@ -7,6 +7,25 @@ export function formatCurrency(agorot: number): string {
   }).format(agorot / 100)
 }
 
+/** טווח מחירים למנה עם כמה גדלים, למשל "36–59 ₪"; מחיר אחד — כרגיל. */
+export function formatPriceRange(item: {
+  price_agorot: number
+  price_variants?: { price_agorot: number }[] | null
+}): string {
+  const prices = item.price_variants?.length
+    ? item.price_variants.map((v) => v.price_agorot)
+    : [item.price_agorot]
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
+  if (min === max) return formatCurrency(min)
+  const num = (a: number) =>
+    new Intl.NumberFormat('he-IL', {
+      maximumFractionDigits: a % 100 === 0 ? 0 : 2,
+    }).format(a / 100)
+  // בידוד LTR (U+2066…U+2069) — אחרת בעברית הטווח מתהפך ל-"32–18"
+  return `\u2066${num(min)}–${num(max)}\u2069 ₪`
+}
+
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date
   return new Intl.DateTimeFormat('he-IL', {

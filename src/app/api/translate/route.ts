@@ -74,7 +74,7 @@ export async function POST(request: Request) {
   if (categoryIds.length > 0) {
     const { data } = await supabase
       .from('menu_categories')
-      .select('id, name_he')
+      .select('id, name_he, description_he')
       .in('id', categoryIds)
       .eq('is_active', true)
     for (const row of data ?? []) {
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         id: row.id,
         scope: 'menu_category',
         name: row.name_he,
-        description: null,
+        description: row.description_he ?? null,
       })
     }
   }

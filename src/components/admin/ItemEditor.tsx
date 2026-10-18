@@ -8,6 +8,7 @@ import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ImageUploadButton } from './ImageUploadButton'
 import { TagPicker } from './TagPicker'
+import { PriceVariantsField, type VariantDraft } from './PriceVariantsField'
 import { normalizeTag } from '@/lib/menu/tags'
 import type { MenuItem } from '@/types/db'
 
@@ -25,6 +26,12 @@ export function ItemEditor({
   const [nameHe, setNameHe] = useState(item.name_he)
   const [descriptionHe, setDescriptionHe] = useState(item.description_he ?? '')
   const [price, setPrice] = useState((item.price_agorot / 100).toFixed(2))
+  const [variants, setVariants] = useState<VariantDraft[]>(
+    (item.price_variants ?? []).map((v) => ({
+      label: v.label,
+      price: (v.price_agorot / 100).toString(),
+    })),
+  )
   const [imageUrl, setImageUrl] = useState(item.image_url)
   const [isAvailable, setIsAvailable] = useState(item.is_available)
   const [isFeatured, setIsFeatured] = useState(item.is_featured)
@@ -41,13 +48,21 @@ export function ItemEditor({
 
   async function save() {
     setStatus('saving')
+    const toAgorot = (p: string) => Math.round(parseFloat(p || '0') * 100)
+    const cleanVariants = variants
+      .filter((v) => v.price.trim())
+      .map((v) => ({ label: v.label.trim(), price_agorot: toAgorot(v.price) }))
     const supabase = createClient()
     const { error } = await supabase
       .from('menu_items')
       .update({
         name_he: nameHe,
         description_he: descriptionHe || null,
-        price_agorot: Math.round(parseFloat(price || '0') * 100),
+        // עם גדלים — המחיר הבסיסי הוא הנמוך מביניהם (למיון ולמנות מומלצות)
+        price_agorot: cleanVariants.length
+          ? Math.min(...cleanVariants.map((v) => v.price_agorot))
+          : toAgorot(price),
+        price_variants: cleanVariants.length ? cleanVariants : null,
         image_url: imageUrl,
         is_available: isAvailable,
         is_featured: isFeatured,
@@ -82,11 +97,13 @@ export function ItemEditor({
           />
           <div className="relative">
             <Input
-              value={price}
+              value={variants.length ? '' : price}
               onChange={(e) => edit(setPrice)(e.target.value)}
               inputMode="decimal"
-              placeholder="מחיר"
-              className="ps-8"
+              placeholder={variants.length ? 'לפי גודל ↓' : 'מחיר'}
+              disabled={variants.length > 0}
+              aria-label="מחיר"
+              className="ps-8 disabled:opacity-60"
             />
             <span className="text-ink-soft absolute inset-y-0 start-3 flex items-center">
               ₪
@@ -99,6 +116,7 @@ export function ItemEditor({
           placeholder="תיאור קצר"
           rows={2}
         />
+        <PriceVariantsField value={variants} onChange={edit(setVariants)} />
         <TagPicker value={tags} onChange={edit(setTags)} />
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm">

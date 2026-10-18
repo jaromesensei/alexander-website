@@ -52,6 +52,8 @@ export interface Page {
 export interface MenuCategory {
   id: string
   name_he: string
+  /** הערה מתחת לשם הקטגוריה */
+  description_he?: string | null
   sort_order: number
   is_active: boolean
   created_at: string
@@ -63,12 +65,20 @@ export interface MenuItem {
   name_he: string
   description_he: string | null
   price_agorot: number
+  /** כמה מחירים (גדלים/סוגים). כשקיים — מוצג במקום המחיר הבודד; price_agorot = הנמוך */
+  price_variants?: PriceVariant[] | null
   image_url: string | null
   is_available: boolean
   is_featured: boolean
   tags: string[]
   sort_order: number
   created_at: string
+}
+
+export interface PriceVariant {
+  /** למשל "קטן", "220 גרם"; ריק = רק המחיר */
+  label: string
+  price_agorot: number
 }
 
 /** מטמון תרגומים גנרי: מפתח (lang, source_hash) → טקסט מתורגם. */

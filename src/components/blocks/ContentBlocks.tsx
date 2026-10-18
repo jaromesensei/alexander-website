@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ImageIcon, Navigation, UtensilsCrossed } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { HOURS_LABELS } from '@/lib/data/fallback'
-import { formatCurrency, formatTime } from '@/lib/format'
+import { formatPriceRange, formatTime } from '@/lib/format'
 import { featureIcon } from '@/lib/blocks/icons'
 import { wazeHref } from '@/lib/links'
 import { siteText } from '@/lib/siteTexts'
@@ -431,9 +431,7 @@ function DishRow({
         {item.description_he && (
           <p className="text-ink-soft mt-4 max-w-sm text-lg">{item.description_he}</p>
         )}
-        <p className="mt-6 text-2xl font-bold tabular-nums">
-          {formatCurrency(item.price_agorot)}
-        </p>
+        <p className="mt-6 text-2xl font-bold tabular-nums">{formatPriceRange(item)}</p>
         <Link
           href="/menu"
           className="text-pink-dark hover:text-pink-deep mt-4 inline-block font-semibold underline underline-offset-4"

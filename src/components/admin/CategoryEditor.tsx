@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ChevronUp, ChevronDown, Trash2, Plus, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { publishContent } from '@/app/admin/actions'
-import { Input } from '@/components/ui/Input'
+import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ItemEditor } from './ItemEditor'
 import { cn } from '@/lib/utils'
@@ -23,6 +23,7 @@ export function CategoryEditor({
   onMove: (direction: 'up' | 'down') => void
 }) {
   const [name, setName] = useState(category.name_he)
+  const [description, setDescription] = useState(category.description_he ?? '')
   const [addingItem, setAddingItem] = useState(false)
   const [newItemName, setNewItemName] = useState('')
 
@@ -30,6 +31,15 @@ export function CategoryEditor({
     if (name === category.name_he) return
     const supabase = createClient()
     await supabase.from('menu_categories').update({ name_he: name }).eq('id', category.id)
+    await publishContent()
+  }
+
+  async function saveDescription() {
+    if (description === (category.description_he ?? '')) return
+    await createClient()
+      .from('menu_categories')
+      .update({ description_he: description.trim() || null })
+      .eq('id', category.id)
     await publishContent()
   }
 
@@ -139,6 +149,16 @@ export function CategoryEditor({
           </button>
         </div>
       </div>
+
+      <Textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        onBlur={saveDescription}
+        rows={2}
+        placeholder="הערה לקטגוריה (לא חובה) — למשל: מוגשים עם צ'יפס, אפשר ללא גלוטן"
+        aria-label="הערה לקטגוריה"
+        className="mb-4 text-sm"
+      />
 
       <div className="space-y-3">
         {category.items.map((item, i) => (
