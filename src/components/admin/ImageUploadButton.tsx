@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { ImageUp, X } from 'lucide-react'
-import { uploadPublicImage } from '@/lib/supabase/storage'
+import { uploadPublicImage, type UploadFolder } from '@/lib/supabase/storage'
 import { Spinner } from '@/components/ui/Spinner'
 
 export function ImageUploadButton({
@@ -13,7 +13,7 @@ export function ImageUploadButton({
 }: {
   value: string | null
   onChange: (url: string | null) => void
-  folder: 'menu' | 'gallery' | 'hero'
+  folder: UploadFolder
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
@@ -35,15 +35,19 @@ export function ImageUploadButton({
   return (
     <div>
       <div
-        className="border-ink/30 bg-paper-dark relative flex size-24 items-center justify-center overflow-hidden rounded-xl border border-dashed"
+        className="border-ink/30 bg-paper-dark relative flex size-24 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed"
         onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
+        }}
         role="button"
         tabIndex={0}
+        aria-label={value ? 'החלפת תמונה' : 'העלאת תמונה'}
       >
         {loading ? (
           <Spinner className="text-ink-soft size-5" />
         ) : value ? (
-          <Image src={value} alt="" fill className="object-cover" />
+          <Image src={value} alt="" fill sizes="96px" className="object-cover" />
         ) : (
           <ImageUp className="text-ink-soft size-6" />
         )}

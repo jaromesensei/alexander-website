@@ -1,15 +1,18 @@
 import Image from 'next/image'
 import { formatCurrency } from '@/lib/format'
+import { HighlightTags, DietTags } from './MenuTags'
 import type { MenuItem } from '@/types/db'
 
 export function MenuItemCard({
   item,
   name,
   description,
+  tagLabel,
 }: {
   item: MenuItem
   name?: string
   description?: string | null
+  tagLabel?: (key: string, fallback: string) => string
 }) {
   const text = description ?? item.description_he
 
@@ -34,10 +37,9 @@ export function MenuItemCard({
             {formatCurrency(item.price_agorot)}
           </span>
         </div>
-        {text && <p className="text-ink-soft mt-1">{text}</p>}
-        {item.tags.length > 0 && (
-          <p className="text-ink-soft mt-1 text-sm">{item.tags.join(', ')}</p>
-        )}
+        <HighlightTags tags={item.tags} label={tagLabel} className="mt-1.5" />
+        {text && <p className="text-ink-soft mt-1.5">{text}</p>}
+        <DietTags tags={item.tags} label={tagLabel} className="mt-2" />
       </div>
     </div>
   )

@@ -1,0 +1,472 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { ImageIcon, Navigation, UtensilsCrossed } from 'lucide-react'
+import { Container } from '@/components/ui/Container'
+import { HOURS_LABELS } from '@/lib/data/fallback'
+import { formatCurrency, formatTime } from '@/lib/format'
+import { featureIcon } from '@/lib/blocks/icons'
+import { wazeHref } from '@/lib/links'
+import { cn } from '@/lib/utils'
+import { BlockButton } from './BlockButton'
+import { BG_CLASSES, MUTED_TEXT, outlineVariant, primaryVariant } from './styles'
+import type { BlockContext } from './context'
+import type {
+  CtaBlock,
+  FeaturedDishesBlock,
+  FeaturesBlock,
+  GalleryBlock,
+  HeadingBlock,
+  ImageBlock,
+  ImageTextBlock,
+  LocationBlock,
+  TextBlock,
+} from '@/lib/blocks/types'
+import type { MenuItem } from '@/types/db'
+
+/** מציין מקום לבלוק ריק — מוצג רק בעורך, באתר הבלוק פשוט לא מופיע. */
+function Placeholder({ label }: { label: string }) {
+  return (
+    <section className="py-12">
+      <Container>
+        <div className="border-ink/20 text-ink-soft flex items-center justify-center gap-2 border-2 border-dashed py-12 text-sm font-semibold">
+          <ImageIcon className="size-4" aria-hidden="true" />
+          {label}
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+export function HeadingBlockView({
+  block,
+  level,
+}: {
+  block: HeadingBlock
+  level: 1 | 2
+}) {
+  const H = level === 1 ? 'h1' : 'h2'
+  return (
+    <section className={cn(BG_CLASSES[block.bg], 'py-16 sm:py-24')}>
+      <Container>
+        <H className="max-w-4xl text-5xl leading-[0.95] whitespace-pre-line sm:text-7xl">
+          {block.title}
+        </H>
+        {block.text && (
+          <p
+            className={cn(
+              'mt-6 max-w-2xl text-lg whitespace-pre-line sm:text-xl',
+              MUTED_TEXT[block.bg],
+            )}
+          >
+            {block.text}
+          </p>
+        )}
+      </Container>
+    </section>
+  )
+}
+
+export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockContext }) {
+  if (!block.text && !block.title)
+    return ctx.preview ? <Placeholder label="טקסט ריק" /> : null
+  const large = block.size === 'lg'
+
+  return (
+    <section className={cn(BG_CLASSES[block.bg], 'py-20 sm:py-28')}>
+      <Container>
+        {block.title ? (
+          <h2 className="mb-6 max-w-3xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+        ) : (
+          <h2 className="sr-only">{block.text.slice(0, 40)}</h2>
+        )}
+        {block.text && (
+          <p
+            className={cn(
+              'whitespace-pre-line',
+              large
+                ? 'max-w-3xl text-3xl leading-snug font-bold sm:text-4xl'
+                : cn('max-w-2xl text-lg leading-relaxed', MUTED_TEXT[block.bg]),
+            )}
+          >
+            {block.text}
+          </p>
+        )}
+        <BlockButton
+          link={block.button}
+          settings={ctx.settings}
+          variant={outlineVariant(block.bg)}
+          className="mt-10"
+        />
+      </Container>
+    </section>
+  )
+}
+
+export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContext }) {
+  if (!block.title)
+    return ctx.preview ? <Placeholder label="קריאה לפעולה בלי כותרת" /> : null
+
+  if (block.size === 'lg') {
+    return (
+      <section className={cn(BG_CLASSES[block.bg], 'py-24 sm:py-32')}>
+        <Container>
+          <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+          {block.text && (
+            <p className="mt-6 max-w-md text-lg font-medium whitespace-pre-line">
+              {block.text}
+            </p>
+          )}
+          <BlockButton
+            link={block.button}
+            settings={ctx.settings}
+            variant={primaryVariant(block.bg)}
+            size="lg"
+            className="mt-8"
+          />
+        </Container>
+      </section>
+    )
+  }
+
+  return (
+    <section className={cn(BG_CLASSES[block.bg], 'py-14 sm:py-20')}>
+      <Container className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+          {block.text && (
+            <p className="mt-3 max-w-lg text-lg font-medium whitespace-pre-line">
+              {block.text}
+            </p>
+          )}
+        </div>
+        <BlockButton
+          link={block.button}
+          settings={ctx.settings}
+          variant={primaryVariant(block.bg)}
+          size="lg"
+          className="shrink-0"
+        />
+      </Container>
+    </section>
+  )
+}
+
+export function ImageTextBlockView({
+  block,
+  ctx,
+}: {
+  block: ImageTextBlock
+  ctx: BlockContext
+}) {
+  return (
+    <section className={cn(BG_CLASSES[block.bg], 'py-20 sm:py-28')}>
+      <Container className="grid items-center gap-8 sm:grid-cols-2 sm:gap-16">
+        <div
+          className={cn(
+            'bg-paper-dark relative aspect-4/5 overflow-hidden',
+            block.imageSide === 'end' && 'sm:order-2',
+          )}
+        >
+          {block.image ? (
+            <Image
+              src={block.image}
+              alt={block.title}
+              fill
+              sizes="(min-width: 640px) 50vw, 100vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="text-ink-soft/40 flex h-full items-center justify-center">
+              <ImageIcon className="size-12" strokeWidth={1} aria-hidden="true" />
+            </div>
+          )}
+        </div>
+        <div>
+          <h2 className="text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+          {block.text && (
+            <p
+              className={cn(
+                'mt-5 max-w-md text-lg leading-relaxed whitespace-pre-line',
+                MUTED_TEXT[block.bg],
+              )}
+            >
+              {block.text}
+            </p>
+          )}
+          <BlockButton
+            link={block.button}
+            settings={ctx.settings}
+            variant={primaryVariant(block.bg)}
+            className="mt-8"
+          />
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+export function ImageBlockView({ block, ctx }: { block: ImageBlock; ctx: BlockContext }) {
+  if (!block.image)
+    return ctx.preview ? <Placeholder label="תמונה — עוד לא הועלתה" /> : null
+  return (
+    <section className="py-10 sm:py-16">
+      <Container>
+        <figure>
+          <div className="bg-paper-dark relative aspect-video overflow-hidden">
+            <Image
+              src={block.image}
+              alt={block.caption}
+              fill
+              sizes="(min-width: 1152px) 1152px, 100vw"
+              className="object-cover"
+            />
+          </div>
+          {block.caption && (
+            <figcaption className="text-ink-soft mt-3 text-sm">
+              {block.caption}
+            </figcaption>
+          )}
+        </figure>
+      </Container>
+    </section>
+  )
+}
+
+export function FeaturesBlockView({
+  block,
+  ctx,
+}: {
+  block: FeaturesBlock
+  ctx: BlockContext
+}) {
+  const cols =
+    block.items.length >= 4
+      ? 'lg:grid-cols-4'
+      : block.items.length === 3
+        ? 'lg:grid-cols-3'
+        : 'lg:grid-cols-2'
+  return (
+    <section className={cn(BG_CLASSES[block.bg], 'py-20 sm:py-28')}>
+      <Container>
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+          <h2 className="text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+          <BlockButton
+            link={block.button}
+            settings={ctx.settings}
+            variant={outlineVariant(block.bg)}
+          />
+        </div>
+        <div className={cn('grid gap-10 sm:grid-cols-2', cols)}>
+          {block.items.map((item, i) => {
+            const Icon = featureIcon(item.icon)
+            return (
+              <div
+                key={i}
+                className={cn(
+                  'border-t-2 pt-5',
+                  block.bg === 'ink' ? 'border-paper' : 'border-ink',
+                )}
+              >
+                <Icon className="mb-4 size-6" strokeWidth={1.75} aria-hidden="true" />
+                <h3 className="text-xl">{item.title}</h3>
+                {item.text && (
+                  <p className={cn('mt-1', MUTED_TEXT[block.bg])}>{item.text}</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+export function FeaturedDishesBlockView({
+  block,
+  ctx,
+}: {
+  block: FeaturedDishesBlock
+  ctx: BlockContext
+}) {
+  const featured = ctx.categories
+    .flatMap((c) => c.items.filter((i) => i.is_featured))
+    .slice(0, Math.max(1, block.limit))
+  if (featured.length === 0) {
+    return ctx.preview ? <Placeholder label="אין מנות מסומנות כ'מומלץ' בתפריט" /> : null
+  }
+
+  return (
+    <section className="py-20 sm:py-28">
+      <Container>
+        <h2 className="mb-14 text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+          {block.title}
+        </h2>
+        <div className="space-y-20 sm:space-y-28">
+          {featured.map((item, i) => (
+            <DishRow key={item.id} item={item} reversed={i % 2 === 1} />
+          ))}
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+function DishRow({ item, reversed }: { item: MenuItem; reversed: boolean }) {
+  return (
+    <article className="grid items-center gap-8 sm:grid-cols-2 sm:gap-16">
+      <div
+        className={cn(
+          'bg-paper-dark relative aspect-4/5 overflow-hidden',
+          reversed && 'sm:order-2',
+        )}
+      >
+        {item.image_url ? (
+          <Image
+            src={item.image_url}
+            alt={item.name_he}
+            fill
+            sizes="(min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-700 hover:scale-105 motion-reduce:hover:scale-100"
+          />
+        ) : (
+          <div className="text-ink-soft/30 flex h-full items-center justify-center">
+            <UtensilsCrossed className="size-16" strokeWidth={1} />
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h3 className="text-3xl leading-tight sm:text-4xl">{item.name_he}</h3>
+        {item.description_he && (
+          <p className="text-ink-soft mt-4 max-w-sm text-lg">{item.description_he}</p>
+        )}
+        <p className="mt-6 text-2xl font-bold tabular-nums">
+          {formatCurrency(item.price_agorot)}
+        </p>
+        <Link
+          href="/menu"
+          className="text-pink hover:text-pink-dark mt-4 inline-block font-semibold underline underline-offset-4"
+        >
+          לתפריט המלא
+        </Link>
+      </div>
+    </article>
+  )
+}
+
+export function GalleryBlockView({
+  block,
+  ctx,
+}: {
+  block: GalleryBlock
+  ctx: BlockContext
+}) {
+  const images =
+    block.images.length > 0
+      ? block.images.map((url) => ({ url, alt: '' }))
+      : ctx.gallery
+          .slice(0, 6)
+          .map((g) => ({ url: g.image_url, alt: g.caption_he ?? '' }))
+  if (images.length === 0) {
+    return ctx.preview ? <Placeholder label="גלריה — עוד אין תמונות" /> : null
+  }
+
+  return (
+    <section className="py-20 sm:py-28">
+      <Container>
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+          <h2 className="text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title}
+          </h2>
+          <BlockButton link={block.button} settings={ctx.settings} variant="outline" />
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {images.map((img, i) => (
+            <div key={i} className="bg-paper-dark relative aspect-square overflow-hidden">
+              <Image
+                src={img.url}
+                alt={img.alt}
+                fill
+                sizes="(min-width: 640px) 33vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+export function LocationBlockView({
+  block,
+  ctx,
+}: {
+  block: LocationBlock
+  ctx: BlockContext
+}) {
+  const { settings } = ctx
+  const waze = wazeHref(settings)
+
+  return (
+    <section className="border-ink border-t-2 py-20 sm:py-28">
+      <Container className="grid gap-12 sm:grid-cols-2">
+        <div>
+          <h2 className="text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+            {block.title || settings.address}
+          </h2>
+          {block.title && <p className="mt-3 text-lg">{settings.address}</p>}
+          <a
+            href={`tel:${settings.phone}`}
+            className="text-ink-soft hover:text-ink mt-3 inline-block text-lg tabular-nums"
+            dir="ltr"
+          >
+            {settings.phone}
+          </a>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <BlockButton
+              link={{ label: 'הזמנת שולחן', href: 'wa:reservation' }}
+              settings={settings}
+            />
+            {waze && (
+              <BlockButton
+                link={{ label: 'ניווט בוויז', href: 'waze' }}
+                settings={settings}
+                variant="outline"
+              >
+                <Navigation className="size-4" aria-hidden="true" />
+              </BlockButton>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-xl">שעות פתיחה</h3>
+          <ul className="divide-ink/10 divide-y text-lg">
+            {HOURS_LABELS.map((label, i) => {
+              const h = settings.hours[String(i)]
+              return (
+                <li key={i} className="flex justify-between py-2.5">
+                  <span>{label}</span>
+                  <span className="text-ink-soft tabular-nums" dir="ltr">
+                    {h ? `${formatTime(h.open)}–${formatTime(h.close)}` : 'סגור'}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </Container>
+    </section>
+  )
+}

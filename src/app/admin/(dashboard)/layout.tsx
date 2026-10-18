@@ -2,6 +2,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminNav } from '@/components/admin/AdminNav'
 
+// אזור הניהול תמיד מרונדר לכל בקשה — לעולם לא נשמר במטמון
+export const dynamic = 'force-dynamic'
+
 function SupabaseNotConfigured() {
   return (
     <div className="bg-ink text-paper flex min-h-svh items-center justify-center px-4">
@@ -39,7 +42,7 @@ export default async function AdminDashboardLayout({
   return (
     <div className="bg-paper flex min-h-svh flex-col sm:flex-row">
       <AdminNav />
-      <div className="flex-1 p-4 sm:p-8">{children}</div>
+      <div className="min-w-0 flex-1 p-4 sm:p-8">{children}</div>
     </div>
   )
 }

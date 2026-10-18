@@ -1,13 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/useTranslations'
+import { MENU_TAGS, TAG_KEYS, normalizeTag, type MenuTagKey } from '@/lib/menu/tags'
+import { TAG_ICONS } from './tagIcons'
 import { MenuItemCard } from './MenuItemCard'
 import type { CategoryWithItems } from '@/lib/data/menu'
 
 export function MenuPageClient({ categories }: { categories: CategoryWithItems[] }) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? '')
+  const [filters, setFilters] = useState<MenuTagKey[]>([])
 
   const allItemEntries = categories.flatMap((c) =>
     c.items.map((i) => ({ id: i.id, scope: 'menu_item' as const })),
@@ -17,18 +21,88 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
     scope: 'menu_category' as const,
   }))
 
+  // תגיות שבאמת מופיעות בתפריט — רק תגיות התזונה מביניהן מוצעות כמסננים
+  const { usedTags, dietFilters } = useMemo(() => {
+    const used = new Set(
+      categories.flatMap((c) => c.items.flatMap((i) => i.tags.map(normalizeTag))),
+    )
+    const keys = TAG_KEYS.filter((k) => used.has(k))
+    return {
+      usedTags: keys,
+      dietFilters: keys.filter((k) => MENU_TAGS[k].kind === 'diet'),
+    }
+  }, [categories])
+
   const items = useTranslations(allItemEntries)
   const cats = useTranslations(categoryEntries)
+  const tags = useTranslations(usedTags.map((id) => ({ id, scope: 'menu_tag' as const })))
+
+  const visible = useMemo(() => {
+    if (filters.length === 0) return categories
+    return categories
+      .map((c) => ({
+        ...c,
+        items: c.items.filter((i) => {
+          const itemTags = i.tags.map(normalizeTag)
+          return filters.every((f) => itemTags.includes(f))
+        }),
+      }))
+      .filter((c) => c.items.length > 0)
+  }, [categories, filters])
 
   if (categories.length === 0) {
     return <p className="text-ink-soft text-center">התפריט יתעדכן בקרוב.</p>
   }
 
+  function toggleFilter(key: MenuTagKey) {
+    setFilters((f) => (f.includes(key) ? f.filter((k) => k !== key) : [...f, key]))
+  }
+
   return (
     <div>
+      {dietFilters.length > 0 && (
+        <div
+          className="mb-8 flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="סינון"
+        >
+          {dietFilters.map((key) => {
+            const Icon = TAG_ICONS[key]
+            const on = filters.includes(key)
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={on}
+                onClick={() => toggleFilter(key)}
+                className={cn(
+                  'inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-sm font-semibold transition-colors',
+                  on
+                    ? 'border-ink bg-ink text-paper'
+                    : 'border-ink/20 text-ink hover:border-ink',
+                )}
+              >
+                <Icon className="size-4" strokeWidth={1.75} aria-hidden="true" />
+                {tags.name(key, MENU_TAGS[key].label)}
+              </button>
+            )
+          })}
+          {filters.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setFilters([])}
+              className="text-ink-soft hover:text-ink inline-flex h-9 items-center gap-1 px-2 text-sm font-semibold"
+            >
+              <X className="size-4" aria-hidden="true" />
+              ניקוי
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="bg-paper/95 border-ink/10 sticky top-18 z-20 -mx-4 mb-12 overflow-x-auto border-b px-4 py-4 backdrop-blur sm:mx-0">
         <div className="flex w-max gap-6">
-          {categories.map((c) => (
+          {visible.map((c) => (
             <button
               key={c.id}
               type="button"
@@ -58,25 +132,30 @@ export function MenuPageClient({ categories }: { categories: CategoryWithItems[]
         </div>
       </div>
 
-      <div className="max-w-2xl space-y-16">
-        {categories.map((category) => (
-          <section key={category.id} id={category.id} className="scroll-mt-36">
-            <h2 className="mb-2 text-3xl leading-tight sm:text-4xl">
-              {cats.name(category.id, category.name_he)}
-            </h2>
-            <div>
-              {category.items.map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  item={item}
-                  name={items.name(item.id, item.name_he)}
-                  description={items.description(item.id, item.description_he)}
-                />
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+      {visible.length === 0 ? (
+        <p className="text-ink-soft">אין מנות שמתאימות לכל המסננים שבחרתם.</p>
+      ) : (
+        <div className="max-w-2xl space-y-16">
+          {visible.map((category) => (
+            <section key={category.id} id={category.id} className="scroll-mt-36">
+              <h2 className="mb-2 text-3xl leading-tight sm:text-4xl">
+                {cats.name(category.id, category.name_he)}
+              </h2>
+              <div>
+                {category.items.map((item) => (
+                  <MenuItemCard
+                    key={item.id}
+                    item={item}
+                    name={items.name(item.id, item.name_he)}
+                    description={items.description(item.id, item.description_he)}
+                    tagLabel={tags.name}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

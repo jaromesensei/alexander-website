@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ChevronUp, ChevronDown, Trash2, Plus, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { publishContent } from '@/app/admin/actions'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ItemEditor } from './ItemEditor'
@@ -22,7 +22,6 @@ export function CategoryEditor({
   canMoveDown: boolean
   onMove: (direction: 'up' | 'down') => void
 }) {
-  const router = useRouter()
   const [name, setName] = useState(category.name_he)
   const [addingItem, setAddingItem] = useState(false)
   const [newItemName, setNewItemName] = useState('')
@@ -31,7 +30,7 @@ export function CategoryEditor({
     if (name === category.name_he) return
     const supabase = createClient()
     await supabase.from('menu_categories').update({ name_he: name }).eq('id', category.id)
-    router.refresh()
+    await publishContent()
   }
 
   async function toggleActive() {
@@ -40,7 +39,7 @@ export function CategoryEditor({
       .from('menu_categories')
       .update({ is_active: !category.is_active })
       .eq('id', category.id)
-    router.refresh()
+    await publishContent()
   }
 
   async function removeCategory() {
@@ -51,7 +50,7 @@ export function CategoryEditor({
     if (!confirm(`למחוק את הקטגוריה "${category.name_he}"?`)) return
     const supabase = createClient()
     await supabase.from('menu_categories').delete().eq('id', category.id)
-    router.refresh()
+    await publishContent()
   }
 
   async function addItem() {
@@ -68,7 +67,7 @@ export function CategoryEditor({
     })
     setNewItemName('')
     setAddingItem(false)
-    router.refresh()
+    await publishContent()
   }
 
   async function moveItem(items: MenuItem[], index: number, direction: 'up' | 'down') {
@@ -81,7 +80,7 @@ export function CategoryEditor({
       supabase.from('menu_items').update({ sort_order: b.sort_order }).eq('id', a.id),
       supabase.from('menu_items').update({ sort_order: a.sort_order }).eq('id', b.id),
     ])
-    router.refresh()
+    await publishContent()
   }
 
   return (

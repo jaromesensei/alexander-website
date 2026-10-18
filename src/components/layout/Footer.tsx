@@ -4,10 +4,21 @@ import { InstagramIcon, FacebookIcon } from '@/components/icons/SocialIcons'
 import { HOURS_LABELS } from '@/lib/data/fallback'
 import { Container } from '@/components/ui/Container'
 import { formatTime } from '@/lib/format'
-import { navItems } from './navItems'
-import type { RestaurantSettings } from '@/types/db'
+import { resolveHref } from '@/lib/links'
+import type { NavItem, RestaurantSettings } from '@/types/db'
 
-export function Footer({ settings }: { settings: RestaurantSettings }) {
+export function Footer({
+  settings,
+  nav,
+}: {
+  settings: RestaurantSettings
+  nav: NavItem[]
+}) {
+  const links = nav.flatMap((item) => {
+    const r = resolveHref(item.href, settings)
+    return r ? [{ ...r, label: item.label }] : []
+  })
+
   return (
     <footer className="border-ink/10 bg-ink text-paper relative overflow-hidden border-t">
       <Container className="pt-16 pb-10">
@@ -48,9 +59,13 @@ export function Footer({ settings }: { settings: RestaurantSettings }) {
         <div>
           <h2 className="text-paper/50 mb-3 text-sm font-semibold">ניווט</h2>
           <ul className="text-paper/80 space-y-2 text-sm">
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="hover:text-paper">
+            {links.map((item) => (
+              <li key={item.href + item.label}>
+                <Link
+                  href={item.href}
+                  target={item.external ? '_blank' : undefined}
+                  className="hover:text-paper"
+                >
                   {item.label}
                 </Link>
               </li>

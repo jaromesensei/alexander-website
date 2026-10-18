@@ -7,6 +7,7 @@ import { MobileActionBar } from '@/components/layout/MobileActionBar'
 import { ChromeGate } from '@/components/layout/ChromeGate'
 import { StructuredData } from '@/components/StructuredData'
 import { getSettings } from '@/lib/data/settings'
+import { getNav } from '@/lib/links'
 import './globals.css'
 
 const heebo = Heebo({
@@ -49,6 +50,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings()
+  const nav = getNav(settings)
 
   return (
     <html
@@ -60,11 +62,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <StructuredData settings={settings} />
         <LanguageProvider>
           <ChromeGate>
-            <Header settings={settings} />
+            <Header settings={settings} nav={nav} />
           </ChromeGate>
           <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <ChromeGate>
-            <Footer settings={settings} />
+            <Footer settings={settings} nav={nav} />
             <MobileActionBar settings={settings} />
           </ChromeGate>
         </LanguageProvider>

@@ -29,7 +29,7 @@ export function StructuredData({ settings }: { settings: RestaurantSettings }) {
     '@type': 'Restaurant',
     name: settings.name,
     description: settings.tagline ?? undefined,
-    image: settings.hero_image_url ?? undefined,
+    image: `${baseUrl}/opengraph-image`,
     url: baseUrl,
     telephone: settings.phone,
     email: settings.email ?? undefined,

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from './LanguageProvider'
 
-export type TranslationScope = 'menu_item' | 'menu_category'
+export type TranslationScope = 'menu_item' | 'menu_category' | 'menu_tag'
 
 export interface TranslatableEntry {
   id: string

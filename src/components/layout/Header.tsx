@@ -4,18 +4,28 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-import { navItems } from './navItems'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
-import type { RestaurantSettings } from '@/types/db'
+import { resolveHref } from '@/lib/links'
+import type { NavItem, RestaurantSettings } from '@/types/db'
 
-export function Header({ settings }: { settings: RestaurantSettings }) {
+export function Header({
+  settings,
+  nav,
+}: {
+  settings: RestaurantSettings
+  nav: NavItem[]
+}) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const reserveHref =
     waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
+  const links = nav.flatMap((item) => {
+    const r = resolveHref(item.href, settings)
+    return r ? [{ ...r, label: item.label }] : []
+  })
 
   // קישורי עוגן (עם #) לא מקבלים מצב "פעיל" — אין דרך זולה לדעת איזו סקשן בתצוגה כרגע.
   function isActive(href: string) {
@@ -30,10 +40,11 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => (
+          {links.map((item) => (
             <Link
-              key={item.href}
+              key={item.href + item.label}
               href={item.href}
+              target={item.external ? '_blank' : undefined}
               aria-current={isActive(item.href) ? 'page' : undefined}
               className={cn(
                 'text-ink hover:text-pink text-[15px] font-semibold underline-offset-8 transition-colors',
@@ -66,10 +77,11 @@ export function Header({ settings }: { settings: RestaurantSettings }) {
       {open && (
         <nav className="border-ink/10 bg-paper border-t px-4 py-4 md:hidden">
           <ul className="flex flex-col gap-1">
-            {navItems.map((item) => (
-              <li key={item.href}>
+            {links.map((item) => (
+              <li key={item.href + item.label}>
                 <Link
                   href={item.href}
+                  target={item.external ? '_blank' : undefined}
                   onClick={() => setOpen(false)}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                   className={cn(

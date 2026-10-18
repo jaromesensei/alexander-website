@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { PREVIEW_PATH } from '@/lib/blocks/previewProtocol'
 import Link from 'next/link'
 import {
   UtensilsCrossed,
@@ -21,7 +22,7 @@ interface Action {
 
 export function MobileActionBar({ settings }: { settings: RestaurantSettings }) {
   const pathname = usePathname()
-  if (pathname?.startsWith('/admin')) return null
+  if (pathname?.startsWith('/admin') && pathname !== PREVIEW_PATH) return null
 
   const wazeHref =
     settings.lat && settings.lng

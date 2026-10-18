@@ -1,16 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { publishContent } from '@/app/admin/actions'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { CategoryEditor } from './CategoryEditor'
 import type { CategoryWithItems } from '@/lib/data/menu'
 
 export function MenuAdminClient({ categories }: { categories: CategoryWithItems[] }) {
-  const router = useRouter()
   const [adding, setAdding] = useState(false)
   const [newName, setNewName] = useState('')
 
@@ -24,7 +23,7 @@ export function MenuAdminClient({ categories }: { categories: CategoryWithItems[
     })
     setNewName('')
     setAdding(false)
-    router.refresh()
+    await publishContent()
   }
 
   async function moveCategory(index: number, direction: 'up' | 'down') {
@@ -43,7 +42,7 @@ export function MenuAdminClient({ categories }: { categories: CategoryWithItems[
         .update({ sort_order: a.sort_order })
         .eq('id', b.id),
     ])
-    router.refresh()
+    await publishContent()
   }
 
   return (

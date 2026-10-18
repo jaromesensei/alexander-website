@@ -1,12 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { MENU_TAGS, isMenuTag } from '@/lib/menu/tags'
 
 export const runtime = 'nodejs'
 
 interface RequestEntry {
   id: string
-  scope: 'menu_item' | 'menu_category'
+  scope: 'menu_item' | 'menu_category' | 'menu_tag'
 }
 
 interface SourceRow {
@@ -81,6 +82,18 @@ export async function POST(request: Request) {
         id: row.id,
         scope: 'menu_category',
         name: row.name_he,
+        description: null,
+      })
+    }
+  }
+
+  // תגיות: הטקסט מגיע מרשימה קבועה בקוד (לא מהקליינט), כמו שאר המקורות.
+  for (const e of entries) {
+    if (e.scope === 'menu_tag' && isMenuTag(e.id)) {
+      sourceRows.push({
+        id: e.id,
+        scope: 'menu_tag',
+        name: MENU_TAGS[e.id].label,
         description: null,
       })
     }

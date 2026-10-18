@@ -2,24 +2,27 @@
 
 import Image from 'next/image'
 import { motion, MotionConfig } from 'motion/react'
-import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
-import { waLink, WA_MESSAGES } from '@/lib/whatsapp'
+import { BlockButton } from './BlockButton'
+import type { HeroBlock as HeroBlockData } from '@/lib/blocks/types'
 import type { RestaurantSettings } from '@/types/db'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-export function Hero({ settings }: { settings: RestaurantSettings }) {
-  const reserveHref =
-    waLink(settings.whatsapp, WA_MESSAGES.reservation) ?? `tel:${settings.phone}`
-
+export function HeroBlock({
+  block,
+  settings,
+}: {
+  block: HeroBlockData
+  settings: RestaurantSettings
+}) {
   return (
     <MotionConfig reducedMotion="user">
       <section className="bg-ink text-paper relative overflow-hidden">
-        {settings.hero_image_url && (
+        {block.image && (
           <>
             <Image
-              src={settings.hero_image_url}
+              src={block.image}
               alt=""
               fill
               priority
@@ -53,20 +56,23 @@ export function Hero({ settings }: { settings: RestaurantSettings }) {
             className="border-paper/20 mt-8 flex flex-col gap-8 border-t pt-8 sm:flex-row sm:items-end sm:justify-between"
           >
             <div>
-              {settings.tagline && (
-                <p className="max-w-lg text-2xl font-bold text-balance sm:text-3xl">
-                  {settings.tagline}
+              {block.tagline && (
+                <p className="max-w-lg text-2xl font-bold text-balance whitespace-pre-line sm:text-3xl">
+                  {block.tagline}
                 </p>
               )}
-              <p className="text-paper/60 mt-2 text-base">לוקאל דיינר בנהריה</p>
+              {block.subtitle && (
+                <p className="text-paper/60 mt-2 text-base">{block.subtitle}</p>
+              )}
             </div>
             <div className="flex flex-wrap gap-3">
-              <ButtonLink href={reserveHref} target="_blank" size="lg">
-                הזמנת שולחן
-              </ButtonLink>
-              <ButtonLink href="/menu" variant="outlineInverse" size="lg">
-                לתפריט
-              </ButtonLink>
+              <BlockButton link={block.primary} settings={settings} size="lg" />
+              <BlockButton
+                link={block.secondary}
+                settings={settings}
+                variant="outlineInverse"
+                size="lg"
+              />
             </div>
           </motion.div>
         </Container>

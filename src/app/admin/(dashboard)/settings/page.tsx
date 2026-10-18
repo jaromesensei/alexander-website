@@ -1,8 +1,12 @@
-import { getSettings } from '@/lib/data/settings'
+import { createClient } from '@/lib/supabase/server'
+import { fetchSettings } from '@/lib/data/settings'
+import { FALLBACK_SETTINGS } from '@/lib/data/fallback'
 import { SettingsAdminClient } from '@/components/admin/SettingsAdminClient'
 
 export default async function AdminSettingsPage() {
-  const settings = await getSettings()
+  const settings = await fetchSettings(await createClient()).catch(
+    () => FALLBACK_SETTINGS,
+  )
 
   return (
     <div>

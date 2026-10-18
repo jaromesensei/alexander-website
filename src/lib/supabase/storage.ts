@@ -1,15 +1,20 @@
 import { createClient } from './client'
+import { compressImage } from '@/lib/image/compress'
 
 const BUCKET = 'public-media'
 
-/** מעלה קובץ ל-Storage הציבורי ומחזיר URL ציבורי קבוע. */
-export async function uploadPublicImage(file: File, folder: 'menu' | 'gallery' | 'hero') {
+export type UploadFolder = 'menu' | 'gallery' | 'hero' | 'pages'
+
+/** מכווץ ומעלה קובץ ל-Storage הציבורי ומחזיר URL ציבורי קבוע. */
+export async function uploadPublicImage(original: File, folder: UploadFolder) {
+  const file = await compressImage(original)
   const supabase = createClient()
-  const ext = file.name.split('.').pop()
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
   const path = `${folder}/${crypto.randomUUID()}.${ext}`
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
     cacheControl: '31536000',
+    contentType: file.type || undefined,
     upsert: false,
   })
   if (error) throw error

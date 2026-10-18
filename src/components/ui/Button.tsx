@@ -16,6 +16,9 @@ const sizes = {
   lg: 'h-14 px-8 text-lg',
 } as const
 
+export type ButtonVariant = keyof typeof variants
+export type ButtonSize = keyof typeof sizes
+
 export function buttonClasses(
   variant: keyof typeof variants = 'primary',
   size: keyof typeof sizes = 'md',

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
+  PanelsTopLeft,
   UtensilsCrossed,
   Images,
   Settings,
@@ -15,6 +16,7 @@ import { cn } from '@/lib/utils'
 
 const items = [
   { href: '/admin', label: 'סקירה', icon: LayoutDashboard },
+  { href: '/admin/pages', label: 'עמודים ועיצוב', icon: PanelsTopLeft },
   { href: '/admin/menu', label: 'תפריט', icon: UtensilsCrossed },
   { href: '/admin/gallery', label: 'גלריה', icon: Images },
   { href: '/admin/settings', label: 'הגדרות', icon: Settings },

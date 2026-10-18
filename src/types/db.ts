@@ -1,3 +1,5 @@
+import type { Block } from '@/lib/blocks/types'
+
 export interface RestaurantSettings {
   id: string
   name: string
@@ -17,6 +19,25 @@ export interface RestaurantSettings {
   promo_active: boolean
   promo_title: string | null
   promo_description: string | null
+  /** null = ברירת המחדל שבקוד (DEFAULT_NAV) */
+  nav_items: NavItem[] | null
+  updated_at: string
+}
+
+/** href יכול להיות נתיב, URL, או טוקן פעולה (ראו lib/links.ts) */
+export interface NavItem {
+  label: string
+  href: string
+}
+
+export interface Page {
+  id: string
+  slug: string
+  title: string
+  description: string | null
+  blocks: Block[]
+  is_published: boolean
+  created_at: string
   updated_at: string
 }
 

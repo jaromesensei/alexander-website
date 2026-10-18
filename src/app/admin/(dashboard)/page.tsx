@@ -1,62 +1,101 @@
 import Link from 'next/link'
-import { LayoutGrid, UtensilsCrossed, Images } from 'lucide-react'
+import {
+  House,
+  UtensilsCrossed,
+  Images,
+  FileText,
+  Settings,
+  ExternalLink,
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Card } from '@/components/ui/Card'
 
 async function getCounts() {
   const supabase = await createClient()
-  const [{ count: categories }, { count: menuItems }, { count: galleryImages }] =
-    await Promise.all([
-      supabase.from('menu_categories').select('*', { count: 'exact', head: true }),
-      supabase.from('menu_items').select('*', { count: 'exact', head: true }),
-      supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
-    ])
+  const [menuItems, galleryImages, pages] = await Promise.all([
+    supabase.from('menu_items').select('*', { count: 'exact', head: true }),
+    supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
+    supabase
+      .from('pages')
+      .select('*', { count: 'exact', head: true })
+      .neq('slug', 'home'),
+  ])
   return {
-    categories: categories ?? 0,
-    menuItems: menuItems ?? 0,
-    galleryImages: galleryImages ?? 0,
+    menuItems: menuItems.count ?? 0,
+    galleryImages: galleryImages.count ?? 0,
+    pages: pages.count ?? 0,
   }
 }
 
 export default async function AdminHomePage() {
   const counts = await getCounts()
 
-  const stats = [
+  const actions = [
     {
-      href: '/admin/menu',
-      label: 'קטגוריות בתפריט',
-      value: counts.categories,
-      icon: LayoutGrid,
+      href: '/admin/pages/home',
+      title: 'עריכת עמוד הבית',
+      text: 'תמונה ראשית, טקסטים, מבצעים וסדר הסקשנים — עם תצוגה מקדימה חיה',
+      icon: House,
     },
     {
       href: '/admin/menu',
-      label: 'מנות בתפריט',
-      value: counts.menuItems,
+      title: 'תפריט',
+      text: `${counts.menuItems} מנות · מחירים, תמונות ותגיות`,
       icon: UtensilsCrossed,
     },
     {
+      href: '/admin/pages',
+      title: 'עמודים וניווט',
+      text: `${counts.pages} עמודים נוספים · תפריט הניווט העליון`,
+      icon: FileText,
+    },
+    {
       href: '/admin/gallery',
-      label: 'תמונות בגלריה',
-      value: counts.galleryImages,
+      title: 'גלריה',
+      text: `${counts.galleryImages} תמונות`,
       icon: Images,
+    },
+    {
+      href: '/admin/settings',
+      title: 'הגדרות',
+      text: 'טלפון, וואטסאפ, כתובת, שעות פתיחה ורשתות',
+      icon: Settings,
     },
   ]
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">סקירה כללית</h1>
-      <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map(({ href, label, value, icon: Icon }) => (
-          <Link key={label} href={href}>
-            <Card className="hover:border-pink/40 flex items-center gap-4 p-6">
-              <div className="bg-pink/10 text-pink flex size-11 items-center justify-center rounded-xl">
-                <Icon className="size-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{value}</p>
-                <p className="text-ink-soft text-sm">{label}</p>
-              </div>
-            </Card>
+    <div className="max-w-4xl">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <h1 className="text-2xl font-bold">מה עורכים היום?</h1>
+        <a
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-ink-soft hover:text-ink flex items-center gap-1.5 text-sm font-semibold"
+        >
+          <ExternalLink className="size-4" />
+          צפייה באתר
+        </a>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {actions.map(({ href, title, text, icon: Icon }, i) => (
+          <Link
+            key={href}
+            href={href}
+            className={
+              i === 0
+                ? 'bg-ink text-paper hover:bg-ink-soft flex items-start gap-4 rounded-2xl p-5 sm:col-span-2'
+                : 'border-ink/10 hover:border-ink flex items-start gap-4 rounded-2xl border bg-white p-5'
+            }
+          >
+            <Icon className="mt-0.5 size-6 shrink-0" strokeWidth={1.75} />
+            <span>
+              <span className="block text-lg font-bold">{title}</span>
+              <span
+                className={i === 0 ? 'text-paper/70 text-sm' : 'text-ink-soft text-sm'}
+              >
+                {text}
+              </span>
+            </span>
           </Link>
         ))}
       </div>

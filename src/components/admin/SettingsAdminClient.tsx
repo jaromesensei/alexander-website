@@ -1,19 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { publishContent } from '@/app/admin/actions'
 import { Card } from '@/components/ui/Card'
-import { Input, Label, Textarea } from '@/components/ui/Input'
+import { Input, Label } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { ImageUploadButton } from './ImageUploadButton'
 import { HOURS_LABELS } from '@/lib/data/fallback'
 import type { RestaurantSettings } from '@/types/db'
 
 type Hours = RestaurantSettings['hours']
 
 export function SettingsAdminClient({ settings }: { settings: RestaurantSettings }) {
-  const router = useRouter()
   const [form, setForm] = useState(settings)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -69,7 +68,7 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
       return
     }
     setSaved(true)
-    router.refresh()
+    await publishContent()
   }
 
   return (
@@ -82,29 +81,19 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
             <Input value={form.name} onChange={(e) => set('name', e.target.value)} />
           </div>
           <div>
-            <Label>סלוגן</Label>
+            <Label>סלוגן (גוגל, שיתופים ופוטר)</Label>
             <Input
               value={form.tagline ?? ''}
               onChange={(e) => set('tagline', e.target.value)}
             />
           </div>
         </div>
-        <div>
-          <Label>הסיפור שלנו (מוצג בעמוד הבית)</Label>
-          <Textarea
-            rows={4}
-            value={form.about ?? ''}
-            onChange={(e) => set('about', e.target.value)}
-          />
-        </div>
-        <div>
-          <Label>תמונת הירו (עמוד הבית)</Label>
-          <ImageUploadButton
-            value={form.hero_image_url}
-            onChange={(url) => set('hero_image_url', url)}
-            folder="hero"
-          />
-        </div>
+        <p className="text-ink-soft text-sm">
+          התמונה הראשית, הטקסטים והמבצעים של עמוד הבית נערכים עכשיו בעורך הוויזואלי:{' '}
+          <Link href="/admin/pages/home" className="text-pink font-semibold underline">
+            עריכת עמוד הבית
+          </Link>
+        </p>
       </Card>
 
       <Card className="space-y-4 p-6">
@@ -210,37 +199,6 @@ export function SettingsAdminClient({ settings }: { settings: RestaurantSettings
             </div>
           )
         })}
-      </Card>
-
-      <Card className="space-y-4 p-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg">מבצע נוכחי (מוצג בעמוד הבית)</h2>
-          <label className="flex items-center gap-2 text-sm font-semibold">
-            <input
-              type="checkbox"
-              checked={form.promo_active}
-              onChange={(e) => set('promo_active', e.target.checked)}
-            />
-            פעיל
-          </label>
-        </div>
-        <div>
-          <Label>כותרת</Label>
-          <Input
-            value={form.promo_title ?? ''}
-            onChange={(e) => set('promo_title', e.target.value)}
-            placeholder="למשל: האפי-אַוור של אלכסנדר"
-          />
-        </div>
-        <div>
-          <Label>תיאור</Label>
-          <Textarea
-            rows={2}
-            value={form.promo_description ?? ''}
-            onChange={(e) => set('promo_description', e.target.value)}
-            placeholder="למשל: ראשון–חמישי, 17:00–19:00. שתייה ומנות פתיחה במחיר מיוחד."
-          />
-        </div>
       </Card>
 
       <Card className="space-y-4 p-6">

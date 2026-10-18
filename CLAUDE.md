@@ -24,24 +24,50 @@ SEO ומהירות טעינה, Supabase נפרד משלו.
 ```
 src/
   app/
-    page.tsx, menu/, gallery/, contact/   עמודים ציבוריים
+    page.tsx, [slug]/                     עמוד הבית ועמודים דינמיים — מורכבים מבלוקים
+    menu/, gallery/, contact/             עמודים קבועים
     admin/login/                          כניסה
     admin/(dashboard)/                    CMS מוגן (layout עושה auth guard)
+    admin/(dashboard)/pages/              עורך עמודים ויזואלי + עריכת ניווט
+    admin/preview/                        העמוד שנטען ב-iframe של העורך (postMessage)
+    admin/actions.ts                      publishContent — ניקוי מטמון אחרי שמירה
     api/translate/                        Route Handler לתרגום עם מטמון
   components/
     ui/       רכיבי design system בסיסיים (Button, Card, Input, Section)
     layout/   Header, Footer, LanguageSwitcher, ChromeGate (מסתיר chrome ב-/admin)
-    home/     סקשנים של עמוד הבית
-    menu/     כרטיס מנה, עמוד תפריט
-    admin/    רכיבי ניהול (CRUD תפריט/גלריה/הגדרות)
+    blocks/   רכיבי הבלוקים (פתיח, טקסט, קריאה לפעולה…) + BlockRenderer
+    menu/     כרטיס מנה, עמוד תפריט, תגיות מנה
+    admin/    רכיבי ניהול (CRUD תפריט/גלריה/הגדרות), admin/editor/ = העורך הוויזואלי
   lib/
-    data/     שכבת גישה ל-DB עם fallback לתוכן placeholder כשאין נתונים
+    blocks/   טיפוסי בלוקים, הגדרות שדות (defs.ts), ברירת המחדל של עמוד הבית
+    data/     שכבת גישה ל-DB עם מטמון ו-fallback לתוכן placeholder
+    menu/     הגדרות תגיות המנה (tags.ts)
+    links.ts  פתרון קישורים וטוקני פעולה (wa:reservation, tel, waze), ניווט ברירת מחדל
     i18n/     LanguageProvider + useTranslations (תרגום חי בצד קליינט)
     supabase/ client.ts (דפדפן), server.ts (Server Components + service role)
   types/db.ts  טיפוסי DB
 supabase/
   migrations/0001_init.sql   סכמה מלאה + RLS + Storage bucket
+  migrations/0003_pages_and_nav.sql   טבלת pages (בלוקים ב-jsonb) + nav_items
 ```
+
+## עמודים ובלוקים
+
+כל עמוד (כולל עמוד הבית, `slug = 'home'`) הוא מערך בלוקים ב-`pages.blocks`.
+הטיפוסים ב-`lib/blocks/types.ts`; השדות שהעורך מציג לכל סוג ב-`lib/blocks/defs.ts`
+(הטופס נבנה מהם אוטומטית). כדי להוסיף סוג בלוק: טיפוס → הגדרה ב-`BLOCK_DEFS` →
+רכיב ב-`components/blocks/` → case ב-`BlockView`. צבעי רקע מוגבלים לצבעי המותג.
+
+התצוגה המקדימה בעורך היא iframe של `/admin/preview` שמרנדר את אותם רכיבים —
+כך ה-breakpoints אמיתיים והתצוגה זהה לאתר.
+
+## מטמון ומהירות
+
+הדפים הציבוריים קוראים ל-Supabase דרך קליינט בלי עוגיות (`lib/supabase/public.ts`)
+עטוף ב-`unstable_cache` עם התג `content`, ולכן נבנים סטטית ומוגשים מה-CDN.
+**כל שמירה בניהול חייבת לקרוא ל-`publishContent()`** (`app/admin/actions.ts`) —
+אחרת השינוי לא יופיע באתר עד הריענון התקופתי (שעה). דפי הניהול קוראים ישירות,
+בלי מטמון. תמונות מכווצות בדפדפן לפני העלאה (`lib/image/compress.ts`).
 
 ## הרשאות
 

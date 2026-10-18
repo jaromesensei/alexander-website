@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Trash2, ChevronUp, ChevronDown, Star } from 'lucide-react'
+import { Trash2, ChevronUp, ChevronDown, Star, Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { publishContent } from '@/app/admin/actions'
 import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ImageUploadButton } from './ImageUploadButton'
+import { TagPicker } from './TagPicker'
+import { normalizeTag } from '@/lib/menu/tags'
 import type { MenuItem } from '@/types/db'
 
 export function ItemEditor({
@@ -20,20 +22,27 @@ export function ItemEditor({
   canMoveDown: boolean
   onMove: (direction: 'up' | 'down') => void
 }) {
-  const router = useRouter()
   const [nameHe, setNameHe] = useState(item.name_he)
   const [descriptionHe, setDescriptionHe] = useState(item.description_he ?? '')
   const [price, setPrice] = useState((item.price_agorot / 100).toFixed(2))
   const [imageUrl, setImageUrl] = useState(item.image_url)
   const [isAvailable, setIsAvailable] = useState(item.is_available)
   const [isFeatured, setIsFeatured] = useState(item.is_featured)
-  const [tags, setTags] = useState(item.tags.join(', '))
-  const [saving, setSaving] = useState(false)
+  const [tags, setTags] = useState(item.tags.map(normalizeTag))
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+
+  // כל שינוי בשדה מחזיר את הכפתור למצב "שמירה"
+  function edit<T>(setter: (v: T) => void) {
+    return (v: T) => {
+      setter(v)
+      setStatus('idle')
+    }
+  }
 
   async function save() {
-    setSaving(true)
+    setStatus('saving')
     const supabase = createClient()
-    await supabase
+    const { error } = await supabase
       .from('menu_items')
       .update({
         name_he: nameHe,
@@ -42,38 +51,39 @@ export function ItemEditor({
         image_url: imageUrl,
         is_available: isAvailable,
         is_featured: isFeatured,
-        tags: tags
-          .split(',')
-          .map((t) => t.trim())
-          .filter(Boolean),
+        tags,
       })
       .eq('id', item.id)
-    setSaving(false)
-    router.refresh()
+    if (error) {
+      setStatus('error')
+      return
+    }
+    await publishContent()
+    setStatus('saved')
   }
 
   async function remove() {
     if (!confirm(`למחוק את "${item.name_he}"?`)) return
     const supabase = createClient()
     await supabase.from('menu_items').delete().eq('id', item.id)
-    router.refresh()
+    await publishContent()
   }
 
   return (
     <div className="border-ink/10 flex flex-col gap-4 rounded-xl border p-4 sm:flex-row">
-      <ImageUploadButton value={imageUrl} onChange={setImageUrl} folder="menu" />
+      <ImageUploadButton value={imageUrl} onChange={edit(setImageUrl)} folder="menu" />
 
       <div className="flex-1 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <Input
             value={nameHe}
-            onChange={(e) => setNameHe(e.target.value)}
+            onChange={(e) => edit(setNameHe)(e.target.value)}
             placeholder="שם המנה"
           />
           <div className="relative">
             <Input
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => edit(setPrice)(e.target.value)}
               inputMode="decimal"
               placeholder="מחיר"
               className="ps-8"
@@ -85,21 +95,17 @@ export function ItemEditor({
         </div>
         <Textarea
           value={descriptionHe}
-          onChange={(e) => setDescriptionHe(e.target.value)}
+          onChange={(e) => edit(setDescriptionHe)(e.target.value)}
           placeholder="תיאור קצר"
           rows={2}
         />
-        <Input
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          placeholder="תגיות, מופרדות בפסיק (למשל: צמחוני, חריף)"
-        />
+        <TagPicker value={tags} onChange={edit(setTags)} />
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={isAvailable}
-              onChange={(e) => setIsAvailable(e.target.checked)}
+              onChange={(e) => edit(setIsAvailable)(e.target.checked)}
             />
             זמין בתפריט
           </label>
@@ -107,7 +113,7 @@ export function ItemEditor({
             <input
               type="checkbox"
               checked={isFeatured}
-              onChange={(e) => setIsFeatured(e.target.checked)}
+              onChange={(e) => edit(setIsFeatured)(e.target.checked)}
             />
             <Star className="size-3.5" />
             מומלץ (מופיע בעמוד הבית)
@@ -143,9 +149,28 @@ export function ItemEditor({
               <Trash2 className="size-4" />
             </button>
           </div>
-          <Button type="button" size="sm" onClick={save} disabled={saving}>
-            {saving ? 'שומר…' : 'שמירה'}
-          </Button>
+          <div className="flex items-center gap-3">
+            {status === 'error' && (
+              <span className="text-pink text-sm">השמירה נכשלה</span>
+            )}
+            <Button
+              type="button"
+              size="sm"
+              variant={status === 'saved' ? 'outline' : 'primary'}
+              onClick={save}
+              disabled={status === 'saving' || status === 'saved'}
+            >
+              {status === 'saving' ? (
+                'שומר…'
+              ) : status === 'saved' ? (
+                <>
+                  <Check className="size-4" /> נשמר
+                </>
+              ) : (
+                'שמירה'
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,17 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Trash2, ChevronUp, ChevronDown, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { publishContent } from '@/app/admin/actions'
 import { uploadPublicImage } from '@/lib/supabase/storage'
 import { Input } from '@/components/ui/Input'
 import { Spinner } from '@/components/ui/Spinner'
 import type { GalleryImage } from '@/types/db'
 
 export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
-  const router = useRouter()
   const [uploading, setUploading] = useState(false)
 
   async function addImages(files: FileList) {
@@ -30,7 +29,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
       }
     }
     setUploading(false)
-    router.refresh()
+    await publishContent()
   }
 
   async function updateCaption(id: string, caption: string) {
@@ -39,13 +38,14 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
       .from('gallery_images')
       .update({ caption_he: caption || null })
       .eq('id', id)
+    await publishContent()
   }
 
   async function remove(id: string) {
     if (!confirm('להסיר את התמונה?')) return
     const supabase = createClient()
     await supabase.from('gallery_images').delete().eq('id', id)
-    router.refresh()
+    await publishContent()
   }
 
   async function move(index: number, direction: 'up' | 'down') {
@@ -58,7 +58,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
       supabase.from('gallery_images').update({ sort_order: b.sort_order }).eq('id', a.id),
       supabase.from('gallery_images').update({ sort_order: a.sort_order }).eq('id', b.id),
     ])
-    router.refresh()
+    await publishContent()
   }
 
   return (
@@ -94,6 +94,7 @@ export function GalleryAdminClient({ images }: { images: GalleryImage[] }) {
                 src={img.image_url}
                 alt={img.caption_he ?? ''}
                 fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
