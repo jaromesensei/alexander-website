@@ -18,6 +18,7 @@ export type Field =
   | { key: string; label: string; kind: 'text'; placeholder?: string; help?: string }
   | { key: string; label: string; kind: 'textarea'; rows?: number; help?: string }
   | { key: string; label: string; kind: 'image'; help?: string }
+  | { key: string; label: string; kind: 'video'; help?: string }
   | { key: string; label: string; kind: 'images'; help?: string }
   | { key: string; label: string; kind: 'bg' }
   | { key: string; label: string; kind: 'link' }
@@ -64,6 +65,12 @@ const BG_IMAGE: Field = {
   kind: 'image',
   help: 'מעל התמונה תונח שכבה כהה והטקסט יהיה לבן',
 }
+const BG_VIDEO: Field = {
+  key: 'bgVideo',
+  label: 'וידאו רקע (לא חובה)',
+  kind: 'video',
+  help: 'סרטון קצר (5–10 שניות) שרץ בלולאה בלי קול. MP4, עדיף עד 5MB. כדאי גם תמונת רקע — היא מוצגת עד שהווידאו נטען ולמי שביקש להפחית אנימציות.',
+}
 const SIZE = (md: string, lg: string): Field => ({
   key: 'size',
   label: 'גודל',
@@ -83,6 +90,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       { key: 'tagline', label: 'סלוגן', kind: 'textarea', rows: 2 },
       { key: 'subtitle', label: 'שורת משנה', kind: 'text' },
       { key: 'image', label: 'תמונת רקע', kind: 'image', help: 'תמונה רחבה ואיכותית' },
+      { ...BG_VIDEO, help: 'מוצג בתוך מסך הטלוויזיה. ' + BG_VIDEO.help },
       { key: 'primary', label: 'כפתור ראשי', kind: 'link' },
       { key: 'secondary', label: 'כפתור משני', kind: 'link' },
     ],
@@ -105,6 +113,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       ALIGN,
       BG,
       BG_IMAGE,
+      BG_VIDEO,
     ],
     create: () => ({ type: 'heading', title: 'כותרת העמוד', text: '', bg: 'paper' }),
   },
@@ -119,6 +128,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       ALIGN,
       BG,
       BG_IMAGE,
+      BG_VIDEO,
       BUTTON,
     ],
     create: () => ({
@@ -141,6 +151,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       ALIGN,
       BG,
       BG_IMAGE,
+      BG_VIDEO,
       BUTTON,
     ],
     create: () => ({

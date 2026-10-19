@@ -24,6 +24,27 @@ export async function uploadPublicImage(original: File, folder: UploadFolder) {
   return data.publicUrl
 }
 
+/** וידאו גדול מזה כבר מאט את האתר ומבזבז גלישה ללקוחות — העורך מזהיר */
+export const VIDEO_WARN_BYTES = 6 * 1024 * 1024
+/** מעל זה לא מעלים בכלל */
+export const VIDEO_MAX_BYTES = 20 * 1024 * 1024
+
+/** מעלה וידאו כמו שהוא (בלי כיווץ — את זה עושים לפני, בתוכנה לעריכת וידאו). */
+export async function uploadPublicVideo(file: File, folder: UploadFolder) {
+  const supabase = createClient()
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'mp4'
+  const path = `${folder}/${crypto.randomUUID()}.${ext}`
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    cacheControl: '31536000',
+    contentType: file.type || 'video/mp4',
+    upsert: false,
+  })
+  if (error) throw error
+
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+}
+
 export interface MediaItem {
   url: string
   createdAt: string

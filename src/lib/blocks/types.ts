@@ -30,6 +30,8 @@ export interface HeroBlock extends BlockBase {
   tagline: string
   subtitle: string
   image: string | null
+  /** וידאו רקע בתוך מסך הטלוויזיה; התמונה מוצגת עד שהוא נטען / בהפחתת תנועה */
+  bgVideo?: string | null
   primary: LinkValue | null
   secondary: LinkValue | null
 }
@@ -43,6 +45,8 @@ export interface HeadingBlock extends BlockBase {
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null
+  /** וידאו רקע (עם שכבה כהה); תמונת הרקע מוצגת עד שהוא נטען / בהפחתת תנועה */
+  bgVideo?: string | null
 }
 
 export interface TextBlock extends BlockBase {
@@ -55,6 +59,8 @@ export interface TextBlock extends BlockBase {
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null
+  /** וידאו רקע (עם שכבה כהה); תמונת הרקע מוצגת עד שהוא נטען / בהפחתת תנועה */
+  bgVideo?: string | null
   button: LinkValue | null
 }
 
@@ -69,6 +75,8 @@ export interface CtaBlock extends BlockBase {
   bg: BlockBg
   /** תמונת רקע (עם שכבה כהה) — גוברת על צבע הרקע */
   bgImage?: string | null
+  /** וידאו רקע (עם שכבה כהה); תמונת הרקע מוצגת עד שהוא נטען / בהפחתת תנועה */
+  bgVideo?: string | null
   button: LinkValue | null
 }
 

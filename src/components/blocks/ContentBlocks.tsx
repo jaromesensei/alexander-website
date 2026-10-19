@@ -9,6 +9,7 @@ import { wazeHref } from '@/lib/links'
 import { siteText } from '@/lib/siteTexts'
 import { cn } from '@/lib/utils'
 import { BlockButton } from './BlockButton'
+import { BackgroundVideo } from './BackgroundVideo'
 import { BG_CLASSES, MUTED_TEXT, outlineVariant, primaryVariant } from './styles'
 import type { BlockContext } from './context'
 import type {
@@ -23,7 +24,7 @@ import type {
   LocationBlock,
   TextBlock,
 } from '@/lib/blocks/types'
-import type { MenuItem } from '@/types/db'
+import type { MenuItem, RestaurantSettings } from '@/types/db'
 
 /** מציין מקום לבלוק ריק — מוצג רק בעורך, באתר הבלוק פשוט לא מופיע. */
 function Placeholder({ label }: { label: string }) {
@@ -39,30 +40,42 @@ function Placeholder({ label }: { label: string }) {
   )
 }
 
-/** על תמונת רקע הטקסט תמיד בהיר (שכבה כהה מעל התמונה), אז מתנהגים כמו רקע שחור. */
-function effectiveBg(block: { bg: BlockBg; bgImage?: string | null }): BlockBg {
-  return block.bgImage ? 'ink' : block.bg
+type MediaBg = { bg: BlockBg; bgImage?: string | null; bgVideo?: string | null }
+
+/** על תמונת/וידאו רקע הטקסט תמיד בהיר (שכבה כהה מעל), אז מתנהגים כמו רקע שחור. */
+function effectiveBg(block: MediaBg): BlockBg {
+  return block.bgImage || block.bgVideo ? 'ink' : block.bg
 }
 
 function BlockSection({
   bg,
-  image,
+  media,
+  settings,
   className,
   children,
 }: {
   bg: BlockBg
-  image?: string | null
+  media: MediaBg
+  settings: RestaurantSettings
   className?: string
   children: React.ReactNode
 }) {
+  const { bgImage, bgVideo } = media
   return (
     <section className={cn(BG_CLASSES[bg], 'relative overflow-hidden', className)}>
-      {image && (
-        <>
-          <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
-          <div className="bg-ink/60 absolute inset-0" />
-        </>
+      {bgImage && (
+        <Image src={bgImage} alt="" fill sizes="100vw" className="object-cover" />
       )}
+      {bgVideo && (
+        <BackgroundVideo
+          src={bgVideo}
+          labels={{
+            pause: siteText(settings, 'video.pause'),
+            play: siteText(settings, 'video.play'),
+          }}
+        />
+      )}
+      {(bgImage || bgVideo) && <div className="bg-ink/60 absolute inset-0" />}
       <div className="relative w-full">{children}</div>
     </section>
   )
@@ -71,9 +84,11 @@ function BlockSection({
 export function HeadingBlockView({
   block,
   level,
+  ctx,
 }: {
   block: HeadingBlock
   level: 1 | 2
+  ctx: BlockContext
 }) {
   const H = level === 1 ? 'h1' : 'h2'
   const bg = effectiveBg(block)
@@ -81,8 +96,12 @@ export function HeadingBlockView({
   return (
     <BlockSection
       bg={bg}
-      image={block.bgImage}
-      className={cn('py-16 sm:py-24', block.bgImage && 'flex min-h-[60svh] items-end')}
+      media={block}
+      settings={ctx.settings}
+      className={cn(
+        'py-16 sm:py-24',
+        (block.bgImage || block.bgVideo) && 'flex min-h-[60svh] items-end',
+      )}
     >
       <Container className={cn(center && 'text-center')}>
         <H
@@ -117,7 +136,12 @@ export function TextBlockView({ block, ctx }: { block: TextBlock; ctx: BlockCont
   const center = block.align === 'center'
 
   return (
-    <BlockSection bg={bg} image={block.bgImage} className="py-20 sm:py-28">
+    <BlockSection
+      bg={bg}
+      media={block}
+      settings={ctx.settings}
+      className="py-20 sm:py-28"
+    >
       <Container className={cn(center && 'text-center')}>
         {block.title ? (
           <h2
@@ -166,7 +190,8 @@ export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContex
     return (
       <BlockSection
         bg={bg}
-        image={block.bgImage}
+        media={block}
+        settings={ctx.settings}
         className={block.size === 'lg' ? 'py-24 sm:py-32' : 'py-14 sm:py-20'}
       >
         <Container className={cn(center && 'text-center')}>
@@ -201,7 +226,12 @@ export function CtaBlockView({ block, ctx }: { block: CtaBlock; ctx: BlockContex
   }
 
   return (
-    <BlockSection bg={bg} image={block.bgImage} className="py-14 sm:py-20">
+    <BlockSection
+      bg={bg}
+      media={block}
+      settings={ctx.settings}
+      className="py-14 sm:py-20"
+    >
       <Container className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="max-w-2xl text-4xl leading-tight whitespace-pre-line sm:text-5xl">
