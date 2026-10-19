@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/lib/i18n/useTranslations'
@@ -21,6 +21,9 @@ export function MenuPageClient({
   const [active, setActive] = useState<string>(categories[0]?.id ?? '')
   const [filters, setFilters] = useState<MenuTagKey[]>([])
   const { lang } = useLanguage()
+  const tabsRef = useRef<HTMLDivElement>(null)
+  // אחרי לחיצה על לשונית הדף גולל לקטגוריה — בזמן הזה לא מעדכנים לפי הגלילה
+  const lockUntil = useRef(0)
 
   const allItemEntries = categories.flatMap((c) =>
     c.items.map((i) => ({ id: i.id, scope: 'menu_item' as const })),
@@ -58,6 +61,39 @@ export function MenuPageClient({
       }))
       .filter((c) => c.items.length > 0)
   }, [categories, filters])
+
+  // הלשונית הפעילה עוקבת אחרי הגלילה: הקטגוריה שהכותרת שלה עברה את הסרגל הדביק
+  useEffect(() => {
+    const sections = visible
+      .map((c) => document.getElementById(c.id))
+      .filter((el): el is HTMLElement => el !== null)
+    if (sections.length === 0) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (Date.now() < lockUntil.current) return
+        const hit = entries.find((e) => e.isIntersecting)
+        if (hit) setActive(hit.target.id)
+      },
+      { rootMargin: '-150px 0px -60% 0px' },
+    )
+    sections.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [visible])
+
+  // הלשונית הפעילה תמיד גלויה בסרגל (16 קטגוריות לא נכנסות ברוחב טלפון).
+  // scrollBy על הסרגל ולא scrollIntoView — זה האחרון היה עוצר את גלילת הדף.
+  useEffect(() => {
+    const bar = tabsRef.current
+    const tab = bar?.querySelector<HTMLElement>(`[data-cat="${active}"]`)
+    if (!bar || !tab) return
+    const b = bar.getBoundingClientRect()
+    const t = tab.getBoundingClientRect()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    bar.scrollBy({
+      left: t.left + t.width / 2 - (b.left + b.width / 2),
+      behavior: reduce ? 'auto' : 'smooth',
+    })
+  }, [active])
 
   if (categories.length === 0) {
     return <p className="text-ink-soft text-center">{emptyText}</p>
@@ -116,14 +152,19 @@ export function MenuPageClient({
         </div>
       )}
 
-      <div className="bg-paper/95 border-ink/10 sticky top-18 z-20 -mx-4 mb-12 overflow-x-auto border-b px-4 py-4 backdrop-blur sm:mx-0">
+      <div
+        ref={tabsRef}
+        className="bg-paper/95 border-ink/10 sticky top-18 z-20 -mx-4 mb-12 overflow-x-auto border-b px-4 py-4 backdrop-blur sm:mx-0"
+      >
         <div className="flex w-max gap-6">
           {visible.map((c) => (
             <button
               key={c.id}
               type="button"
+              data-cat={c.id}
               aria-current={active === c.id ? 'true' : undefined}
               onClick={() => {
+                lockUntil.current = Date.now() + 1000
                 setActive(c.id)
                 const reduce = window.matchMedia(
                   '(prefers-reduced-motion: reduce)',

@@ -69,7 +69,7 @@ export function LanguageSwitcher() {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="border-ink/15 hover:bg-paper-dark flex h-10 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold"
+        className="border-ink/15 hover:bg-paper-dark flex h-10 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
         aria-expanded={open}
         aria-controls={panelId}
       >
@@ -83,7 +83,7 @@ export function LanguageSwitcher() {
           id={panelId}
           role="group"
           aria-label="בחירת שפה"
-          className="border-ink/10 absolute end-0 top-12 z-30 max-h-[70svh] w-56 overflow-y-auto rounded-xl border bg-white p-2 shadow-lg"
+          className="border-ink/10 pop-in absolute end-0 top-12 z-30 max-h-[70svh] w-56 origin-top-left overflow-y-auto rounded-xl border bg-white p-2 shadow-lg"
         >
           {QUICK_LANGUAGES.map((l) => (
             <button

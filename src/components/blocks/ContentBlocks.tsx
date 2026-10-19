@@ -417,7 +417,7 @@ function DishRow({
             alt={item.name_he}
             fill
             sizes="(min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-300 ease-out hover:scale-105 motion-reduce:hover:scale-100"
+            className="object-cover transition-transform duration-200 ease-out hover:scale-105 motion-reduce:hover:scale-100"
           />
         ) : (
           <div className="text-ink-soft/30 flex h-full items-center justify-center">

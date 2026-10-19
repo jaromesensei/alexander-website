@@ -49,7 +49,7 @@ export function DishImage({ src, name }: { src: string; name: string }) {
           alt={name}
           fill
           sizes="(min-width: 640px) 160px, 112px"
-          className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100"
+          className="object-cover transition-transform duration-200 ease-out group-hover:scale-105 motion-reduce:group-hover:scale-100"
         />
         <span className="bg-ink/70 text-paper absolute end-1.5 bottom-1.5 flex size-7 items-center justify-center rounded-full">
           <Expand className="size-3.5" aria-hidden="true" />
@@ -61,7 +61,7 @@ export function DishImage({ src, name }: { src: string; name: string }) {
           role="dialog"
           aria-modal="true"
           aria-label={name}
-          className="bg-ink/90 fixed inset-0 z-[80] flex flex-col items-center justify-center p-4"
+          className="bg-ink/90 fade-in fixed inset-0 z-[80] flex flex-col items-center justify-center p-4"
           onClick={() => setOpen(false)}
         >
           <button
@@ -79,7 +79,7 @@ export function DishImage({ src, name }: { src: string; name: string }) {
             width={1600}
             height={1600}
             sizes="(min-width: 768px) 80vw, 100vw"
-            className="h-auto max-h-[80svh] w-auto max-w-full object-contain"
+            className="pop-in h-auto max-h-[80svh] w-auto max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
           <p className="text-paper mt-4 text-center text-xl font-bold">{name}</p>

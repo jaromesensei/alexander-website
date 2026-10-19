@@ -8,11 +8,13 @@ import {
   MessageCircle,
   Phone,
   Navigation,
+  Accessibility,
   type LucideIcon,
 } from 'lucide-react'
 import { waHref } from '@/lib/links'
 import { siteText } from '@/lib/siteTexts'
 import { NewTabHint } from '@/components/a11y/NewTabHint'
+import { OPEN_A11Y_EVENT } from '@/components/a11y/AccessibilityMenu'
 import type { RestaurantSettings } from '@/types/db'
 
 interface Action {
@@ -22,9 +24,14 @@ interface Action {
   external?: boolean
 }
 
+const ITEM =
+  'text-ink active:text-pink-dark flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-transform duration-150 ease-out active:scale-[0.97]'
+
 export function MobileActionBar({ settings }: { settings: RestaurantSettings }) {
   const pathname = usePathname()
   if (pathname?.startsWith('/admin') && pathname !== PREVIEW_PATH) return null
+  // תפריט הנגישות לא נטען בתצוגה המקדימה של העורך
+  const showA11y = pathname !== PREVIEW_PATH
 
   const wazeHref =
     settings.lat && settings.lng
@@ -55,7 +62,7 @@ export function MobileActionBar({ settings }: { settings: RestaurantSettings }) 
   return (
     <nav
       aria-label="פעולות מהירות"
-      className="border-ink/10 bg-paper/95 fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t backdrop-blur md:hidden"
+      className="border-ink/10 bg-paper/95 fixed inset-x-0 bottom-0 z-40 flex border-t backdrop-blur md:hidden"
     >
       {actions.map(({ href, label, icon: Icon, external }) => (
         <Link
@@ -63,13 +70,28 @@ export function MobileActionBar({ settings }: { settings: RestaurantSettings }) 
           href={href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noreferrer' : undefined}
-          className="text-ink active:text-pink-dark flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold"
+          className={ITEM}
         >
           <Icon className="size-5" aria-hidden="true" />
           {label}
           {external && <NewTabHint />}
         </Link>
       ))}
+      {showA11y && (
+        <button
+          type="button"
+          onClick={(e) =>
+            window.dispatchEvent(
+              new CustomEvent(OPEN_A11Y_EVENT, { detail: e.currentTarget }),
+            )
+          }
+          aria-haspopup="dialog"
+          className={ITEM}
+        >
+          <Accessibility className="size-5" aria-hidden="true" />
+          {siteText(settings, 'mobile.a11y')}
+        </button>
+      )}
     </nav>
   )
 }

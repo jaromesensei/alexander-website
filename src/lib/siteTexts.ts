@@ -15,6 +15,7 @@ export const SITE_TEXT_GROUPS = [
       { key: 'mobile.reserve', label: 'סרגל תחתון בטלפון — הזמנה', default: 'הזמנה' },
       { key: 'mobile.call', label: 'סרגל תחתון בטלפון — חיוג', default: 'התקשרות' },
       { key: 'mobile.waze', label: 'סרגל תחתון בטלפון — ניווט', default: 'וייז' },
+      { key: 'mobile.a11y', label: 'סרגל תחתון בטלפון — נגישות', default: 'נגישות' },
     ],
   },
   {
