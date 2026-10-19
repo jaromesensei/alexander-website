@@ -3,6 +3,7 @@ import { getMenu } from '@/lib/data/menu'
 import { getSettings } from '@/lib/data/settings'
 import { Section } from '@/components/ui/Section'
 import { MenuPageClient } from '@/components/menu/MenuPageClient'
+import { MenuHeading } from '@/components/menu/MenuHeading'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { PageCTA } from '@/components/ui/PageCTA'
 import { waHref } from '@/lib/links'
@@ -24,12 +25,7 @@ export default async function MenuPage() {
     <>
       <Section>
         <div className="mb-10">
-          <h1 className="text-4xl leading-tight sm:text-5xl">{t('menu.title')}</h1>
-          {t('menu.intro') && (
-            <p className="text-ink-soft mt-4 max-w-2xl text-lg whitespace-pre-line">
-              {t('menu.intro')}
-            </p>
-          )}
+          <MenuHeading title={t('menu.title')} intro={t('menu.intro')} />
           <div className="mt-4 flex items-center gap-3">
             <span className="text-ink-soft">{t('menu.langLabel')}</span>
             <LanguageSwitcher />

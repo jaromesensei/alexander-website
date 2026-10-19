@@ -211,6 +211,7 @@ export function MenuPageClient({
                     name={items.name(item.id, item.name_he)}
                     description={items.description(item.id, item.description_he)}
                     tagLabel={tags.name}
+                    variantLabel={(i, fallback) => items.variant(item.id, i, fallback)}
                   />
                 ))}
               </div>

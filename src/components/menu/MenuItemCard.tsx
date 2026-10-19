@@ -8,16 +8,21 @@ export function MenuItemCard({
   name,
   description,
   tagLabel,
+  variantLabel,
 }: {
   item: MenuItem
   name?: string
   description?: string | null
   tagLabel?: (key: string, fallback: string) => string
+  /** תרגום שם הגודל לפי מיקומו ב-price_variants */
+  variantLabel?: (index: number, fallback: string) => string
 }) {
   const text = description ?? item.description_he
   const title = name ?? item.name_he
   // רשימת הגדלים מוצגת רק כשיש להם שמות; בלי שמות מספיק הטווח שליד שם המנה
-  const variants = (item.price_variants ?? []).filter((v) => v.label.trim())
+  const variants = (item.price_variants ?? [])
+    .map((v, i) => ({ ...v, label: variantLabel?.(i, v.label) ?? v.label }))
+    .filter((v) => v.label.trim())
 
   return (
     <div className="border-ink/10 flex gap-4 border-b py-5 sm:gap-6">
