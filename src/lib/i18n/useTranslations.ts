@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from './LanguageProvider'
 
-export type TranslationScope = 'menu_item' | 'menu_category' | 'menu_tag'
+export type TranslationScope = 'menu_item' | 'menu_category' | 'menu_tag' | 'site_text'
+
+interface Translation {
+  name: string
+  description?: string
+  /** שמות הגדלים/התוספות, באותו סדר כמו price_variants */
+  variants?: string[]
+}
 
 export interface TranslatableEntry {
   id: string
@@ -18,13 +25,9 @@ export interface TranslatableEntry {
  */
 export function useTranslations(entries: TranslatableEntry[]) {
   const { lang } = useLanguage()
-  const [translated, setTranslated] = useState<
-    Record<string, { name: string; description?: string }>
-  >({})
+  const [translated, setTranslated] = useState<Record<string, Translation>>({})
   const [isLoading, setIsLoading] = useState(false)
-  const cache = useRef<
-    Map<string, Record<string, { name: string; description?: string }>>
-  >(new Map())
+  const cache = useRef<Map<string, Record<string, Translation>>>(new Map())
 
   const key = entries.map((e) => `${e.scope}:${e.id}`).join(',')
 
@@ -52,15 +55,11 @@ export function useTranslations(entries: TranslatableEntry[]) {
       .then((res) =>
         res.ok ? res.json() : Promise.reject(new Error('translate failed')),
       )
-      .then(
-        (data: {
-          translations: Record<string, { name: string; description?: string }>
-        }) => {
-          if (cancelled) return
-          cache.current.set(lang, data.translations)
-          setTranslated(data.translations)
-        },
-      )
+      .then((data: { translations: Record<string, Translation> }) => {
+        if (cancelled) return
+        cache.current.set(lang, data.translations)
+        setTranslated(data.translations)
+      })
       .catch(() => {
         if (!cancelled) setTranslated({})
       })
@@ -82,5 +81,9 @@ export function useTranslations(entries: TranslatableEntry[]) {
     return translated[id]?.description ?? fallback
   }
 
-  return { name, description, isLoading, isTranslated: lang !== 'he' }
+  function variant(id: string, index: number, fallback: string): string {
+    return translated[id]?.variants?.[index] || fallback
+  }
+
+  return { name, description, variant, isLoading, isTranslated: lang !== 'he' }
 }

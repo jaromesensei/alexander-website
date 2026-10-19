@@ -2,12 +2,16 @@ import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { MENU_TAGS, isMenuTag } from '@/lib/menu/tags'
+import { fetchSettings } from '@/lib/data/settings'
+import { siteText, type SiteTextKey } from '@/lib/siteTexts'
 
 export const runtime = 'nodejs'
+// תפריט מלא בשפה חדשה = כמה קריאות ל-Claude במקביל; ברירת המחדל קצרה מדי
+export const maxDuration = 60
 
 interface RequestEntry {
   id: string
-  scope: 'menu_item' | 'menu_category' | 'menu_tag'
+  scope: 'menu_item' | 'menu_category' | 'menu_tag' | 'site_text'
 }
 
 interface SourceRow {
@@ -15,7 +19,16 @@ interface SourceRow {
   scope: RequestEntry['scope']
   name: string
   description: string | null
+  /** שמות הגדלים/התוספות של המנה, באותו סדר כמו price_variants (ריק = בלי שם) */
+  variants?: string[]
 }
+
+/** טקסטים קבועים שמותר לתרגם — רק בעמוד התפריט, והמקור נשלף מההגדרות ב-DB */
+const TRANSLATABLE_SITE_TEXTS: SiteTextKey[] = ['menu.title', 'menu.intro', 'menu.empty']
+
+/** כמה טקסטים בכל קריאה ל-Claude: מספיק קטן כדי שהתשובה לא תיחתך באמצע */
+const BATCH_SIZE = 40
+const PARALLEL_BATCHES = 3
 
 async function sha256(text: string): Promise<string> {
   const data = new TextEncoder().encode(text)
@@ -58,15 +71,19 @@ export async function POST(request: Request) {
   if (itemIds.length > 0) {
     const { data } = await supabase
       .from('menu_items')
-      .select('id, name_he, description_he')
+      .select('id, name_he, description_he, price_variants')
       .in('id', itemIds)
       .eq('is_available', true)
     for (const row of data ?? []) {
+      const variants = ((row.price_variants ?? []) as { label?: string }[]).map((v) =>
+        (v.label ?? '').trim(),
+      )
       sourceRows.push({
         id: row.id,
         scope: 'menu_item',
         name: row.name_he,
         description: row.description_he,
+        variants: variants.some(Boolean) ? variants : undefined,
       })
     }
   }
@@ -99,57 +116,79 @@ export async function POST(request: Request) {
     }
   }
 
+  const siteKeys = entries
+    .filter((e) => e.scope === 'site_text')
+    .map((e) => e.id as SiteTextKey)
+    .filter((k) => TRANSLATABLE_SITE_TEXTS.includes(k))
+  if (siteKeys.length > 0) {
+    const settings = await fetchSettings(supabase).catch(() => null)
+    if (settings) {
+      for (const key of siteKeys) {
+        const text = siteText(settings, key)
+        if (text)
+          sourceRows.push({ id: key, scope: 'site_text', name: text, description: null })
+      }
+    }
+  }
+
   if (sourceRows.length === 0) {
     return NextResponse.json({ translations: {} })
   }
 
   // כל טקסט מקבל hash משלו כדי שנוכל למטמן שם/תיאור בנפרד ולשתף מטמון בין מנות זהות.
+  // field: 'name' | 'description' | 'variant:<index>'
   type TextRef = {
     hash: string
     text: string
     rowId: string
-    field: 'name' | 'description'
+    field: string
   }
   const textRefs: TextRef[] = []
+  async function addRef(rowId: string, field: string, text: string) {
+    textRefs.push({ hash: await sha256(`${lang}:${text}`), text, rowId, field })
+  }
   for (const row of sourceRows) {
-    textRefs.push({
-      hash: await sha256(`${lang}:${row.name}`),
-      text: row.name,
-      rowId: row.id,
-      field: 'name',
-    })
-    if (row.description) {
-      textRefs.push({
-        hash: await sha256(`${lang}:${row.description}`),
-        text: row.description,
-        rowId: row.id,
-        field: 'description',
-      })
+    await addRef(row.id, 'name', row.name)
+    if (row.description) await addRef(row.id, 'description', row.description)
+    for (const [i, label] of (row.variants ?? []).entries()) {
+      if (label) await addRef(row.id, `variant:${i}`, label)
     }
   }
 
-  const allHashes = textRefs.map((r) => r.hash)
-  const { data: cachedRows } = await supabase
-    .from('translation_cache')
-    .select('source_hash, translated_text')
-    .eq('lang', lang)
-    .in('source_hash', allHashes)
-
+  // שליפה מהמטמון בחלקים: מאות hash-ים בבקשה אחת יוצרים URL ארוך מדי
+  const allHashes = [...new Set(textRefs.map((r) => r.hash))]
   const cacheMap = new Map<string, string>()
-  for (const row of cachedRows ?? []) cacheMap.set(row.source_hash, row.translated_text)
+  for (let i = 0; i < allHashes.length; i += 100) {
+    const { data: cachedRows } = await supabase
+      .from('translation_cache')
+      .select('source_hash, translated_text')
+      .eq('lang', lang)
+      .in('source_hash', allHashes.slice(i, i + 100))
+    for (const row of cachedRows ?? []) cacheMap.set(row.source_hash, row.translated_text)
+  }
 
-  const missing = textRefs.filter((r) => !cacheMap.has(r.hash))
+  // אותו טקסט (למשל "120 גרם") מתורגם פעם אחת גם אם הוא מופיע בכמה מנות
+  const missing = [
+    ...new Map(
+      textRefs.filter((r) => !cacheMap.has(r.hash)).map((r) => [r.hash, r]),
+    ).values(),
+  ]
 
-  if (missing.length > 0) {
-    const apiKey = process.env.ANTHROPIC_API_KEY
-    if (apiKey) {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (missing.length > 0 && apiKey) {
+    const anthropic = new Anthropic({ apiKey })
+    const batches: TextRef[][] = []
+    for (let i = 0; i < missing.length; i += BATCH_SIZE) {
+      batches.push(missing.slice(i, i + BATCH_SIZE))
+    }
+
+    // כל חבילה נשמרת במטמון בנפרד — אם אחת נכשלת, השאר כבר מתורגמות
+    async function translateBatch(batch: TextRef[]) {
       try {
-        const anthropic = new Anthropic({ apiKey })
-        // תרגום מרוכז בקריאה אחת: JSON פנימה, JSON החוצה.
-        const payload = missing.map((m, i) => ({ i, text: m.text }))
+        const payload = batch.map((m, i) => ({ i, text: m.text }))
         const message = await anthropic.messages.create({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 4096,
+          max_tokens: 8000,
           system:
             'אתה מתרגם תפריטי מסעדות. תרגם כל טקסט לשפה שקוד ISO שלה ניתן. ' +
             'שמור על טון תיאבון וקצר, בלי תוספות או הערות. החזר אך ורק JSON תקין: ' +
@@ -161,6 +200,9 @@ export async function POST(request: Request) {
             },
           ],
         })
+        if (message.stop_reason === 'max_tokens') {
+          console.error('translation batch truncated', lang, batch.length)
+        }
 
         const textBlock = message.content.find((b) => b.type === 'text')
         const raw = textBlock && 'text' in textBlock ? textBlock.text : '[]'
@@ -171,8 +213,8 @@ export async function POST(request: Request) {
 
         const upserts = []
         for (const { i, t } of parsed) {
-          const ref = missing[i]
-          if (!ref || typeof t !== 'string') continue
+          const ref = batch[i]
+          if (!ref || typeof t !== 'string' || !t.trim()) continue
           cacheMap.set(ref.hash, t)
           upserts.push({
             lang,
@@ -187,20 +229,31 @@ export async function POST(request: Request) {
             .upsert(upserts, { onConflict: 'lang,source_hash' })
         }
       } catch (err) {
-        console.error('translation failed', err)
+        console.error('translation batch failed', lang, err)
       }
+    }
+
+    for (let i = 0; i < batches.length; i += PARALLEL_BATCHES) {
+      await Promise.all(batches.slice(i, i + PARALLEL_BATCHES).map(translateBatch))
     }
   }
 
-  const translations: Record<string, { name: string; description?: string }> = {}
+  const translations: Record<
+    string,
+    { name: string; description?: string; variants?: string[] }
+  > = {}
   for (const row of sourceRows) {
-    const nameRef = textRefs.find((r) => r.rowId === row.id && r.field === 'name')!
-    const name = cacheMap.get(nameRef.hash) ?? row.name
-    const descRef = textRefs.find((r) => r.rowId === row.id && r.field === 'description')
-    const description = descRef
-      ? (cacheMap.get(descRef.hash) ?? row.description ?? undefined)
-      : undefined
-    translations[row.id] = { name, description }
+    const lookup = (field: string, fallback: string) => {
+      const ref = textRefs.find((r) => r.rowId === row.id && r.field === field)
+      return ref ? (cacheMap.get(ref.hash) ?? fallback) : fallback
+    }
+    translations[row.id] = {
+      name: lookup('name', row.name),
+      description: row.description ? lookup('description', row.description) : undefined,
+      variants: row.variants?.map((label, i) =>
+        label ? lookup(`variant:${i}`, label) : '',
+      ),
+    }
   }
 
   return NextResponse.json({ translations })
