@@ -16,6 +16,8 @@ export const SITE_TEXT_GROUPS = [
       { key: 'mobile.call', label: 'סרגל תחתון בטלפון — חיוג', default: 'התקשרות' },
       { key: 'mobile.waze', label: 'סרגל תחתון בטלפון — ניווט', default: 'וייז' },
       { key: 'mobile.a11y', label: 'סרגל תחתון בטלפון — נגישות', default: 'נגישות' },
+      { key: 'video.pause', label: 'וידאו רקע — כפתור עצירה', default: 'עצירת הווידאו' },
+      { key: 'video.play', label: 'וידאו רקע — כפתור הפעלה', default: 'הפעלת הווידאו' },
     ],
   },
   {

@@ -27,7 +27,7 @@ export function BlockView({
     case 'hero':
       return <HeroBlock block={block} settings={ctx.settings} />
     case 'heading':
-      return <HeadingBlockView block={block} level={index === 0 ? 1 : 2} />
+      return <HeadingBlockView block={block} level={index === 0 ? 1 : 2} ctx={ctx} />
     case 'text':
       return <TextBlockView block={block} ctx={ctx} />
     case 'cta':

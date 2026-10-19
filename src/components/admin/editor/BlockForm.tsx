@@ -11,6 +11,7 @@ import {
   Textarea,
 } from './fields'
 import { ImageField, ImagesField } from '@/components/admin/media/ImageField'
+import { VideoField } from '@/components/admin/media/VideoField'
 import type { LinkOption } from '@/lib/blocks/linkOptions'
 import type { Block, BlockBg, FeatureItem, LinkValue } from '@/lib/blocks/types'
 
@@ -52,6 +53,14 @@ export function BlockForm({
       case 'image':
         return (
           <ImageField
+            value={(value as string | null) ?? null}
+            onChange={(url) => set(field.key, url)}
+            folder="pages"
+          />
+        )
+      case 'video':
+        return (
+          <VideoField
             value={(value as string | null) ?? null}
             onChange={(url) => set(field.key, url)}
             folder="pages"

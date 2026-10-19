@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import { BlockButton } from './BlockButton'
 import { NeonWordmark } from './NeonWordmark'
+import { BackgroundVideo } from './BackgroundVideo'
+import { siteText } from '@/lib/siteTexts'
 import type { HeroBlock as HeroBlockData } from '@/lib/blocks/types'
 import type { RestaurantSettings } from '@/types/db'
 
@@ -19,19 +21,33 @@ export function HeroBlock({
       <div className="tv-frame flex flex-1 p-3 sm:p-5 lg:p-7">
         <div className="tv-bezel flex flex-1 rounded-[1.1rem] p-1.5 sm:rounded-[2rem] sm:p-2">
           <div className="tv-screen relative flex flex-1 overflow-hidden rounded-[0.9rem] sm:rounded-[1.75rem/2.25rem]">
+            {/* שכבות המסך: זכוכית (+תמונה) ← וידאו ← הצללה ופסים. הכפתור של הווידאו
+                מעל הכול, בפינה העליונה */}
             <div aria-hidden="true" className="tv-glass absolute inset-0">
               {block.image && (
-                <>
-                  <Image
-                    src={block.image}
-                    alt=""
-                    fill
-                    priority
-                    className="object-cover opacity-60"
-                    sizes="100vw"
-                  />
-                  <div className="from-ink absolute inset-0 bg-gradient-to-t to-transparent" />
-                </>
+                <Image
+                  src={block.image}
+                  alt=""
+                  fill
+                  priority
+                  className="object-cover opacity-60"
+                  sizes="100vw"
+                />
+              )}
+            </div>
+            {block.bgVideo && (
+              <BackgroundVideo
+                src={block.bgVideo}
+                className="opacity-60"
+                labels={{
+                  pause: siteText(settings, 'video.pause'),
+                  play: siteText(settings, 'video.play'),
+                }}
+              />
+            )}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              {(block.image || block.bgVideo) && (
+                <div className="from-ink absolute inset-0 bg-gradient-to-t to-transparent" />
               )}
               <div className="tv-scanlines absolute inset-0" />
             </div>
