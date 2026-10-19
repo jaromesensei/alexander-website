@@ -229,7 +229,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
   },
   featured_dishes: {
     label: 'מנות מומלצות',
-    description: "המנות שמסומנות 'מומלץ' בתפריט, עם תמונה ומחיר.",
+    description: "קרוסלה של המנות שמסומנות 'מומלץ' בתפריט, עם תמונה ומחיר.",
     icon: Hamburger,
     fields: [
       { key: 'title', label: 'כותרת', kind: 'text' },
@@ -238,8 +238,8 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
         label: 'כמה מנות להציג',
         kind: 'number',
         min: 1,
-        max: 8,
-        help: "המנות נבחרות בניהול התפריט: מסמנים 'מומלץ' על המנה.",
+        max: 12,
+        help: "המנות נבחרות בניהול התפריט: מסמנים 'מומלץ' על המנה. מנה עם שכבות נפתחת למרכיבים כשהיא במרכז.",
       },
     ],
     create: () => ({ type: 'featured_dishes', title: 'המנות שבשבילן באים', limit: 4 }),

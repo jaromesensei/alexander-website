@@ -68,11 +68,20 @@ export interface MenuItem {
   /** כמה מחירים (גדלים/סוגים). כשקיים — מוצג במקום המחיר הבודד; price_agorot = הנמוך */
   price_variants?: PriceVariant[] | null
   image_url: string | null
+  /** שכבות המנה מלמעלה למטה (מיגרציה 0008) — לקרוסלה בעמוד הבית; null = תמונה רגילה */
+  layers?: DishLayer[] | null
   is_available: boolean
   is_featured: boolean
   tags: string[]
   sort_order: number
   created_at: string
+}
+
+export interface DishLayer {
+  /** תמונה ריבועית עם רקע שקוף, המרכיב במרכז — כל השכבות של מנה באותו גודל */
+  image_url: string
+  /** שם המרכיב, למשל "180 גרם בקר" */
+  label: string
 }
 
 export interface PriceVariant {

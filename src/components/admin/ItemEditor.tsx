@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { ImageUploadButton } from './ImageUploadButton'
 import { TagPicker } from './TagPicker'
 import { PriceVariantsField, type VariantDraft } from './PriceVariantsField'
+import { LayersField, type LayerDraft } from './LayersField'
 import { normalizeTag } from '@/lib/menu/tags'
 import type { MenuItem } from '@/types/db'
 
@@ -33,10 +34,13 @@ export function ItemEditor({
     })),
   )
   const [imageUrl, setImageUrl] = useState(item.image_url)
+  const [layers, setLayers] = useState<LayerDraft[]>(item.layers ?? [])
   const [isAvailable, setIsAvailable] = useState(item.is_available)
   const [isFeatured, setIsFeatured] = useState(item.is_featured)
   const [tags, setTags] = useState(item.tags.map(normalizeTag))
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [status, setStatus] = useState<
+    'idle' | 'saving' | 'saved' | 'error' | 'needs-migration'
+  >('idle')
 
   // כל שינוי בשדה מחזיר את הכפתור למצב "שמירה"
   function edit<T>(setter: (v: T) => void) {
@@ -52,6 +56,13 @@ export function ItemEditor({
     const cleanVariants = variants
       .filter((v) => v.price.trim())
       .map((v) => ({ label: v.label.trim(), price_agorot: toAgorot(v.price) }))
+    const cleanLayers = layers
+      .filter((l) => l.image_url)
+      .map((l) => ({ image_url: l.image_url!, label: l.label.trim() }))
+    // העמודה layers נוספת במיגרציה 0008 — שולחים אותה רק כשהשכבות השתנו,
+    // כדי ששמירת מנה תעבוד גם לפני שהמיגרציה הורצה
+    const layersChanged =
+      JSON.stringify(cleanLayers) !== JSON.stringify(item.layers ?? [])
     const supabase = createClient()
     const { error } = await supabase
       .from('menu_items')
@@ -67,10 +78,13 @@ export function ItemEditor({
         is_available: isAvailable,
         is_featured: isFeatured,
         tags,
+        ...(layersChanged ? { layers: cleanLayers.length ? cleanLayers : null } : {}),
       })
       .eq('id', item.id)
     if (error) {
-      setStatus('error')
+      setStatus(
+        layersChanged && /layers/.test(error.message) ? 'needs-migration' : 'error',
+      )
       return
     }
     await publishContent()
@@ -118,6 +132,7 @@ export function ItemEditor({
         />
         <PriceVariantsField value={variants} onChange={edit(setVariants)} />
         <TagPicker value={tags} onChange={edit(setTags)} />
+        <LayersField value={layers} onChange={edit(setLayers)} />
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm">
             <input
@@ -170,6 +185,11 @@ export function ItemEditor({
           <div className="flex items-center gap-3">
             {status === 'error' && (
               <span className="text-pink text-sm">השמירה נכשלה</span>
+            )}
+            {status === 'needs-migration' && (
+              <span className="text-pink text-sm">
+                כדי לשמור שכבות צריך להריץ קודם את מיגרציה 0008
+              </span>
             )}
             <Button
               type="button"

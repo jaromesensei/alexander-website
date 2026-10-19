@@ -25,7 +25,10 @@ export function MenuItemCard({
     .filter((v) => v.label.trim())
 
   return (
-    <div className="border-ink/10 flex gap-4 border-b py-5 sm:gap-6">
+    <div
+      id={`dish-${item.id}`}
+      className="border-ink/10 flex scroll-mt-40 gap-4 border-b py-5 sm:gap-6"
+    >
       {item.image_url && <DishImage src={item.image_url} name={title} />}
 
       <div className="min-w-0 flex-1">

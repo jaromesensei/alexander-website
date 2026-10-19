@@ -1,15 +1,15 @@
 import Image from 'next/image'
-import Link from 'next/link'
-import { ImageIcon, Navigation, UtensilsCrossed } from 'lucide-react'
+import { ImageIcon, Navigation } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { HOURS_LABELS } from '@/lib/data/fallback'
-import { formatPriceRange, formatTime } from '@/lib/format'
+import { formatTime } from '@/lib/format'
 import { featureIcon } from '@/lib/blocks/icons'
 import { wazeHref } from '@/lib/links'
 import { siteText } from '@/lib/siteTexts'
 import { cn } from '@/lib/utils'
 import { BlockButton } from './BlockButton'
 import { BackgroundVideo } from './BackgroundVideo'
+import { DishCarousel } from './DishCarousel'
 import { BG_CLASSES, MUTED_TEXT, outlineVariant, primaryVariant } from './styles'
 import type { BlockContext } from './context'
 import type {
@@ -24,7 +24,7 @@ import type {
   LocationBlock,
   TextBlock,
 } from '@/lib/blocks/types'
-import type { MenuItem, RestaurantSettings } from '@/types/db'
+import type { RestaurantSettings } from '@/types/db'
 
 /** מציין מקום לבלוק ריק — מוצג רק בעורך, באתר הבלוק פשוט לא מופיע. */
 function Placeholder({ label }: { label: string }) {
@@ -404,72 +404,23 @@ export function FeaturedDishesBlockView({
   }
 
   return (
-    <section className="py-20 sm:py-28">
+    <section className="overflow-hidden py-20 sm:py-28">
       <Container>
-        <h2 className="mb-14 text-4xl leading-tight whitespace-pre-line sm:text-5xl">
+        <h2 className="mb-10 text-4xl leading-tight whitespace-pre-line sm:text-5xl">
           {block.title}
         </h2>
-        <div className="space-y-20 sm:space-y-28">
-          {featured.map((item, i) => (
-            <DishRow
-              key={item.id}
-              item={item}
-              reversed={i % 2 === 1}
-              linkLabel={siteText(ctx.settings, 'dishes.menuLink')}
-            />
-          ))}
-        </div>
       </Container>
+      <DishCarousel
+        title={block.title}
+        items={featured}
+        texts={{
+          prev: siteText(ctx.settings, 'dishes.prev'),
+          next: siteText(ctx.settings, 'dishes.next'),
+          allCard: siteText(ctx.settings, 'dishes.allCard'),
+          menuLink: siteText(ctx.settings, 'dishes.menuLink'),
+        }}
+      />
     </section>
-  )
-}
-
-function DishRow({
-  item,
-  reversed,
-  linkLabel,
-}: {
-  item: MenuItem
-  reversed: boolean
-  linkLabel: string
-}) {
-  return (
-    <article className="grid items-center gap-8 sm:grid-cols-2 sm:gap-16">
-      <div
-        className={cn(
-          'bg-paper-dark relative aspect-4/5 overflow-hidden',
-          reversed && 'sm:order-2',
-        )}
-      >
-        {item.image_url ? (
-          <Image
-            src={item.image_url}
-            alt={item.name_he}
-            fill
-            sizes="(min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-200 ease-out hover:scale-105 motion-reduce:hover:scale-100"
-          />
-        ) : (
-          <div className="text-ink-soft/30 flex h-full items-center justify-center">
-            <UtensilsCrossed className="size-16" strokeWidth={1} />
-          </div>
-        )}
-      </div>
-
-      <div>
-        <h3 className="text-3xl leading-tight sm:text-4xl">{item.name_he}</h3>
-        {item.description_he && (
-          <p className="text-ink-soft mt-4 max-w-sm text-lg">{item.description_he}</p>
-        )}
-        <p className="mt-6 text-2xl font-bold tabular-nums">{formatPriceRange(item)}</p>
-        <Link
-          href="/menu"
-          className="text-pink-dark hover:text-pink-deep mt-4 inline-block font-semibold underline underline-offset-4"
-        >
-          {linkLabel}
-        </Link>
-      </div>
-    </article>
   )
 }
 
