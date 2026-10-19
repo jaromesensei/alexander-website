@@ -39,7 +39,8 @@ src/
     blocks/   רכיבי הבלוקים (פתיח, טקסט, קריאה לפעולה…) + BlockRenderer
     menu/     כרטיס מנה, עמוד תפריט, תגיות מנה
     admin/    רכיבי ניהול; admin/editor/ = העורך הוויזואלי, admin/media/ = ספריית תמונות
-    popups/   PopupCard + PopupManager (בוחר ומציג חלון לפי תזמון, בדפדפן)
+    popups/   PopupCard + PopupManager (בוחר חלון לפי תזמון, בדפדפן) + PopupDialog
+              (נטען ב-next/dynamic רק כשיש חלון — כך motion לא יורד בכל עמוד)
   lib/
     blocks/   טיפוסי בלוקים, הגדרות שדות (defs.ts), ברירת המחדל של עמוד הבית
     data/     שכבת גישה ל-DB עם מטמון ו-fallback לתוכן placeholder
@@ -97,7 +98,9 @@ supabase/
   עד שה-JS נטען. מצב הבסיס = המצב הסופי, והאנימציה רק תחת
   `prefers-reduced-motion: no-preference` (ו-`a11y-no-motion` מבטל). motion רק
   לאינטראקציות (חלון קופץ) ותמיד בתוך `SiteMotion`; transform כמחרוזת, יציאה מהירה
-  מכניסה. בלי יותר מ-3 הבזקים בשנייה.
+  מכניסה. בלי יותר מ-3 הבזקים בשנייה. חלונות קטנים שנפתחים מלחיצה — מחלקות
+  `pop-in`/`drop-in`/`fade-in` (CSS `@starting-style`) עם `origin-*` לכיוון הכפתור.
+  `ease-out` של Tailwind מוגדר מחדש לעקומה חזקה (`globals.css`).
 - **שפה:** תוכן מתורגם מסומן ב-`lang`/`dir` על המכיל שלו, לא על `<html>`.
 - תפריט הנגישות (`components/a11y/AccessibilityMenu`) משלים — לא מחליף — את ההנגשה.
 - הצהרת הנגישות: `/accessibility`, נבנית מההגדרות (איש קשר, הסדרים פיזיים, תאריך).

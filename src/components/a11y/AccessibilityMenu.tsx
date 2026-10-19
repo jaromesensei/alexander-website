@@ -30,6 +30,9 @@ const TOGGLES = [
   { key: 'noMotion', label: 'עצירת אנימציות' },
 ] as const
 
+/** אירוע שפותח את התפריט מבחוץ — מהסרגל התחתון בטלפון, שם אין כפתור צף */
+export const OPEN_A11Y_EVENT = 'a11y:open'
+
 /**
  * תפריט נגישות מובנה (לא תוסף חיצוני). משלים את ההנגשה של האתר עצמו —
  * לא מחליף אותה: האתר עומד בדרישות גם בלי שום בחירה כאן.
@@ -39,6 +42,8 @@ export function AccessibilityMenu() {
   const [open, setOpen] = useState(false)
   const [prefs, setPrefs] = useState<A11yPrefs>(DEFAULT_PREFS)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  // מי שפתח את התפריט (הכפתור הצף או הכפתור בסרגל התחתון) — אליו חוזר הפוקוס
+  const openerRef = useRef<HTMLElement | null>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
   const titleId = useId()
@@ -47,7 +52,19 @@ export function AccessibilityMenu() {
     // ההעדפות כבר הוחלו ע"י סקריפט ה-head; כאן רק מסנכרנים את מצב הכפתורים
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefs(load())
+    function onOpen(e: Event) {
+      // הפותח מגיע באירוע: בספארי בטלפון לחיצה לא מעבירה פוקוס לכפתור
+      openerRef.current = (e as CustomEvent<HTMLElement>).detail
+      setOpen(true)
+    }
+    window.addEventListener(OPEN_A11Y_EVENT, onOpen)
+    return () => window.removeEventListener(OPEN_A11Y_EVENT, onOpen)
   }, [])
+
+  function close() {
+    setOpen(false)
+    ;(openerRef.current ?? buttonRef.current)?.focus()
+  }
 
   useEffect(() => {
     if (!open) return
@@ -55,11 +72,15 @@ export function AccessibilityMenu() {
     function onKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return
       setOpen(false)
-      buttonRef.current?.focus()
+      ;(openerRef.current ?? buttonRef.current)?.focus()
     }
     function onClick(e: MouseEvent) {
       const t = e.target as Node
-      if (!panelRef.current?.contains(t) && !buttonRef.current?.contains(t))
+      if (
+        !panelRef.current?.contains(t) &&
+        !buttonRef.current?.contains(t) &&
+        !openerRef.current?.contains(t)
+      )
         setOpen(false)
     }
     document.addEventListener('keydown', onKey)
@@ -89,12 +110,16 @@ export function AccessibilityMenu() {
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          openerRef.current = buttonRef.current
+          setOpen((v) => !v)
+        }}
         aria-expanded={open}
         aria-controls={panelId}
         aria-label="תפריט נגישות"
         title="תפריט נגישות"
-        className="bg-ink text-paper hover:bg-ink-soft fixed start-3 bottom-20 z-50 flex size-12 items-center justify-center rounded-full shadow-lg md:start-5 md:bottom-5"
+        // בטלפון הכפתור נמצא בסרגל התחתון — כפתור צף הסתיר שם את כפתורי הפתיח
+        className="bg-ink text-paper hover:bg-ink-soft fixed start-5 bottom-5 z-50 hidden size-12 items-center justify-center rounded-full shadow-lg transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] md:flex"
       >
         <Accessibility className="size-6" aria-hidden="true" />
       </button>
@@ -105,7 +130,7 @@ export function AccessibilityMenu() {
           id={panelId}
           role="dialog"
           aria-labelledby={titleId}
-          className="border-ink/15 fixed start-3 bottom-36 z-50 w-[min(18rem,calc(100vw-1.5rem))] rounded-2xl border bg-white p-4 shadow-2xl md:start-5 md:bottom-20"
+          className="border-ink/15 pop-in fixed start-3 bottom-20 z-50 w-[min(18rem,calc(100vw-1.5rem))] origin-bottom-left rounded-2xl border bg-white p-4 shadow-2xl md:start-5 md:origin-bottom-right"
         >
           <div className="mb-3 flex items-center justify-between">
             <h2 id={titleId} className="text-lg">
@@ -113,10 +138,7 @@ export function AccessibilityMenu() {
             </h2>
             <button
               type="button"
-              onClick={() => {
-                setOpen(false)
-                buttonRef.current?.focus()
-              }}
+              onClick={close}
               aria-label="סגירת תפריט הנגישות"
               className="hover:bg-paper-dark rounded-lg p-1.5"
             >

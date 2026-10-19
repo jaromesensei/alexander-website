@@ -106,7 +106,7 @@ export function Header({
         <nav
           id="mobile-menu"
           aria-label="תפריט ניווט"
-          className="border-ink/10 bg-paper border-t px-4 py-4 md:hidden"
+          className="border-ink/10 bg-paper drop-in border-t px-4 py-4 md:hidden"
         >
           <ul className="flex flex-col gap-1">
             {links.map((item) => (
