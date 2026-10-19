@@ -11,12 +11,12 @@ export function HeroBlock({
   block: HeroBlockData
   settings: RestaurantSettings
 }) {
-  // טלוויזיה וינטג': מסגרת עץ טורקיז (tv-frame), שוליים כהים (tv-bezel) וזכוכית עם
+  // טלוויזיה וינטג': מסגרת עץ אגוז (tv-frame) צמודה לקצוות, פינות מעוגלות רק בפנים, שוליים כהים (tv-bezel) וזכוכית עם
   // פסים אפורים (tv-glass) — הכול ב-CSS (globals.css), כך שהמסגרת נכנסת בדיוק בכל מסך.
   // הגובה = המסך פחות הכותרת (4.5rem) ובטלפון גם פחות הסרגל התחתון (~4rem).
   return (
-    <section className="bg-ink text-paper flex min-h-[calc(100svh-8.5rem)] p-2 sm:p-4 md:min-h-[calc(100svh-4.5rem)]">
-      <div className="tv-frame flex flex-1 rounded-[1.5rem] p-3 sm:rounded-[2.5rem] sm:p-5 lg:p-7">
+    <section className="bg-ink text-paper flex min-h-[calc(100svh-8.5rem)] md:min-h-[calc(100svh-4.5rem)]">
+      <div className="tv-frame flex flex-1 p-3 sm:p-5 lg:p-7">
         <div className="tv-bezel flex flex-1 rounded-[1.1rem] p-1.5 sm:rounded-[2rem] sm:p-2">
           <div className="tv-screen relative flex flex-1 overflow-hidden rounded-[0.9rem] sm:rounded-[1.75rem/2.25rem]">
             <div aria-hidden="true" className="tv-glass absolute inset-0">
