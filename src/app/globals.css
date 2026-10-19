@@ -81,6 +81,87 @@ h4,
   box-shadow: 0 0 0 2px var(--color-paper);
 }
 
+/*
+ * ===== אנימציות כניסה (CSS ולא JS) =====
+ * רצות מהצביעה הראשונה ועל ה-compositor, בלי לחכות ל-React.
+ * מצב הבסיס של כל אלמנט הוא המצב הסופי, והאנימציות מוגדרות רק כשלא ביקשו
+ * להפחית תנועה — כך ב"הפחתת תנועה" וב"עצירת אנימציות" (a11y-no-motion) הכול
+ * פשוט מופיע במקום.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .page-fade {
+    animation: fade-in 200ms ease-out both;
+  }
+
+  /* הלוגו בפתיח: אותיות עולות עם הטיה שמתיישרת → ניאון נדלק → ה-E מהבהבת */
+  .hero-letter {
+    animation: hero-letter-rise 750ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+  .hero-neon {
+    animation: hero-neon 1600ms linear 900ms both;
+  }
+  .hero-flicker {
+    animation: hero-flicker 450ms linear 1550ms both;
+  }
+  .hero-rule {
+    animation: hero-rule 900ms cubic-bezier(0.22, 1, 0.36, 1) 550ms both;
+  }
+  .hero-content {
+    animation: hero-content 600ms cubic-bezier(0.22, 1, 0.36, 1) 950ms both;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes hero-letter-rise {
+  from {
+    transform: translateY(110%) rotate(var(--tilt, 0deg));
+  }
+}
+@keyframes hero-neon {
+  0%,
+  100% {
+    text-shadow:
+      0 0 0 rgb(255 47 126 / 0),
+      0 0 0 rgb(255 47 126 / 0);
+  }
+  6%,
+  24%,
+  60% {
+    text-shadow:
+      0 0 0.06em rgb(255 255 255 / 0.9),
+      0 0 0.22em rgb(255 47 126 / 0.95);
+  }
+  14% {
+    text-shadow:
+      0 0 0.03em rgb(255 255 255 / 0.4),
+      0 0 0.1em rgb(255 47 126 / 0.45);
+  }
+}
+@keyframes hero-flicker {
+  30% {
+    opacity: 0.25;
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes hero-rule {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes hero-content {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
 /* ===== תפריט נגישות (AccessibilityMenu) — מחלקות על <html> ===== */
 html.a11y-text-1 {
   font-size: 112.5%;

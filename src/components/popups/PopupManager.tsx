@@ -88,8 +88,8 @@ export function PopupManager({
             key={current.id}
             className="bg-ink/60 fixed inset-0 z-[70] flex items-end justify-center p-4 sm:items-center"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.25, ease: 'easeOut' } }}
+            exit={{ opacity: 0, transition: { duration: 0.15, ease: 'easeIn' } }}
             onClick={() => setCurrent(null)}
           >
             <motion.div
@@ -98,10 +98,17 @@ export function PopupManager({
               aria-modal="true"
               aria-labelledby={titleId}
               className="flex w-full justify-center"
-              initial={{ y: 40 }}
-              animate={{ y: 0 }}
-              exit={{ y: 40 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              // transform כמחרוזת (לא y) — רץ על ה-GPU גם כשהדף עסוק בטעינה.
+              // יציאה מהירה מהכניסה: סגירה צריכה להרגיש מיידית
+              initial={{ transform: 'translateY(40px)' }}
+              animate={{
+                transform: 'translateY(0px)',
+                transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+              }}
+              exit={{
+                transform: 'translateY(24px)',
+                transition: { duration: 0.15, ease: 'easeIn' },
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               <PopupCard
