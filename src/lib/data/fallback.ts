@@ -61,14 +61,14 @@ export const FALLBACK_CATEGORIES: (MenuCategory & { items: MenuItem[] })[] = [
         description_he: '180 גרם בקר טרי, גבינת צ׳דר, חסה, עגבנייה, בצל סגול ורוטב הבית',
         price_agorot: 5400,
         image_url: null,
-        // שכבות לדוגמה (איורים ב-public/demo-burger) — מראות איך המנה נפתחת בקרוסלה
+        // שכבות לדוגמה (public/demo-burger) — מראות איך המנה נפתחת בקרוסלה
         layers: [
-          { image_url: '/demo-burger/bun-top.svg', label: 'לחמנייה' },
-          { image_url: '/demo-burger/lettuce.svg', label: 'חסה' },
-          { image_url: '/demo-burger/tomato.svg', label: 'עגבנייה' },
-          { image_url: '/demo-burger/cheese.svg', label: 'צ׳דר' },
-          { image_url: '/demo-burger/patty.svg', label: '180 גרם בקר' },
-          { image_url: '/demo-burger/bun-bottom.svg', label: 'לחמנייה' },
+          { image_url: '/demo-burger/bun-top.webp', label: 'לחמניית בריוש' },
+          { image_url: '/demo-burger/lettuce.webp', label: 'חסה' },
+          { image_url: '/demo-burger/tomato.webp', label: 'עגבנייה' },
+          { image_url: '/demo-burger/onion-pickle.webp', label: 'בצל סגול ומלפפון חמוץ' },
+          { image_url: '/demo-burger/patty.webp', label: 'קציצת בקר' },
+          { image_url: '/demo-burger/bun-bottom.webp', label: 'לחמנייה' },
         ],
         is_available: true,
         is_featured: true,
