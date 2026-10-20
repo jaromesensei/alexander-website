@@ -9,6 +9,7 @@ import {
   Hamburger,
   Images,
   MapPin,
+  GalleryHorizontal,
   type LucideIcon,
 } from 'lucide-react'
 import type { Block, BlockType } from './types'
@@ -37,6 +38,7 @@ export type Field =
       help?: string
     }
   | { key: string; label: string; kind: 'features' }
+  | { key: string; label: string; kind: 'slides' }
 
 export interface BlockDef {
   label: string
@@ -229,7 +231,7 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
   },
   featured_dishes: {
     label: 'מנות מומלצות',
-    description: "המנות שמסומנות 'מומלץ' בתפריט, עם תמונה ומחיר.",
+    description: "קרוסלה של המנות שמסומנות 'מומלץ' בתפריט, עם תמונה ומחיר.",
     icon: Hamburger,
     fields: [
       { key: 'title', label: 'כותרת', kind: 'text' },
@@ -238,8 +240,8 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
         label: 'כמה מנות להציג',
         kind: 'number',
         min: 1,
-        max: 8,
-        help: "המנות נבחרות בניהול התפריט: מסמנים 'מומלץ' על המנה.",
+        max: 12,
+        help: "המנות נבחרות בניהול התפריט: מסמנים 'מומלץ' על המנה. מנה עם שכבות נפתחת למרכיבים כשהיא במרכז.",
       },
     ],
     create: () => ({ type: 'featured_dishes', title: 'המנות שבשבילן באים', limit: 4 }),
@@ -263,6 +265,32 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       title: 'אצלנו בדיינר',
       button: { label: 'לכל התמונות', href: '/gallery' },
       images: [],
+    }),
+  },
+  carousel: {
+    label: 'קרוסלה',
+    description:
+      'שקופיות שמחליקים הצידה: תמונה או תמונה מתפרקת לשכבות, כותרת, טקסט וכפתור.',
+    icon: GalleryHorizontal,
+    fields: [
+      { key: 'title', label: 'כותרת', kind: 'text' },
+      BG,
+      { key: 'slides', label: 'שקופיות', kind: 'slides' },
+    ],
+    create: () => ({
+      type: 'carousel',
+      title: 'כותרת הקרוסלה',
+      bg: 'paper',
+      slides: [
+        {
+          title: 'שקופית ראשונה',
+          text: '',
+          badge: '',
+          image: null,
+          layers: [],
+          button: null,
+        },
+      ],
     }),
   },
   location: {

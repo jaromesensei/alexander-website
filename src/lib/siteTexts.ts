@@ -120,6 +120,15 @@ export const SITE_TEXT_GROUPS = [
         label: 'מנות מומלצות — קישור לתפריט',
         default: 'לתפריט המלא',
       },
+      { key: 'carousel.prev', label: 'קרוסלה — חץ קודם', default: 'הקודם' },
+      { key: 'carousel.next', label: 'קרוסלה — חץ הבא', default: 'הבא' },
+      { key: 'dishes.prev', label: 'מנות מומלצות — חץ קודם', default: 'המנה הקודמת' },
+      { key: 'dishes.next', label: 'מנות מומלצות — חץ הבא', default: 'המנה הבאה' },
+      {
+        key: 'dishes.allCard',
+        label: 'מנות מומלצות — הכרטיס האחרון',
+        default: 'עוד המון מנות מחכות בתפריט',
+      },
       {
         key: 'location.hoursTitle',
         label: 'מיקום — כותרת שעות פתיחה',

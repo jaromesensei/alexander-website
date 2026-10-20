@@ -12,6 +12,25 @@ export interface LinkValue {
   href: string
 }
 
+/** שכבה של תמונה מתפרקת: תמונה ריבועית שקופה + שם המרכיב */
+export interface LayerImage {
+  image_url: string
+  label: string
+}
+
+/** שקופית בבלוק קרוסלה */
+export interface CarouselSlide {
+  title: string
+  text: string
+  /** תגית קטנה ליד הכותרת — מחיר, "חדש" וכו' */
+  badge: string
+  image: string | null
+  imageAlt?: string
+  /** שתי שכבות ומעלה — השקופית נפתחת למרכיבים כשהיא במרכז (במקום התמונה) */
+  layers: LayerImage[]
+  button: LinkValue | null
+}
+
 export interface FeatureItem {
   icon: string
   title: string
@@ -122,6 +141,13 @@ export interface GalleryBlock extends BlockBase {
   images: string[]
 }
 
+export interface CarouselBlock extends BlockBase {
+  type: 'carousel'
+  title: string
+  bg: BlockBg
+  slides: CarouselSlide[]
+}
+
 export interface LocationBlock extends BlockBase {
   type: 'location'
   /** ריק = הכתובת מההגדרות */
@@ -138,6 +164,7 @@ export type Block =
   | FeaturesBlock
   | FeaturedDishesBlock
   | GalleryBlock
+  | CarouselBlock
   | LocationBlock
 
 export type BlockType = Block['type']

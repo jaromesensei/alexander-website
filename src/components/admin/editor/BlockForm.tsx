@@ -12,8 +12,15 @@ import {
 } from './fields'
 import { ImageField, ImagesField } from '@/components/admin/media/ImageField'
 import { VideoField } from '@/components/admin/media/VideoField'
+import { SlidesField } from './SlidesField'
 import type { LinkOption } from '@/lib/blocks/linkOptions'
-import type { Block, BlockBg, FeatureItem, LinkValue } from '@/lib/blocks/types'
+import type {
+  Block,
+  BlockBg,
+  CarouselSlide,
+  FeatureItem,
+  LinkValue,
+} from '@/lib/blocks/types'
 
 /** טופס עריכה לבלוק, נבנה אוטומטית מהגדרת השדות ב-BLOCK_DEFS. */
 export function BlockForm({
@@ -110,6 +117,14 @@ export function BlockForm({
               )
             }
             className="w-28"
+          />
+        )
+      case 'slides':
+        return (
+          <SlidesField
+            value={(value as CarouselSlide[]) ?? []}
+            onChange={(v) => set(field.key, v)}
+            linkOptions={linkOptions}
           />
         )
       case 'features':

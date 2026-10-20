@@ -28,6 +28,42 @@ export function defaultHomeBlocks(settings: RestaurantSettings): Block[] {
       button: { label: 'הזמנת שולחן', href: 'wa:reservation' },
     },
     { id: 'home-dishes', type: 'featured_dishes', title: 'המנות שבשבילן באים', limit: 4 },
+    // דוגמה לקרוסלה חופשית: תמונה שמתפרקת לשכבות (public/demo-burger)
+    {
+      id: 'home-carousel',
+      type: 'carousel',
+      title: 'מה יש בפנים',
+      bg: 'paper',
+      slides: [
+        {
+          title: 'אלכסנדר בורגר',
+          text: 'בשר בקר טרי שנטחן כל יום, בלחמניית בריוש.',
+          badge: '',
+          image: null,
+          layers: [
+            { image_url: '/demo-burger/bun-top.webp', label: 'לחמניית בריוש' },
+            { image_url: '/demo-burger/lettuce.webp', label: 'חסה' },
+            { image_url: '/demo-burger/tomato.webp', label: 'עגבנייה' },
+            {
+              image_url: '/demo-burger/onion-pickle.webp',
+              label: 'בצל סגול ומלפפון חמוץ',
+            },
+            { image_url: '/demo-burger/patty.webp', label: 'קציצת בקר' },
+            { image_url: '/demo-burger/bun-bottom.webp', label: 'לחמנייה' },
+          ],
+          button: { label: 'לתפריט', href: '/menu' },
+        },
+        {
+          title: 'כל שכבה במקום',
+          text: 'תמונה רגילה עובדת כמו בכל קרוסלה.',
+          badge: '',
+          image: '/demo-burger/full.webp',
+          imageAlt: 'המבורגר שהמרכיבים שלו מרחפים זה מעל זה',
+          layers: [],
+          button: null,
+        },
+      ],
+    },
     {
       id: 'home-menu',
       type: 'cta',
