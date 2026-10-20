@@ -9,6 +9,7 @@ import {
   Hamburger,
   Images,
   MapPin,
+  GalleryHorizontal,
   type LucideIcon,
 } from 'lucide-react'
 import type { Block, BlockType } from './types'
@@ -37,6 +38,7 @@ export type Field =
       help?: string
     }
   | { key: string; label: string; kind: 'features' }
+  | { key: string; label: string; kind: 'slides' }
 
 export interface BlockDef {
   label: string
@@ -263,6 +265,32 @@ export const BLOCK_DEFS: Record<BlockType, BlockDef> = {
       title: 'אצלנו בדיינר',
       button: { label: 'לכל התמונות', href: '/gallery' },
       images: [],
+    }),
+  },
+  carousel: {
+    label: 'קרוסלה',
+    description:
+      'שקופיות שמחליקים הצידה: תמונה או תמונה מתפרקת לשכבות, כותרת, טקסט וכפתור.',
+    icon: GalleryHorizontal,
+    fields: [
+      { key: 'title', label: 'כותרת', kind: 'text' },
+      BG,
+      { key: 'slides', label: 'שקופיות', kind: 'slides' },
+    ],
+    create: () => ({
+      type: 'carousel',
+      title: 'כותרת הקרוסלה',
+      bg: 'paper',
+      slides: [
+        {
+          title: 'שקופית ראשונה',
+          text: '',
+          badge: '',
+          image: null,
+          layers: [],
+          button: null,
+        },
+      ],
     }),
   },
   location: {

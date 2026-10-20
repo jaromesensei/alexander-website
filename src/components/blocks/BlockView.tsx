@@ -1,4 +1,5 @@
 import { HeroBlock } from './HeroBlock'
+import { CarouselBlockView } from './CarouselBlock'
 import {
   CtaBlockView,
   FeaturedDishesBlockView,
@@ -42,6 +43,8 @@ export function BlockView({
       return <FeaturedDishesBlockView block={block} ctx={ctx} />
     case 'gallery':
       return <GalleryBlockView block={block} ctx={ctx} />
+    case 'carousel':
+      return <CarouselBlockView block={block} ctx={ctx} />
     case 'location':
       return <LocationBlockView block={block} ctx={ctx} />
     default:

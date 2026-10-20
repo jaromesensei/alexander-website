@@ -1,7 +1,8 @@
 'use client'
 
 import { ChevronDown, ChevronUp, Layers, Plus, X } from 'lucide-react'
-import { ImageUploadButton } from './ImageUploadButton'
+import { ImageUploadButton } from '@/components/admin/ImageUploadButton'
+import type { UploadFolder } from '@/lib/supabase/storage'
 
 export interface LayerDraft {
   image_url: string | null
@@ -9,15 +10,17 @@ export interface LayerDraft {
 }
 
 /**
- * שכבות המנה לקרוסלה בעמוד הבית: מהשכבה העליונה לתחתונה, תמונה + שם המרכיב.
+ * שכבות של שקופית בקרוסלה: מהשכבה העליונה לתחתונה, תמונה + שם המרכיב.
  * כל התמונות באותו גודל (ריבוע), רקע שקוף והמרכיב במרכז.
  */
 export function LayersField({
   value,
   onChange,
+  folder,
 }: {
   value: LayerDraft[]
   onChange: (v: LayerDraft[]) => void
+  folder: UploadFolder
 }) {
   function update(i: number, patch: Partial<LayerDraft>) {
     onChange(value.map((l, j) => (j === i ? { ...l, ...patch } : l)))
@@ -43,7 +46,7 @@ export function LayersField({
         className="text-pink-dark flex items-center gap-1 text-sm font-semibold hover:underline"
       >
         <Layers className="size-4" aria-hidden="true" />
-        שכבות (המנה נפתחת למרכיבים בעמוד הבית)
+        שכבות (התמונה נפתחת למרכיבים כשהשקופית במרכז)
       </button>
     )
   }
@@ -53,14 +56,14 @@ export function LayersField({
       <legend className="px-1 text-sm font-semibold">שכבות — מלמעלה למטה</legend>
       <p className="text-ink-soft text-xs">
         תמונה לכל מרכיב, עם רקע שקוף (PNG). כל התמונות באותו גודל ריבועי, והמרכיב באמצע.
-        מנה עם שתי שכבות ומעלה נפתחת כשהיא במרכז הקרוסלה.
+        עם שתי שכבות ומעלה הן מוצגות במקום התמונה ונפתחות כשהשקופית במרכז.
       </p>
       {value.map((layer, i) => (
         <div key={i} className="flex items-center gap-2">
           <ImageUploadButton
             value={layer.image_url}
             onChange={(url) => update(i, { image_url: url })}
-            folder="menu"
+            folder={folder}
           />
           <input
             value={layer.label}
